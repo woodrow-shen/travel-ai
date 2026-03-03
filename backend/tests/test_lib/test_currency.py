@@ -1,6 +1,5 @@
 from app.lib.currency import convert_price
 
-
 MOCK_RATES = {
     "EUR": 1.0,
     "USD": 1.08,

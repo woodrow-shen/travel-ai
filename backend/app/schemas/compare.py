@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 from app.schemas.search import FlightResult, HotelResult
 
-
 # --- Unified compare schemas ---
 
 

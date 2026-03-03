@@ -1,0 +1,174 @@
+{
+    "data": {
+        "metadata": {
+            "firstResultStations": {
+                "edges": [
+                    {
+                        "node": {
+                            "__isPlace": "Station",
+                            "__typename": "Station",
+                            "id": "Station:airport:TPE",
+                            "legacyId": "TPE",
+                            "name": "Taiwan Taoyuan International",
+                            "slug": "taiwan-taoyuan-international-taipei-taiwan",
+                            "slugEn": "taiwan-taoyuan-international-taipei-taiwan",
+                            "gps": {
+                                "lat": 25.0777778,
+                                "lng": 121.232778
+                            },
+                            "rank": 94,
+                            "type": "AIRPORT",
+                            "code": "TPE",
+                            "city": {
+                                "legacyId": "taipei_tw",
+                                "name": "Taipei",
+                                "slug": "taipei-taiwan",
+                                "autonomousTerritory": null,
+                                "subdivision": null,
+                                "country": {
+                                    "legacyId": "TW",
+                                    "name": "Taiwan",
+                                    "region": {
+                                        "legacyId": "eastern-asia",
+                                        "continent": {
+                                            "legacyId": "asia",
+                                            "id": "Continent:asia"
+                                        },
+                                        "id": "Region:eastern-asia"
+                                    },
+                                    "id": "Country:TW"
+                                },
+                                "id": "City:taipei_tw"
+                            }
+                        },
+                        "sphericalDistance": {
+                            "distance": 33886
+                        },
+                        "carDirections": null
+                    },
+                    {
+                        "node": {
+                            "__isPlace": "Station",
+                            "__typename": "Station",
+                            "id": "Station:airport:TSA",
+                            "legacyId": "TSA",
+                            "name": "Taipei Songshan",
+                            "slug": "taipei-songshan-taipei-taiwan",
+                            "slugEn": "taipei-songshan-taipei-taiwan",
+                            "gps": {
+                                "lat": 25.0697222,
+                                "lng": 121.5525
+                            },
+                            "rank": 837,
+                            "type": "AIRPORT",
+                            "code": "TSA",
+                            "city": {
+                                "legacyId": "taipei_tw",
+                                "name": "Taipei",
+                                "slug": "taipei-taiwan",
+                                "autonomousTerritory": null,
+                                "subdivision": null,
+                                "country": {
+                                    "legacyId": "TW",
+                                    "name": "Taiwan",
+                                    "region": {
+                                        "legacyId": "eastern-asia",
+                                        "continent": {
+                                            "legacyId": "asia",
+                                            "id": "Continent:asia"
+                                        },
+                                        "id": "Region:eastern-asia"
+                                    },
+                                    "id": "Country:TW"
+                                },
+                                "id": "City:taipei_tw"
+                            }
+                        },
+                        "sphericalDistance": {
+                            "distance": 4290
+                        },
+                        "carDirections": null
+                    }
+                ]
+            }
+        },
+        "edges": [
+            {
+                "__typename": "City",
+                "__isPlace": "City",
+                "id": "City:taipei_tw",
+                "legacyId": "taipei_tw",
+                "name": "Taipei",
+                "slug": "taipei-taiwan",
+                "slugEn": "taipei-taiwan",
+                "gps": {
+                    "lat": 25.032964,
+                    "lng": 121.565427
+                },
+                "rank": 88,
+                "code": "TPE",
+                "autonomousTerritory": null,
+                "subdivision": null,
+                "country": {
+                    "legacyId": "TW",
+                    "name": "Taiwan",
+                    "slugEn": "taiwan",
+                    "region": {
+                        "legacyId": "eastern-asia",
+                        "continent": {
+                            "legacyId": "asia",
+                            "id": "Continent:asia"
+                        },
+                        "id": "Region:eastern-asia"
+                    },
+                    "id": "Country:TW"
+                },
+                "airportsCount": 2,
+                "groundStationsCount": 0
+            },
+            {
+                "__typename": "Station",
+                "__isPlace": "Station",
+                "id": "Station:airport:HRB",
+                "legacyId": "HRB",
+                "name": "Harbin Taiping International",
+                "slug": "harbin-taiping-international-harbin-china",
+                "slugEn": "harbin-taiping-international-harbin-china",
+                "gps": {
+                    "lat": 45.623333,
+                    "lng": 126.250278
+                },
+                "rank": 848,
+                "type": "AIRPORT",
+                "code": "HRB",
+                "city": {
+                    "legacyId": "harbin_cn",
+                    "name": "Harbin",
+                    "slug": "harbin-china",
+                    "autonomousTerritory": null,
+                    "subdivision": {
+                        "legacyId": "HL_CN",
+                        "name": "Heilongjiang",
+                        "id": "Subdivision:HL_CN"
+                    },
+                    "country": {
+                        "legacyId": "CN",
+                        "name": "China",
+                        "region": {
+                            "legacyId": "eastern-asia",
+                            "continent": {
+                                "legacyId": "asia",
+                                "id": "Continent:asia"
+                            },
+                            "id": "Region:eastern-asia"
+                        },
+                        "id": "Country:CN"
+                    },
+                    "id": "City:harbin_cn"
+                }
+            }
+        ]
+    },
+    "status": true,
+    "message": "Success"
+}

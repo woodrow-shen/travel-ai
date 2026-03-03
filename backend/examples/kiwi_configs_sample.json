@@ -1,0 +1,14 @@
+{
+    "totalResultCount": 1,
+    "status": true,
+    "data": [
+        {
+            "country": "Taiwan",
+            "market": "TW",
+            "locale": "zh-TW",
+            "currencyTitle": "New Taiwan Dollar",
+            "currency": "TWD",
+            "currencySymbol": "NT$"
+        }
+    ]
+}

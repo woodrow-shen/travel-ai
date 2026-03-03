@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      target: development
+    volumes:
+      - ./backend:/app
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=development
+      - DEBUG=true
+      - ALLOW_TIER_SWITCH=true
+
+  frontend:
+    build:
+      target: development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  monitor:
+    build:
+      target: development
+    volumes:
+      - ./monitor:/app
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=development

@@ -1,0 +1,102 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: travelai
+          POSTGRES_PASSWORD: travelai_test_password
+          POSTGRES_DB: travelai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U travelai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv pip install --system ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: mypy app/
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://travelai:travelai_test_password@localhost:5432/travelai_test
+          REDIS_URL: redis://localhost:6379/0
+          ENV: test
+          SECRET_KEY: test-secret-key
+        run: pytest --cov=app --cov-report=term-missing
+
+  monitor-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: travelai
+          POSTGRES_PASSWORD: travelai_test_password
+          POSTGRES_DB: travelai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U travelai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: monitor
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv pip install --system ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://travelai:travelai_test_password@localhost:5432/travelai_test
+          REDIS_URL: redis://localhost:6379/0
+          ENV: test
+        run: pytest --cov=app --cov-report=term-missing

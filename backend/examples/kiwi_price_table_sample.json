@@ -1,0 +1,103 @@
+{
+    "status": true,
+    "status_code": 200,
+    "data": [
+        {
+            "outboundDate": "2026-03-05T00:00:00",
+            "inboundDate": "2026-03-09T00:00:00",
+            "price": {
+                "amount": "1406"
+            },
+            "rating": "EXPENSIVE"
+        },
+        {
+            "outboundDate": "2026-03-05T00:00:00",
+            "inboundDate": "2026-03-10T00:00:00",
+            "price": {
+                "amount": "846"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-05T00:00:00",
+            "inboundDate": "2026-03-11T00:00:00",
+            "price": {
+                "amount": "710"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-05T00:00:00",
+            "inboundDate": "2026-03-12T00:00:00",
+            "price": {
+                "amount": "632"
+            },
+            "rating": "CHEAP"
+        },
+        {
+            "outboundDate": "2026-03-06T00:00:00",
+            "inboundDate": "2026-03-09T00:00:00",
+            "price": {
+                "amount": "1363"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-06T00:00:00",
+            "inboundDate": "2026-03-10T00:00:00",
+            "price": {
+                "amount": "803"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-06T00:00:00",
+            "inboundDate": "2026-03-11T00:00:00",
+            "price": {
+                "amount": "667"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-06T00:00:00",
+            "inboundDate": "2026-03-12T00:00:00",
+            "price": {
+                "amount": "589"
+            },
+            "rating": "CHEAP"
+        },
+        {
+            "outboundDate": "2026-03-07T00:00:00",
+            "inboundDate": "2026-03-09T00:00:00",
+            "price": {
+                "amount": "1312"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-07T00:00:00",
+            "inboundDate": "2026-03-10T00:00:00",
+            "price": {
+                "amount": "735"
+            },
+            "rating": "AVERAGE"
+        },
+        {
+            "outboundDate": "2026-03-07T00:00:00",
+            "inboundDate": "2026-03-11T00:00:00",
+            "price": {
+                "amount": "599"
+            },
+            "rating": "CHEAP"
+        },
+        {
+            "outboundDate": "2026-03-07T00:00:00",
+            "inboundDate": "2026-03-12T00:00:00",
+            "price": {
+                "amount": "521"
+            },
+            "rating": "CHEAP"
+        }
+    ],
+    "message": "Success"
+}

@@ -1,0 +1,201 @@
+import asyncio
+import json
+import logging
+
+from app.clients.amadeus_client import AmadeusClient
+from app.clients.kiwi_client import KiwiClient
+from app.clients.normalizer import (
+    deduplicate_flights,
+    normalize_amadeus_flight,
+    normalize_kiwi_flight,
+    normalize_skyscanner_flight,
+)
+from app.clients.skyscanner_client import SkyscannerClient
+from app.lib.currency import get_exchange_rates
+from app.models.user import User
+from app.schemas.compare import (
+    CompareResult,
+    FlightCompareRequest,
+    FlightCompareResponse,
+    HotelCompareRequest,
+    HotelCompareResponse,
+    PricePoint,
+    UnifiedCompareRequest,
+)
+from app.schemas.search import normalized_dict_to_flight_result
+
+logger = logging.getLogger(__name__)
+
+
+class PriceService:
+    def __init__(self):
+        self.amadeus = AmadeusClient()
+        self.skyscanner = SkyscannerClient()
+        self.kiwi = KiwiClient()
+
+    async def unified_compare(
+        self, request: UnifiedCompareRequest, user: User
+    ) -> list[CompareResult]:
+        """Compare items by reading cached data from Redis."""
+        results: list[CompareResult] = []
+
+        try:
+            from app.db.redis import redis_client
+
+            for item_id in request.item_ids:
+                cache_key = f"{request.item_type}:{item_id}"
+                raw = await redis_client.get(cache_key)
+                if not raw:
+                    continue
+
+                data = json.loads(raw)
+                sources: list[dict] = data.get("sources", [])
+                flight_data: dict = data.get("flight", {})
+                fetched_at: str = data.get("fetched_at", "")
+
+                # Build label from cached flight data
+                segs = flight_data.get("outbound_segments", [])
+                first_seg = segs[0] if segs else {}
+                label = (
+                    f"{first_seg.get('airline', '')} "
+                    f"{first_seg.get('departure_airport', '')} → "
+                    f"{first_seg.get('arrival_airport', '')}"
+                ).strip()
+
+                # Build price points from all source dicts
+                prices: list[PricePoint] = []
+                for src in sources:
+                    prices.append(
+                        PricePoint(
+                            provider=src.get("source", ""),
+                            price=float(src.get("price", 0)),
+                            currency=src.get("currency", "TWD"),
+                            url=src.get("booking_url") or None,
+                            fetched_at=fetched_at,
+                        )
+                    )
+
+                if not prices:
+                    continue
+
+                price_values = [p.price for p in prices]
+                results.append(
+                    CompareResult(
+                        item_id=item_id,
+                        item_type=request.item_type,
+                        label=label,
+                        prices=prices,
+                        lowest_price=min(price_values),
+                        highest_price=max(price_values),
+                        average_price=sum(price_values) / len(price_values),
+                    )
+                )
+        except Exception:
+            logger.warning("unified_compare Redis read failed", exc_info=True)
+
+        return results
+
+    async def compare_flights(
+        self, request: FlightCompareRequest, user: User
+    ) -> FlightCompareResponse:
+        departure_date = str(request.date_from)
+        return_date = str(request.date_to) if request.date_to else None
+
+        # Multi-source parallel search
+        amadeus_task = self.amadeus.search_flights(
+            origin=request.origin,
+            destination=request.destination,
+            departure_date=departure_date,
+            return_date=return_date,
+            adults=request.passengers,
+            cabin_class=request.cabin_class,
+        )
+        skyscanner_task = self.skyscanner.search_flights(
+            origin_sky_id=request.origin,
+            destination_sky_id=request.destination,
+            departure_date=departure_date,
+            return_date=return_date,
+            adults=request.passengers,
+        )
+        kiwi_task = self.kiwi.search_flights(
+            origin_sky_id=request.origin,
+            destination_sky_id=request.destination,
+            departure_date=departure_date,
+            return_date=return_date,
+            adults=request.passengers,
+        )
+
+        rates_task = get_exchange_rates("EUR")
+
+        amadeus_raw, skyscanner_raw, kiwi_raw, exchange_rates = await asyncio.gather(
+            amadeus_task, skyscanner_task, kiwi_task, rates_task,
+            return_exceptions=True,
+        )
+
+        if isinstance(exchange_rates, BaseException):
+            logger.warning("Exchange rate fetch failed: %s", exchange_rates)
+            exchange_rates = {}
+
+        currency = "TWD"
+
+        normalized: list[dict] = []
+        sources: list[str] = []
+
+        if isinstance(amadeus_raw, list) and amadeus_raw:
+            sources.append("amadeus")
+            for offer in amadeus_raw:
+                try:
+                    normalized.append(
+                        normalize_amadeus_flight(
+                            offer, currency=currency, exchange_rates=exchange_rates
+                        )
+                    )
+                except Exception:
+                    logger.debug("Failed to normalize Amadeus compare offer", exc_info=True)
+
+        if isinstance(skyscanner_raw, list) and skyscanner_raw:
+            sources.append("skyscanner")
+            for itin in skyscanner_raw:
+                try:
+                    normalized.append(
+                        normalize_skyscanner_flight(
+                            itin,
+                            origin=request.origin,
+                            destination=request.destination,
+                        )
+                    )
+                except Exception:
+                    logger.debug("Failed to normalize Skyscanner compare offer", exc_info=True)
+
+        if isinstance(kiwi_raw, list) and kiwi_raw:
+            sources.append("kiwi")
+            for itin in kiwi_raw:
+                try:
+                    normalized.append(normalize_kiwi_flight(itin))
+                except Exception:
+                    logger.debug("Failed to normalize Kiwi compare offer", exc_info=True)
+
+        deduped = deduplicate_flights(normalized)
+        results = [normalized_dict_to_flight_result(d) for d in deduped]
+
+        # Sort by price
+        results.sort(key=lambda f: f.price)
+
+        cheapest = results[0] if results else None
+        fastest = min(
+            (f for f in results if f.total_duration_minutes),
+            key=lambda f: f.total_duration_minutes,
+            default=None,
+        )
+
+        return FlightCompareResponse(
+            results=results,
+            sources=sources,
+            cheapest=cheapest,
+            fastest=fastest,
+        )
+
+    async def compare_hotels(
+        self, request: HotelCompareRequest, user: User
+    ) -> HotelCompareResponse:
+        return HotelCompareResponse(results=[], sources=[])

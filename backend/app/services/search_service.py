@@ -3,6 +3,7 @@ import json
 import logging
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from app.clients.amadeus_client import AmadeusClient
 from app.clients.kiwi_client import KiwiClient
@@ -79,15 +80,19 @@ class SearchService:
 
         rates_task = get_exchange_rates("EUR")
 
-        amadeus_raw, skyscanner_raw, kiwi_raw, exchange_rates = await asyncio.gather(
+        gather_results = await asyncio.gather(
             amadeus_task, skyscanner_task, kiwi_task, rates_task,
             return_exceptions=True,
         )
+        amadeus_raw: Any = gather_results[0]
+        skyscanner_raw: Any = gather_results[1]
+        kiwi_raw: Any = gather_results[2]
+        rates_raw = gather_results[3]
+        exchange_rates: dict[str, float] = rates_raw if isinstance(rates_raw, dict) else {}
 
-        # Ensure exchange_rates is a dict even on failure
-        if isinstance(exchange_rates, BaseException):
-            logger.warning("Exchange rate fetch failed: %s", exchange_rates)
-            exchange_rates = {}
+        # Log exchange rate fetch failure
+        if isinstance(rates_raw, BaseException):
+            logger.warning("Exchange rate fetch failed: %s", rates_raw)
 
         # Normalize all results into common dict format
         normalized: list[dict] = []
@@ -167,7 +172,7 @@ class SearchService:
     ) -> DirectSearchResponse:
         currency = "TWD"
 
-        amadeus_results, exchange_rates = await asyncio.gather(
+        direct_results = await asyncio.gather(
             self.amadeus.search_flights(
                 origin=request.origin.upper(),
                 destination=request.destination.upper(),
@@ -180,6 +185,8 @@ class SearchService:
             ),
             get_exchange_rates("EUR"),
         )
+        amadeus_results: list[dict] = direct_results[0]
+        exchange_rates: dict[str, float] = direct_results[1]
 
         flights: list[FlightResult] = []
         for offer in amadeus_results:

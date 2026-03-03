@@ -2,6 +2,7 @@ from pathlib import Path
 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from jinja2 import Environment, FileSystemLoader
+from pydantic import SecretStr
 
 from app.config import settings
 
@@ -9,7 +10,7 @@ TEMPLATE_DIR = Path(__file__).parent.parent / "templates" / "emails"
 
 mail_config = ConnectionConfig(
     MAIL_USERNAME=settings.SMTP_USER,
-    MAIL_PASSWORD=settings.SMTP_PASSWORD,
+    MAIL_PASSWORD=SecretStr(settings.SMTP_PASSWORD),
     MAIL_FROM=settings.EMAIL_FROM,
     MAIL_FROM_NAME=settings.EMAIL_FROM_NAME,
     MAIL_PORT=settings.SMTP_PORT,
@@ -34,7 +35,7 @@ class EmailService:
 
         message = MessageSchema(
             subject=subject,
-            recipients=[to],
+            recipients=[to],  # type: ignore[list-item]
             body=html,
             subtype=MessageType.html,
         )

@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from typing import Any
 
 from app.clients.amadeus_client import AmadeusClient
 from app.clients.kiwi_client import KiwiClient
@@ -127,14 +128,18 @@ class PriceService:
 
         rates_task = get_exchange_rates("EUR")
 
-        amadeus_raw, skyscanner_raw, kiwi_raw, exchange_rates = await asyncio.gather(
+        gather_results = await asyncio.gather(
             amadeus_task, skyscanner_task, kiwi_task, rates_task,
             return_exceptions=True,
         )
+        amadeus_raw: Any = gather_results[0]
+        skyscanner_raw: Any = gather_results[1]
+        kiwi_raw: Any = gather_results[2]
+        rates_raw = gather_results[3]
+        exchange_rates: dict[str, float] = rates_raw if isinstance(rates_raw, dict) else {}
 
-        if isinstance(exchange_rates, BaseException):
-            logger.warning("Exchange rate fetch failed: %s", exchange_rates)
-            exchange_rates = {}
+        if isinstance(rates_raw, BaseException):
+            logger.warning("Exchange rate fetch failed: %s", rates_raw)
 
         currency = "TWD"
 

@@ -35,7 +35,7 @@ class ItineraryService:
         }
 
         if request.prompt:
-            schedule_params["interests"] = [request.prompt]
+            schedule_params["interests"] = request.prompt
 
         schedule = await self.agent.execute_tool("create_itinerary", schedule_params)
 

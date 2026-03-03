@@ -1,6 +1,13 @@
 from unittest.mock import AsyncMock, patch
 
+import pytest
+
 from app.agents.search_agent import SearchAgent
+from app.config import settings
+
+requires_amadeus = pytest.mark.skipif(
+    not settings.AMADEUS_API_KEY, reason="AMADEUS_API_KEY not set"
+)
 
 
 async def test_search_agent_properties():
@@ -64,3 +71,15 @@ async def test_unknown_tool():
     agent = SearchAgent()
     result = await agent.execute_tool("nonexistent", {})
     assert "error" in result
+
+
+@requires_amadeus
+async def test_search_flights_real_api():
+    """Integration test: hits real Amadeus API. Skipped in CI."""
+    agent = SearchAgent()
+    result = await agent.execute_tool(
+        "search_flights",
+        {"origin": "TPE", "destination": "NRT", "date_from": "2026-04-01"},
+    )
+    assert "flights" in result
+    assert "total" in result

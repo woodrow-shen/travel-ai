@@ -50,7 +50,7 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql://travelai:travelai_test_password@localhost:5432/travelai_test
+          DATABASE_URL: postgresql+asyncpg://travelai:travelai_test_password@localhost:5432/travelai_test
           REDIS_URL: redis://localhost:6379/0
           ENV: test
           SECRET_KEY: test-secret-key
@@ -96,7 +96,7 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql://travelai:travelai_test_password@localhost:5432/travelai_test
+          DATABASE_URL: postgresql+asyncpg://travelai:travelai_test_password@localhost:5432/travelai_test
           REDIS_URL: redis://localhost:6379/0
           ENV: test
         run: pytest --cov=app --cov-report=term-missing

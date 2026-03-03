@@ -48,6 +48,7 @@ packages = ["app"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
+cache_dir = "/tmp/pytest_cache"
 
 [tool.mypy]
 python_version = "3.12"

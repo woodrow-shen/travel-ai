@@ -1,3 +1,5 @@
+from unittest.mock import AsyncMock, patch
+
 from app.agents.search_agent import SearchAgent
 
 
@@ -25,9 +27,35 @@ async def test_resolve_gateway_hubs_no_hub():
 
 async def test_search_flights():
     agent = SearchAgent()
-    result = await agent.execute_tool(
-        "search_flights", {"origin": "TPE", "destination": "NRT", "date_from": "2026-04-01"}
-    )
+    mock_results = [
+        {
+            "type": "flight-offer",
+            "source": "GDS",
+            "price": {"grandTotal": "150.00", "currency": "EUR"},
+            "itineraries": [
+                {
+                    "duration": "PT3H25M",
+                    "segments": [
+                        {
+                            "departure": {"iataCode": "TPE", "at": "2026-04-01T08:00:00"},
+                            "arrival": {"iataCode": "NRT", "at": "2026-04-01T12:25:00"},
+                            "carrierCode": "BR",
+                            "number": "198",
+                            "duration": "PT3H25M",
+                            "numberOfStops": 0,
+                        }
+                    ],
+                }
+            ],
+        }
+    ]
+    with patch.object(
+        agent.amadeus, "search_flights", new_callable=AsyncMock, return_value=mock_results
+    ):
+        result = await agent.execute_tool(
+            "search_flights",
+            {"origin": "TPE", "destination": "NRT", "date_from": "2026-04-01"},
+        )
     assert "flights" in result
     assert "total" in result
 

@@ -1,3 +1,5 @@
+from unittest.mock import AsyncMock, patch
+
 from httpx import AsyncClient
 
 
@@ -49,7 +51,38 @@ async def test_search_direct_requires_premium(client: AsyncClient, auth_headers)
     assert resp.status_code == 403
 
 
-async def test_search_direct_premium_ok(client: AsyncClient, premium_auth_headers):
+MOCK_AMADEUS_OFFERS = [
+    {
+        "type": "flight-offer",
+        "source": "GDS",
+        "price": {"grandTotal": "150.00", "currency": "EUR"},
+        "itineraries": [
+            {
+                "duration": "PT3H25M",
+                "segments": [
+                    {
+                        "departure": {"iataCode": "TPE", "at": "2026-04-01T08:00:00"},
+                        "arrival": {"iataCode": "NRT", "at": "2026-04-01T12:25:00"},
+                        "carrierCode": "BR",
+                        "number": "198",
+                        "duration": "PT3H25M",
+                        "numberOfStops": 0,
+                    }
+                ],
+            }
+        ],
+    }
+]
+
+
+@patch(
+    "app.services.search_service.AmadeusClient.search_flights",
+    new_callable=AsyncMock,
+    return_value=MOCK_AMADEUS_OFFERS,
+)
+async def test_search_direct_premium_ok(
+    mock_amadeus, client: AsyncClient, premium_auth_headers
+):
     resp = await client.post(
         "/api/v1/search/direct",
         json={
@@ -66,7 +99,12 @@ async def test_search_direct_premium_ok(client: AsyncClient, premium_auth_header
     assert "total_direct_flights" in data
 
 
-async def test_search_adventure(client: AsyncClient, auth_headers):
+@patch(
+    "app.services.search_service.AmadeusClient.search_flights",
+    new_callable=AsyncMock,
+    return_value=[],
+)
+async def test_search_adventure(mock_amadeus, client: AsyncClient, auth_headers):
     resp = await client.post(
         "/api/v1/search/adventure",
         json={

@@ -107,7 +107,7 @@ async def test_search_direct_premium_ok(
 
 
 @patch(
-    "app.services.search_service.AmadeusClient.search_flights",
+    "app.services.search_service.AmadeusClient.search_inspiration",
     new_callable=AsyncMock,
     return_value=[],
 )

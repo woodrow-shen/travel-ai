@@ -42,7 +42,10 @@ class Subscription(UUIDMixin, TimestampMixin, Base):
         ForeignKey("subscription_emails.id", ondelete="CASCADE"),
         nullable=False,
     )
-    type: Mapped[SubscriptionType] = mapped_column(Enum(SubscriptionType), nullable=False)
+    type: Mapped[SubscriptionType] = mapped_column(
+        Enum(SubscriptionType, values_callable=lambda e: [x.value for x in e]),
+        nullable=False,
+    )
     config: Mapped[dict] = mapped_column(JSONB, default=dict)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

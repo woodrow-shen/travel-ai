@@ -45,7 +45,7 @@
 - [x] ItineraryService：行程生成（透過 Agent）
 - [x] ChatService：SSE 串流聊天（透過 CoordinatorAgent）
 - [x] SubscriptionService：訂閱 CRUD + Email 管理
-- [ ] SubscriptionService 實際寄信功能（stub）
+- [x] SubscriptionService 驗證信寄送（透過 EmailService + verify_email.html 模板）
 - [ ] NotificationService：觸發條件判斷 + 寄信（stub）
 - [ ] PriceAgent._get_price_history()：未連接 DB
 - [ ] RecommendationAgent._get_user_preferences()：未查詢 DB

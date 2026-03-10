@@ -46,7 +46,7 @@
 - [x] ChatService：SSE 串流聊天（透過 CoordinatorAgent）
 - [x] SubscriptionService：訂閱 CRUD + Email 管理
 - [x] SubscriptionService 驗證信寄送（透過 EmailService + verify_email.html 模板）
-- [ ] NotificationService：觸發條件判斷 + 寄信（stub）
+- [x] NotificationService：觸發條件判斷 + 寄信（monitor notifier 接上 EmailService，含 cooldown、config 過濾、notification_log）
 - [ ] PriceAgent._get_price_history()：未連接 DB
 - [ ] RecommendationAgent._get_user_preferences()：未查詢 DB
 

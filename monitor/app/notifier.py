@@ -1,23 +1,112 @@
 import logging
+from datetime import UTC, datetime
+
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.config import settings
+from app.detector import BugFareAlert
+from app.email_service import EmailService
 
 logger = logging.getLogger(__name__)
 
+_serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+_email_service = EmailService()
 
-async def send_bug_fare_notification(alert, subscription, email_address: str) -> bool:
-    # TODO: Integrate with email_service for actual sending
-    logger.info(
-        "Bug Fare Alert: %s→%s at %s %s (avg: %s) -> %s",
-        alert.origin,
-        alert.destination,
-        alert.current_price,
-        alert.currency,
-        alert.average_price,
-        email_address,
-    )
+# Throttle: don't re-notify the same subscription within this window (seconds)
+NOTIFICATION_COOLDOWN_SECONDS = 6 * 3600  # 6 hours
+
+
+def _unsubscribe_url(subscription_id: str) -> str:
+    token = _serializer.dumps(subscription_id, salt="email-verify")
+    return f"{settings.BACKEND_URL}/api/v1/subscriptions/unsubscribe?token={token}"
+
+
+async def _should_notify(subscription) -> bool:
+    """Check cooldown: skip if notified recently."""
+    if not subscription.is_active:
+        return False
+    if subscription.last_sent_at:
+        elapsed = (datetime.now(UTC) - subscription.last_sent_at).total_seconds()
+        if elapsed < NOTIFICATION_COOLDOWN_SECONDS:
+            logger.debug(
+                "Skipping subscription %s — notified %ds ago",
+                subscription.id,
+                int(elapsed),
+            )
+            return False
     return True
 
 
+async def _log_notification(
+    db: AsyncSession,
+    subscription,
+    email: str,
+    subject: str,
+    success: bool,
+) -> None:
+    """Write notification log and update last_sent_at."""
+    from app.models import NotificationLog, NotificationStatus
+
+    log = NotificationLog(
+        subscription_id=subscription.id,
+        email=email,
+        subject=subject,
+        sent_at=datetime.now(UTC),
+        status=NotificationStatus.SENT if success else NotificationStatus.FAILED,
+    )
+    db.add(log)
+    if success:
+        subscription.last_sent_at = datetime.now(UTC)
+    await db.flush()
+
+
+async def send_bug_fare_notification(
+    db: AsyncSession,
+    alert: BugFareAlert,
+    subscription,
+    email_address: str,
+) -> bool:
+    """Send a bug fare alert email if cooldown allows."""
+    if not await _should_notify(subscription):
+        return False
+
+    discount_pct = round(
+        (1 - alert.current_price / alert.average_price) * 100
+    )
+    unsub_url = _unsubscribe_url(str(subscription.id))
+
+    subject = (
+        f"Bug Fare! {alert.origin}→{alert.destination} "
+        f"{alert.current_price:.0f} {alert.currency}"
+    )
+    context = {
+        "origin": alert.origin,
+        "destination": alert.destination,
+        "airline": alert.source,
+        "departure_date": "",
+        "price_amount": f"{alert.current_price:,.0f}",
+        "price_currency": alert.currency,
+        "avg_price": f"{alert.average_price:,.0f}",
+        "discount_pct": discount_pct,
+        "confidence": alert.confidence,
+        "unsubscribe_url": unsub_url,
+    }
+
+    success = await _email_service.send_email(
+        to=email_address,
+        subject=subject,
+        template_name="bug_fare_alert.html",
+        context=context,
+    )
+    await _log_notification(db, subscription, email_address, subject, success)
+    return success
+
+
 async def send_price_drop_notification(
+    db: AsyncSession,
     origin: str,
     destination: str,
     current_price: float,
@@ -27,14 +116,156 @@ async def send_price_drop_notification(
     subscription,
     email_address: str,
 ) -> bool:
+    """Send a price drop alert email if cooldown allows."""
+    if not await _should_notify(subscription):
+        return False
+
+    unsub_url = _unsubscribe_url(str(subscription.id))
+
+    subject = (
+        f"Price Drop! {origin}→{destination} "
+        f"{current_price:.0f} {currency}"
+    )
+    context = {
+        "origin": origin,
+        "destination": destination,
+        "departure_date": "",
+        "previous_price": f"{previous_price:,.0f}",
+        "current_price": f"{current_price:,.0f}",
+        "target_price": f"{target_price:,.0f}",
+        "price_currency": currency,
+        "unsubscribe_url": unsub_url,
+    }
+
+    success = await _email_service.send_email(
+        to=email_address,
+        subject=subject,
+        template_name="price_drop_alert.html",
+        context=context,
+    )
+    await _log_notification(db, subscription, email_address, subject, success)
+    return success
+
+
+async def check_and_notify_bug_fares(
+    db: AsyncSession,
+    alert: BugFareAlert,
+) -> int:
+    """Find all active bug_fare subscriptions and notify matching ones.
+
+    Returns the number of notifications sent.
+    """
+    from app.models import Subscription, SubscriptionType
+
+    stmt = (
+        select(Subscription)
+        .options(selectinload(Subscription.subscription_email))
+        .where(
+            Subscription.type == SubscriptionType.BUG_FARE,
+            Subscription.is_active.is_(True),
+        )
+    )
+    result = await db.execute(stmt)
+    subscriptions = result.scalars().all()
+
+    sent = 0
+    for sub in subscriptions:
+        email = sub.subscription_email
+        if not email or not email.is_verified:
+            continue
+
+        # Check config threshold: min_discount (percentage)
+        min_discount = sub.config.get("min_discount", 0) if sub.config else 0
+        actual_discount = (
+            (1 - alert.current_price / alert.average_price) * 100
+            if alert.average_price > 0
+            else 0
+        )
+        if actual_discount < min_discount:
+            continue
+
+        success = await send_bug_fare_notification(
+            db, alert, sub, email.email
+        )
+        if success:
+            sent += 1
+
     logger.info(
-        "Price Drop: %s→%s dropped from %s to %s %s (target: %s) -> %s",
+        "Bug fare %s→%s: notified %d/%d subscriptions",
+        alert.origin,
+        alert.destination,
+        sent,
+        len(subscriptions),
+    )
+    return sent
+
+
+async def check_and_notify_price_drops(
+    db: AsyncSession,
+    origin: str,
+    destination: str,
+    current_price: float,
+    previous_price: float,
+    currency: str,
+) -> int:
+    """Find all active price_drop subscriptions and notify if conditions met.
+
+    Returns the number of notifications sent.
+    """
+    from app.models import Subscription, SubscriptionType
+
+    stmt = (
+        select(Subscription)
+        .options(selectinload(Subscription.subscription_email))
+        .where(
+            Subscription.type == SubscriptionType.PRICE_DROP,
+            Subscription.is_active.is_(True),
+        )
+    )
+    result = await db.execute(stmt)
+    subscriptions = result.scalars().all()
+
+    sent = 0
+    for sub in subscriptions:
+        email = sub.subscription_email
+        if not email or not email.is_verified:
+            continue
+
+        # Check config: target_price and optional route filter
+        config = sub.config or {}
+        target_price = config.get("target_price", previous_price)
+
+        # Route filter: if subscription specifies origin/destination, match them
+        sub_origin = config.get("origin")
+        sub_dest = config.get("destination")
+        if sub_origin and sub_origin.upper() != origin.upper():
+            continue
+        if sub_dest and sub_dest.upper() != destination.upper():
+            continue
+
+        # Only notify if price dropped below target
+        if current_price > target_price:
+            continue
+
+        success = await send_price_drop_notification(
+            db,
+            origin=origin,
+            destination=destination,
+            current_price=current_price,
+            previous_price=previous_price,
+            target_price=target_price,
+            currency=currency,
+            subscription=sub,
+            email_address=email.email,
+        )
+        if success:
+            sent += 1
+
+    logger.info(
+        "Price drop %s→%s: notified %d/%d subscriptions",
         origin,
         destination,
-        previous_price,
-        current_price,
-        currency,
-        target_price,
-        email_address,
+        sent,
+        len(subscriptions),
     )
-    return True
+    return sent

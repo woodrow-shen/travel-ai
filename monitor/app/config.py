@@ -30,6 +30,7 @@ class MonitorSettings(BaseSettings):
     MAX_ROUTES_REDUCED: int = 100
 
     SECRET_KEY: str = "change-me-in-production"
+    BACKEND_URL: str = "http://localhost:8000"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

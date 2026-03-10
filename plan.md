@@ -82,9 +82,9 @@
 - [x] Anomaly Detector：Bug Fare 偵測演算法（歷史均價 + 標準差 + 多來源交叉驗證）
 - [x] Amadeus Client：航班搜尋（rate-limited）
 - [x] Rate Limiter：Token bucket 速率控制
-- [ ] price_scan 任務實作（stub）
-- [ ] deal_digest 任務實作（stub）
-- [ ] cleanup 任務實作（stub）
+- [x] price_scan 任務實作（Amadeus 搜尋 → price_history 寫入 → 異常偵測 → 通知）
+- [x] deal_digest 任務實作（price_history + Amadeus inspiration → 用戶偏好過濾 → digest 寄信）
+- [x] cleanup 任務實作（price_history 180天 + notification_log 90天 清除）
 - [x] Notifier 實際寄信（bug_fare + price_drop + deal_digest，含路線過濾、用戶偏好過濾、cooldown）
 - [ ] Monitor Skyscanner/Kiwi 客戶端（Phase 5）
 

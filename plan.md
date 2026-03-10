@@ -617,8 +617,8 @@ backend/app/
 |---|---|---|---|
 | **Amadeus** | 5,000 次/月（免費，搜尋+報價） | 主力來源，精準報價 | 400+ 航空公司 |
 | **Google Flights Search** (RapidAPI) | 依訂閱方案 | 第三方輔助，交叉驗證 | Google Flights 資料 |
-| **Skyscanner Search** (RapidAPI) | 依訂閱方案 | 第三方輔助，廉航覆蓋 | 全球廉航+傳統航空 |
-| **Kiwi Search** (RapidAPI) | 依訂閱方案 | 第三方輔助，組合票價 | 全球航線+虛擬聯程 |
+| **Skyscanner Search** (RapidAPI) | 50 次/月（免費） | 第三方輔助，廉航覆蓋 | 全球廉航+傳統航空 |
+| **Kiwi Search** (RapidAPI) | 120 次/月（免費） | 第三方輔助，組合票價 | 全球航線+虛擬聯程 |
 
 ### Daemon 架構
 

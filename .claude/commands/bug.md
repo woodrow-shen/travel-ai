@@ -1,6 +1,6 @@
 # Claude Code User Command: Bug
 
-Rapid bug triage and fix command. The user is reporting a bug — act fast.
+Automated bug triage, fix, and PR workflow. The user is reporting a bug — act fast.
 
 ## Usage
 
@@ -12,20 +12,22 @@ Rapid bug triage and fix command. The user is reporting a bug — act fast.
 
 ## What This Command Does
 
-1. Immediately reproduce/locate the bug from the description in `$ARGUMENTS`.
-2. Identify root cause with minimal exploration.
-3. Fix it directly — no planning phase, no asking for confirmation.
-4. Verify the fix (run relevant tests, type-check, lint).
-5. Report what was wrong and what was changed.
+1. Triage and locate the bug from the description.
+2. Create a GitHub issue to track it.
+3. Identify root cause and update the issue with the fix plan.
+4. Fix, verify (tests + lint), commit, and push to a new branch.
+5. Create a PR with fix summary.
+6. Deep review the PR, then ask the developer for merge confirmation.
+7. Auto-merge after confirmation and verify CI passes.
 
 ## Severity Classification
 
-Before diving into the fix, assess severity:
+Before diving in, assess severity:
 
-- **Trivial**: Typo, styling glitch, minor UI issue, single-line fix. → Follow the fast path below (Steps 1–5).
-- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Design the fix with the user, then update `plan.md` and `implementation.md` after the fix is complete (per the Checkpoint Validation process in CLAUDE.md).
+- **Trivial**: Typo, styling glitch, minor UI issue, single-line fix.
+- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Design the fix with the user, then update `plan.md` after the fix is complete.
 
-Use your judgement. When in doubt, treat it as critical — it's cheaper to plan than to revert a bad fix.
+Use your judgement. When in doubt, treat it as critical.
 
 ## Instructions
 
@@ -38,34 +40,119 @@ Follow these steps strictly:
 - Check Docker logs (`docker compose logs --tail=30 <service>`) if the bug involves runtime errors.
 - Locate the relevant source files quickly using Grep/Glob. Do NOT do broad exploration — be surgical.
 
-### Step 2: Root Cause
+### Step 2: Create GitHub Issue
+
+Create a GitHub issue immediately using `gh`:
+
+```bash
+gh issue create --title "bug: <concise title>" --body "<body>"
+```
+
+The issue body MUST include:
+- **Description**: what is broken
+- **Reproduction steps**: how to trigger it
+- **Expected vs actual behavior**
+- **Severity**: trivial or critical
+
+Save the issue number for later steps.
+
+### Step 3: Root Cause & Fix Plan
 
 - Read only the files needed to understand the bug.
 - Identify the exact line(s) causing the issue.
-- State the root cause in one sentence before fixing.
+- State the root cause in one sentence.
+- Write a clear resolution/fix plan.
+- **Update the GitHub issue description** with the root cause and fix plan:
 
-### Step 3: Fix
+```bash
+gh issue edit <number> --body "<updated body with fix plan>"
+```
+
+### Step 4: Fix & Verify
 
 - Apply the minimal fix. Do not refactor surrounding code.
 - Do not add features, comments, or "improvements" beyond the fix.
 - If the fix spans multiple files, edit them all in parallel.
-
-### Step 4: Verify
-
-- Run the relevant tests (`uv run pytest` for backend, `npx tsc --noEmit` for frontend).
+- Run relevant tests (`uv run pytest` for backend, `npx tsc --noEmit` for frontend).
 - If tests fail, fix them immediately.
 - Run lint on changed files.
 
-### Step 5: Report
+### Step 5: Commit & Push
 
-Provide a brief summary:
-- **Severity**: trivial or critical
-- **Bug**: what was broken
-- **Cause**: why it was broken (one line)
-- **Fix**: what was changed (file:line)
-- **Verified**: test/lint results
+- Create a new branch from main:
 
-### Step 6: Checkpoint (critical bugs only)
+```bash
+git checkout -b fix/<issue-number>-<short-description>
+```
+
+- Commit the fix with sign-off, referencing the issue:
+
+```bash
+git commit -s -m "fix: <description>
+
+Fixes #<issue-number>"
+```
+
+- Push the branch:
+
+```bash
+git push -u origin fix/<issue-number>-<short-description>
+```
+
+### Step 6: Create PR
+
+Create a PR using `gh` that links to the issue:
+
+```bash
+gh pr create --title "fix: <description>" --body "$(cat <<'EOF'
+## Summary
+- **Bug**: <what was broken>
+- **Cause**: <why it was broken>
+- **Fix**: <what was changed (file:line)>
+
+## Test Results
+<paste test/lint output summary>
+
+Fixes #<issue-number>
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
+```
+
+### Step 7: Review & Confirm
+
+- Perform a deep review of the PR diff using `gh pr diff <number>`.
+- Verify all changes are correct, minimal, and safe.
+- Present the review summary to the developer.
+- **MUST ask the developer for confirmation before proceeding to merge.** Use AskUserQuestion:
+  - "Approve and merge this PR?"
+  - Options: "Yes, merge it" / "No, needs changes"
+- Do NOT merge without explicit developer approval.
+
+### Step 8: Merge & Verify CI
+
+- Check CI status before merging:
+
+```bash
+gh run list --branch fix/<branch> --limit 1
+gh run watch <run-id> --exit-status
+```
+
+- If CI passes and developer confirmed, merge the PR:
+
+```bash
+gh pr merge <number> --squash --delete-branch
+```
+
+- If CI fails, diagnose and fix before merging.
+- Switch back to main and pull:
+
+```bash
+git checkout main && git pull
+```
+
+### Step 9: Checkpoint (critical bugs only)
 
 For critical bugs, run the full Checkpoint Validation per CLAUDE.md:
 1. **Code** — implementation matches the intended fix

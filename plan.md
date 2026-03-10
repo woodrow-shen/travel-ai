@@ -27,7 +27,7 @@
 ### 三、外部 API 整合
 
 - [x] Amadeus Client：Flight Offers Search + OAuth token 管理
-- [x] RapidAPI Base Client：共用 HTTP client + header 管理
+- [x] RapidAPI Base Client：共用 HTTP client + header 管理 + 429 自動 backoff（1h）
 - [x] Skyscanner Client（fly-scraper）：航班搜尋（one-way / roundtrip / incomplete）
 - [x] Kiwi Client（flights-scraper）：航班搜尋（oneway / return）
 - [x] Normalizer：三來源回應正規化為統一 FlightResult 格式
@@ -66,14 +66,14 @@
 ### 六、前端
 
 - [x] 頁面：Landing（/）、Search（/search）、Compare（/compare）、Trip（/trip）、Chat（/chat）、Auth Callback（/auth/callback）
-- [x] Zustand stores：search、trip、chat（使用穩定 selector 模式）
+- [x] Zustand stores：search、trip、chat、auth、compare（使用穩定 selector 模式）
 - [x] Hooks：useAuth、useSearch、useChat（SSE）、useTrip、useCompare
 - [x] API Client：RESTful + SSE 串流
 - [x] Next.js API Proxy：/api/* → backend:8000/api/v1/*（可配置 NEXT_PUBLIC_API_URL）
 - [ ] 飯店搜尋結果 UI（格式待對齊）
-- [ ] 單元測試（Vitest）— 尚未撰寫
+- [x] 單元測試（Vitest）— auth store + compare store（14 tests passing）
 - [ ] E2E 測試（Playwright）— 尚未撰寫
-- [ ] UI/UX 優化 — 待 review
+- [x] UI/UX 優化 — dark mode badges、compare flow（浮動比較列）、auth state sharing
 
 ### 七、價格監控 Daemon（Monitor）
 
@@ -93,7 +93,7 @@
 - [x] Backend：105 tests passing（models、agents、API、services、clients、normalizer、currency）
 - [x] Monitor：10 tests passing（detector、clients、rate_limiter）
 - [x] CI：GitHub Actions 自動執行 backend + monitor 測試
-- [ ] Frontend 單元測試
+- [x] Frontend 單元測試（Vitest — auth store、compare store）
 - [ ] Frontend E2E 測試
 - [ ] CI 中尚未啟用 Redis service
 

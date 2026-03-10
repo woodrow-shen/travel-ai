@@ -112,7 +112,7 @@
 |---|---|---|
 | **高** | Phase 5：Monitor 多來源 | Monitor 加入 Skyscanner + Kiwi，price_scan 實作 |
 | **高** | 飯店搜尋 | SearchAgent/Service/API hotel 方法從 stub 變為實作 |
-| **中** | 前端 UI/UX 優化 | 待 review 後決定改進方向 |
+| **中** | 前端 UI/UX 優化 | ✅ 已完成：Compare flow（store + 浮動比較列）、Auth state sharing（Zustand store 取代 local state）、Dark mode badges |
 | **中** | 前端測試 | Vitest 單元 + Playwright E2E |
 | **低** | Phase 4：Agent 層整合 | Chat 為次要功能，暫不急 |
 | **低** | 通知寄信 | SubscriptionService + Monitor Notifier 實際寄信 |

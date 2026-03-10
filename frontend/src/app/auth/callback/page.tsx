@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useAuthStore } from "@/stores/auth";
 
 function AuthCallbackContent() {
   const router = useRouter();
@@ -35,9 +36,10 @@ function AuthCallbackContent() {
         if (hashRefreshToken) {
           localStorage.setItem("refresh_token", hashRefreshToken);
         }
+        // Reset initialized so next mount triggers fetchUser
+        useAuthStore.setState({ _initialized: false });
         setStatus("success");
-        // Full page reload so Header re-mounts and picks up the new token
-        setTimeout(() => { window.location.href = "/"; }, 1000);
+        setTimeout(() => { router.push("/"); }, 1000);
         return;
       }
 
@@ -51,9 +53,10 @@ function AuthCallbackContent() {
       localStorage.setItem("refresh_token", refreshToken);
     }
 
+    // Reset initialized so next mount triggers fetchUser
+    useAuthStore.setState({ _initialized: false });
     setStatus("success");
-    // Full page reload so Header re-mounts and picks up the new token
-    setTimeout(() => { window.location.href = "/"; }, 1000);
+    setTimeout(() => { router.push("/"); }, 1000);
   }, [searchParams, router]);
 
   return (

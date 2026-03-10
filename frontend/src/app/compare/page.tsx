@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCompare } from "@/hooks/useCompare";
+import { useCompareStore } from "@/stores/compare";
 import { CompareTable } from "@/components/compare/CompareTable";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -9,8 +10,31 @@ import type { SearchType } from "@/types";
 
 export default function ComparePage() {
   const { results, isLoading, error, compare } = useCompare();
+  const storeIds = useCompareStore((s) => s.selectedIds);
+  const storeType = useCompareStore((s) => s.selectedType);
+  const clearSelection = useCompareStore((s) => s.clearSelection);
+
   const [itemType, setItemType] = useState<SearchType>("flight");
   const [itemIdsInput, setItemIdsInput] = useState("");
+  const autoTriggered = useRef(false);
+
+  // Pre-populate from store on mount
+  useEffect(() => {
+    if (storeIds.length >= 2) {
+      setItemIdsInput(storeIds.join(", "));
+      setItemType(storeType);
+    }
+  }, [storeIds, storeType]);
+
+  // Auto-trigger comparison when arriving from search page
+  useEffect(() => {
+    if (storeIds.length >= 2 && !autoTriggered.current) {
+      autoTriggered.current = true;
+      compare(storeIds, storeType).then(() => {
+        clearSelection();
+      });
+    }
+  }, [storeIds, storeType, compare, clearSelection]);
 
   const handleCompare = () => {
     const ids = itemIdsInput

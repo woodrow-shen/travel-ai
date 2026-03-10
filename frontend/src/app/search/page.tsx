@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { SearchForm } from "@/components/search/SearchForm";
 import { FlightCard } from "@/components/search/FlightCard";
 import { HotelCard } from "@/components/search/HotelCard";
 import { useSearch } from "@/hooks/useSearch";
+import { useCompareStore } from "@/stores/compare";
 
 export default function SearchPage() {
   const {
@@ -18,6 +20,10 @@ export default function SearchPage() {
     sortOrder,
     toggleSortOrder,
   } = useSearch();
+
+  const toggleItem = useCompareStore((s) => s.toggleItem);
+  const selectedIds = useCompareStore((s) => s.selectedIds);
+  const clearSelection = useCompareStore((s) => s.clearSelection);
 
   const sortOptions =
     searchType === "flight"
@@ -103,10 +109,20 @@ export default function SearchPage() {
         <div className="space-y-4" role="list" aria-label="Search results">
           {searchType === "flight"
             ? sortedFlights.map((flight) => (
-                <FlightCard key={flight.id} flight={flight} />
+                <FlightCard
+                  key={flight.id}
+                  flight={flight}
+                  onCompare={(f) => toggleItem(f.id, "flight")}
+                  isSelected={selectedIds.includes(flight.id)}
+                />
               ))
             : sortedHotels.map((hotel) => (
-                <HotelCard key={hotel.id} hotel={hotel} />
+                <HotelCard
+                  key={hotel.id}
+                  hotel={hotel}
+                  onCompare={(h) => toggleItem(h.id, "hotel")}
+                  isSelected={selectedIds.includes(hotel.id)}
+                />
               ))}
 
           {results.total_results === 0 && (
@@ -114,6 +130,28 @@ export default function SearchPage() {
               No results found. Try adjusting your search criteria.
             </p>
           )}
+        </div>
+      )}
+
+      {/* Floating compare bar */}
+      {selectedIds.length >= 2 && (
+        <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] px-5 py-3 shadow-lg">
+          <span className="text-sm font-medium">
+            {selectedIds.length} selected
+          </span>
+          <Link
+            href="/compare"
+            className="rounded-full bg-[var(--color-primary)] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)]"
+          >
+            Compare
+          </Link>
+          <button
+            onClick={clearSelection}
+            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+            aria-label="Clear selection"
+          >
+            Clear
+          </button>
         </div>
       )}
     </div>

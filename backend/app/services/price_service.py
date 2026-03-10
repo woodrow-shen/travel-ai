@@ -55,13 +55,32 @@ class PriceService:
                 fetched_at: str = data.get("fetched_at", "")
 
                 # Build label from cached flight data
-                segs = flight_data.get("outbound_segments", [])
-                first_seg = segs[0] if segs else {}
+                out_segs = flight_data.get("outbound_segments", [])
+                ret_segs = flight_data.get("return_segments") or []
+                first_out = out_segs[0] if out_segs else {}
+                last_out = out_segs[-1] if out_segs else {}
+
+                out_stops = flight_data.get("stops", max(len(out_segs) - 1, 0))
+                out_suffix = "s" if out_stops > 1 else ""
+                out_stop_label = "direct" if out_stops == 0 else f"{out_stops} stop{out_suffix}"
+
                 label = (
-                    f"{first_seg.get('airline', '')} "
-                    f"{first_seg.get('departure_airport', '')} → "
-                    f"{first_seg.get('arrival_airport', '')}"
+                    f"{first_out.get('airline', '')} "
+                    f"{first_out.get('departure_airport', '')} → "
+                    f"{last_out.get('arrival_airport', '')} ({out_stop_label})"
                 ).strip()
+
+                if ret_segs:
+                    first_ret = ret_segs[0]
+                    last_ret = ret_segs[-1]
+                    ret_stops = max(len(ret_segs) - 1, 0)
+                    ret_suffix = "s" if ret_stops > 1 else ""
+                    ret_stop_label = "direct" if ret_stops == 0 else f"{ret_stops} stop{ret_suffix}"
+                    label += (
+                        f" / {first_ret.get('airline', '')} "
+                        f"{first_ret.get('departure_airport', '')} → "
+                        f"{last_ret.get('arrival_airport', '')} ({ret_stop_label})"
+                    ).rstrip()
 
                 # Build price points from all source dicts
                 prices: list[PricePoint] = []

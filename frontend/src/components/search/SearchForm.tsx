@@ -1,12 +1,29 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useSearch } from "@/hooks/useSearch";
 import type { SearchParams, SearchType, TripType } from "@/types";
 import { cn } from "@/lib/utils";
+
+const STORAGE_KEY = "travel-ai:search-form";
+
+function loadSavedForm() {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function isFutureDate(date: string): boolean {
+  return date >= new Date().toISOString().slice(0, 10);
+}
 
 export function SearchForm() {
   const router = useRouter();
@@ -23,6 +40,21 @@ export function SearchForm() {
   >("economy");
   const [rooms, setRooms] = useState(1);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Restore saved form values from localStorage on mount
+  useEffect(() => {
+    const saved = loadSavedForm();
+    if (!saved) return;
+    if (saved.searchType) setSearchType(saved.searchType);
+    if (saved.tripType) setTripType(saved.tripType);
+    if (saved.origin) setOrigin(saved.origin);
+    if (saved.destination) setDestination(saved.destination);
+    if (saved.departureDate && isFutureDate(saved.departureDate)) setDepartureDate(saved.departureDate);
+    if (saved.returnDate && isFutureDate(saved.returnDate)) setReturnDate(saved.returnDate);
+    if (saved.adults) setAdults(saved.adults);
+    if (saved.cabinClass) setCabinClass(saved.cabinClass);
+    if (saved.rooms) setRooms(saved.rooms);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -50,6 +82,10 @@ export function SearchForm() {
     try {
       const results = await search(params);
       if (results) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          searchType, tripType, origin, destination,
+          departureDate, returnDate, adults, cabinClass, rooms,
+        }));
         router.push("/search");
       }
     } finally {

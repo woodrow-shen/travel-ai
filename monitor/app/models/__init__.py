@@ -7,6 +7,7 @@ Only the models needed by the notifier are included.
 from app.models.base import Base, TimestampMixin, UUIDMixin
 from app.models.notification_log import NotificationLog, NotificationStatus
 from app.models.subscription import Subscription, SubscriptionEmail, SubscriptionType
+from app.models.user import UserPreference
 
 __all__ = [
     "Base",
@@ -17,4 +18,5 @@ __all__ = [
     "SubscriptionType",
     "NotificationLog",
     "NotificationStatus",
+    "UserPreference",
 ]

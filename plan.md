@@ -85,7 +85,7 @@
 - [ ] price_scan 任務實作（stub）
 - [ ] deal_digest 任務實作（stub）
 - [ ] cleanup 任務實作（stub）
-- [ ] Notifier 實際寄信（stub）
+- [x] Notifier 實際寄信（bug_fare + price_drop + deal_digest，含路線過濾、用戶偏好過濾、cooldown）
 - [ ] Monitor Skyscanner/Kiwi 客戶端（Phase 5）
 
 ### 八、測試
@@ -115,7 +115,7 @@
 | **中** | 前端 UI/UX 優化 | ✅ 已完成：Compare flow（store + 浮動比較列）、Auth state sharing（Zustand store 取代 local state）、Dark mode badges |
 | **中** | 前端測試 | Vitest 單元 + Playwright E2E |
 | **低** | Phase 4：Agent 層整合 | Chat 為次要功能，暫不急 |
-| **低** | 通知寄信 | SubscriptionService + Monitor Notifier 實際寄信 |
+| **低** | ~~通知寄信~~ | ✅ 已完成：SubscriptionService 驗證信 + Monitor Notifier 三種通知類型 |
 | **低** | Price History DB 連接 | PriceAgent._get_price_history() 接 DB |
 | **低** | Recommendation DB 連接 | RecommendationAgent._get_user_preferences() 接 DB |
 | **低** | Caddyfile | docker-compose.prod.yml 參考但尚未建立 |

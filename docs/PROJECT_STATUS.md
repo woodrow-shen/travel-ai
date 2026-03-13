@@ -16,20 +16,20 @@
 
 ```
 Features       ██████████████████░░░░  81%  (70/86 items)
-Infrastructure ██████████████░░░░░░░░  62%  (8/13 items)
+Infrastructure ███████████████░░░░░░░  77%  (10/13 items)
 Quality        █████████████░░░░░░░░░  63%  (17/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ███████████████░░░░░░░  75%  (103/137 items)
+OVERALL        ████████████████░░░░░░  77%  (105/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
 | Features (§3) | 70 | 86 | 16 | 0 |
-| Infrastructure (§4) | 8 | 13 | 5 | 0 |
+| Infrastructure (§4) | 10 | 13 | 3 | 0 |
 | Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **103** | **137** | **34** | **1** |
+| **Total** | **105** | **137** | **32** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -207,9 +207,9 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] GitHub Actions `test.yml` — lint + type-check + pytest (backend + monitor)
 - [x] GitHub Actions `deploy.yml` — test → deploy to Railway (parallel)
 - [x] PostgreSQL service container in CI
+- [x] Frontend lint/type-check in CI (ESLint + TypeScript `--noEmit`)
+- [x] Frontend unit tests in CI (Vitest)
 - [ ] Redis service container in CI
-- [ ] Frontend lint/type-check in CI
-- [ ] Frontend unit tests in CI
 
 ### 4.3 Deployment
 

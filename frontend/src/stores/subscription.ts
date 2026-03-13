@@ -21,7 +21,7 @@ interface SubscriptionState {
   deleteSubscription: (id: string) => Promise<void>;
 }
 
-export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
+export const useSubscriptionStore = create<SubscriptionState>((set) => ({
   emails: [],
   subscriptions: [],
   isLoading: false,

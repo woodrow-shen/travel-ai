@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import UTC, date, datetime, timedelta
 
@@ -6,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.kiwi_client import KiwiClient
+from app.clients.normalizer import extract_kiwi_price, extract_skyscanner_price
+from app.clients.skyscanner_client import SkyscannerClient
 from app.config import settings
 from app.db import async_session
 from app.detector import detect_anomaly
@@ -46,7 +50,7 @@ async def _get_active_routes(db: AsyncSession) -> list[dict]:
         dest = config.get("destination")
         if origin and dest:
             routes.add((origin.upper(), dest.upper()))
-        # Bug fare: origins × destinations
+        # Bug fare: origins x destinations
         origins = config.get("origins", [])
         destinations = config.get("destinations", [])
         for o in origins:
@@ -122,26 +126,193 @@ async def _store_price(
     db.add(record)
 
 
+def _min_price_from_offers(offers: list[dict], source: str) -> float | None:
+    """Extract minimum price from a list of offers/itineraries by source."""
+    prices: list[float] = []
+    if source == "amadeus":
+        for offer in offers:
+            price_info = offer.get("price", {})
+            try:
+                p = float(price_info.get("total", 0))
+                if p > 0:
+                    prices.append(p)
+            except (ValueError, TypeError):
+                continue
+    elif source == "skyscanner":
+        for itin in offers:
+            extracted = extract_skyscanner_price(itin)
+            if extracted:
+                prices.append(extracted["price"])
+    elif source == "kiwi":
+        for itin in offers:
+            extracted = extract_kiwi_price(itin)
+            if extracted:
+                prices.append(extracted["price"])
+    return min(prices) if prices else None
+
+
+async def _search_skyscanner(
+    client: SkyscannerClient, origin: str, destination: str, search_date: str
+) -> list[dict]:
+    """Search Skyscanner, returning empty list on any failure."""
+    try:
+        return await client.search_flights(origin, destination, search_date)
+    except Exception:
+        logger.debug("Skyscanner search failed for %s->%s", origin, destination)
+        return []
+
+
+async def _search_kiwi(
+    client: KiwiClient, origin: str, destination: str, search_date: str
+) -> list[dict]:
+    """Search Kiwi, returning empty list on any failure."""
+    try:
+        return await client.search_flights(origin, destination, search_date)
+    except Exception:
+        logger.debug("Kiwi search failed for %s->%s", origin, destination)
+        return []
+
+
+async def _process_amadeus_offers(
+    db: AsyncSession,
+    offers: list[dict],
+    origin: str,
+    destination: str,
+    search_date: str,
+    history: list[float],
+    previous_price: float | None,
+    other_source_price: float | None,
+) -> int:
+    """Process Amadeus offers: store prices, detect anomalies. Returns notification count."""
+    notifications = 0
+    for offer in offers:
+        price_info = offer.get("price", {})
+        price = float(price_info.get("total", 0))
+        currency = price_info.get("currency", "EUR")
+        if price <= 0:
+            continue
+
+        segments = (
+            offer.get("itineraries", [{}])[0].get("segments", [])
+        )
+        airline = segments[0].get("carrierCode") if segments else None
+        dep_date = (
+            segments[0].get("departure", {}).get("at", search_date)[:10]
+            if segments
+            else search_date
+        )
+        stops = max(len(segments) - 1, 0)
+
+        await _store_price(
+            db,
+            origin=origin,
+            destination=destination,
+            departure_date=dep_date,
+            airline=airline,
+            price=price,
+            currency=currency,
+            source="amadeus",
+            stops=stops,
+        )
+
+        alert = detect_anomaly(
+            origin=origin,
+            destination=destination,
+            current_price=price,
+            currency=currency,
+            history=history,
+            source=airline or "amadeus",
+            other_source_price=other_source_price,
+        )
+        if alert:
+            n = await check_and_notify_bug_fares(db, alert)
+            notifications += n
+
+        if previous_price and price < previous_price:
+            n = await check_and_notify_price_drops(
+                db,
+                origin=origin,
+                destination=destination,
+                current_price=price,
+                previous_price=previous_price,
+                currency=currency,
+                airline=airline,
+                stops=stops,
+            )
+            notifications += n
+
+    return notifications
+
+
+async def _process_rapidapi_itineraries(
+    db: AsyncSession,
+    itineraries: list[dict],
+    source: str,
+    extract_fn,
+    origin: str,
+    destination: str,
+    search_date: str,
+    history: list[float],
+    other_source_price: float | None,
+) -> int:
+    """Process Skyscanner/Kiwi itineraries: store prices, detect anomalies."""
+    notifications = 0
+    for itin in itineraries:
+        extracted = extract_fn(itin)
+        if not extracted:
+            continue
+
+        await _store_price(
+            db,
+            origin=origin,
+            destination=destination,
+            departure_date=extracted["departure_date"] or search_date,
+            airline=extracted["airline"],
+            price=extracted["price"],
+            currency=extracted["currency"],
+            source=source,
+            stops=extracted["stops"],
+        )
+
+        alert = detect_anomaly(
+            origin=origin,
+            destination=destination,
+            current_price=extracted["price"],
+            currency=extracted["currency"],
+            history=history,
+            source=extracted["airline"] or source,
+            other_source_price=other_source_price,
+        )
+        if alert:
+            n = await check_and_notify_bug_fares(db, alert)
+            notifications += n
+
+    return notifications
+
+
 async def scan_prices():
-    """Scan all active subscription routes for price changes."""
+    """Scan all active subscription routes for price changes.
+
+    Queries Amadeus, Skyscanner, and Kiwi in parallel per route.
+    Graceful degradation: if RapidAPI sources fail, Amadeus results
+    are still processed.
+    """
     logger.info("Starting price scan...")
 
     amadeus = AmadeusClient()
+    skyscanner = SkyscannerClient() if settings.RAPIDAPI_KEY else None
+    kiwi = KiwiClient() if settings.RAPIDAPI_KEY else None
 
     try:
         async with async_session() as db:
-            # 1. Aggregate unique routes from active subscriptions
             routes = await _get_active_routes(db)
             if not routes:
                 logger.info("No active routes to scan.")
                 return
 
             logger.info("Scanning %d routes", len(routes))
-
-            # Limit routes to Amadeus quota
             routes = routes[: settings.MAX_ROUTES_STANDARD]
 
-            # Search date: ~2 weeks out (typical booking window)
             search_date = (
                 datetime.now(UTC) + timedelta(days=14)
             ).strftime("%Y-%m-%d")
@@ -153,99 +324,127 @@ async def scan_prices():
                 destination = route["destination"]
 
                 try:
-                    # 2. Query Amadeus for current prices
-                    offers = await amadeus.search_flights(
-                        origin=origin,
-                        destination=destination,
-                        departure_date=search_date,
-                        adults=1,
-                        max_results=5,
+                    # Query all sources in parallel
+                    tasks = [
+                        amadeus.search_flights(
+                            origin=origin,
+                            destination=destination,
+                            departure_date=search_date,
+                            adults=1,
+                            max_results=5,
+                        )
+                    ]
+                    if skyscanner:
+                        tasks.append(
+                            _search_skyscanner(
+                                skyscanner, origin, destination, search_date
+                            )
+                        )
+                    if kiwi:
+                        tasks.append(
+                            _search_kiwi(
+                                kiwi, origin, destination, search_date
+                            )
+                        )
+
+                    results = await asyncio.gather(
+                        *tasks, return_exceptions=True
                     )
 
-                    if not offers:
+                    # Unpack results (graceful: exceptions become empty)
+                    amadeus_offers = (
+                        results[0]
+                        if not isinstance(results[0], BaseException)
+                        else []
+                    )
+                    sky_itins = (
+                        results[1]
+                        if len(results) > 1
+                        and not isinstance(results[1], BaseException)
+                        else []
+                    )
+                    kiwi_itins = (
+                        results[2]
+                        if len(results) > 2
+                        and not isinstance(results[2], BaseException)
+                        else []
+                    )
+
+                    if not amadeus_offers and not sky_itins and not kiwi_itins:
                         continue
 
-                    # Get previous price for price drop detection
                     previous_price = await _get_previous_price(
                         db, origin, destination
                     )
-
-                    # Get price history for anomaly detection
                     history = await _get_price_history(
                         db, origin, destination
                     )
 
-                    for offer in offers:
-                        price_info = offer.get("price", {})
-                        price = float(price_info.get("total", 0))
-                        currency = price_info.get("currency", "EUR")
-                        if price <= 0:
-                            continue
+                    # Compute min prices per source for cross-validation
+                    amadeus_min = _min_price_from_offers(
+                        amadeus_offers, "amadeus"
+                    )
+                    sky_min = _min_price_from_offers(sky_itins, "skyscanner")
+                    kiwi_min = _min_price_from_offers(kiwi_itins, "kiwi")
 
-                        # Extract airline from first segment
-                        segments = (
-                            offer.get("itineraries", [{}])[0]
-                            .get("segments", [])
-                        )
-                        airline = (
-                            segments[0].get("carrierCode")
-                            if segments
-                            else None
-                        )
-                        dep_date = (
-                            segments[0]
-                            .get("departure", {})
-                            .get("at", search_date)[:10]
-                            if segments
-                            else search_date
-                        )
-                        stops = max(len(segments) - 1, 0)
+                    # For cross-source validation, use the min from other sources
+                    other_prices = [
+                        p
+                        for p in [amadeus_min, sky_min, kiwi_min]
+                        if p is not None
+                    ]
 
-                        # 3. Store in price_history
-                        await _store_price(
+                    def _other_min(exclude: float | None) -> float | None:
+                        others = [p for p in other_prices if p != exclude]
+                        return min(others) if others else None
+
+                    # Process Amadeus offers
+                    if amadeus_offers:
+                        n = await _process_amadeus_offers(
                             db,
-                            origin=origin,
-                            destination=destination,
-                            departure_date=dep_date,
-                            airline=airline,
-                            price=price,
-                            currency=currency,
-                            source="amadeus",
-                            stops=stops,
+                            amadeus_offers,
+                            origin,
+                            destination,
+                            search_date,
+                            history,
+                            previous_price,
+                            _other_min(amadeus_min),
                         )
+                        total_notifications += n
 
-                        # 4. Bug fare anomaly detection
-                        alert = detect_anomaly(
-                            origin=origin,
-                            destination=destination,
-                            current_price=price,
-                            currency=currency,
-                            history=history,
-                            source=airline or "amadeus",
+                    # Process Skyscanner itineraries
+                    if sky_itins:
+                        n = await _process_rapidapi_itineraries(
+                            db,
+                            sky_itins,
+                            "skyscanner",
+                            extract_skyscanner_price,
+                            origin,
+                            destination,
+                            search_date,
+                            history,
+                            _other_min(sky_min),
                         )
-                        if alert:
-                            n = await check_and_notify_bug_fares(
-                                db, alert
-                            )
-                            total_notifications += n
+                        total_notifications += n
 
-                        # 5. Price drop detection
-                        if previous_price and price < previous_price:
-                            n = await check_and_notify_price_drops(
-                                db,
-                                origin=origin,
-                                destination=destination,
-                                current_price=price,
-                                previous_price=previous_price,
-                                currency=currency,
-                                airline=airline,
-                                stops=stops,
-                            )
-                            total_notifications += n
+                    # Process Kiwi itineraries
+                    if kiwi_itins:
+                        n = await _process_rapidapi_itineraries(
+                            db,
+                            kiwi_itins,
+                            "kiwi",
+                            extract_kiwi_price,
+                            origin,
+                            destination,
+                            search_date,
+                            history,
+                            _other_min(kiwi_min),
+                        )
+                        total_notifications += n
 
                 except Exception:
                     logger.exception(
-                        "Error scanning route %s→%s",
+                        "Error scanning route %s->%s",
                         origin,
                         destination,
                     )
@@ -262,3 +461,7 @@ async def scan_prices():
         logger.exception("Price scan failed")
     finally:
         await amadeus.close()
+        if skyscanner:
+            await skyscanner.close()
+        if kiwi:
+            await kiwi.close()

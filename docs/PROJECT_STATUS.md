@@ -165,7 +165,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] cleanup — price_history 180d + notification_log 90d purge
 - [x] Notifier — email dispatch with trigger conditions + cooldown
 - [x] Route filtering + user preference filtering
-- [ ] Multi-source monitoring (Skyscanner + Kiwi in addition to Amadeus)
+- [x] Multi-source monitoring (Skyscanner + Kiwi in addition to Amadeus)
 
 ### 3.9 Frontend Pages
 
@@ -233,11 +233,12 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Normalizer tests (multi-source → unified format)
 - [x] Currency conversion tests
 
-### 5.2 Monitor Tests (10 passing)
+### 5.2 Monitor Tests (20 passing)
 
 - [x] Anomaly detector tests
-- [x] Client tests
+- [x] Client tests (Amadeus, RapidAPI base, Skyscanner, Kiwi)
 - [x] Rate limiter tests
+- [x] Normalizer tests (Skyscanner + Kiwi price extraction)
 
 ### 5.3 Frontend Tests (57 passing)
 
@@ -306,7 +307,6 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
 | Hotel search integration | Wire SearchService/PriceService hotel methods to Skyscanner + Kiwi APIs | Large | — |
-| Monitor multi-source | Add Skyscanner + Kiwi to price_scan for cross-source validation | Medium | — |
 | Redis in CI | Add Redis service container to GitHub Actions `test.yml` | Small | — |
 | Frontend test coverage | Add Vitest tests for subscription, preferences, search stores | Medium | — |
 

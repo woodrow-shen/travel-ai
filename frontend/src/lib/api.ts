@@ -84,13 +84,22 @@ class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async delete<T>(path: string): Promise<T> {
+  async delete(path: string): Promise<void> {
     const response = await fetch(`${BASE_URL}${path}`, {
       method: "DELETE",
       headers: this.headers(),
     });
 
-    return this.handleResponse<T>(response);
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({
+        detail: response.statusText,
+      }));
+      const error: ApiError = {
+        detail: body.detail ?? "An unexpected error occurred",
+        status_code: response.status,
+      };
+      throw error;
+    }
   }
 
   /**

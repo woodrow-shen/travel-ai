@@ -548,6 +548,8 @@ POST   /api/v1/subscriptions                  # 建立新訂閱
 PATCH  /api/v1/subscriptions/{id}             # 更新訂閱偏好
 DELETE /api/v1/subscriptions/{id}             # 取消訂閱
 POST   /api/v1/subscriptions/emails           # 新增接收 Email（觸發驗證信）
+GET    /api/v1/subscriptions/emails           # 列出用戶所有 Email
+DELETE /api/v1/subscriptions/emails/{id}      # 刪除 Email（連帶刪除相關訂閱）
 GET    /api/v1/subscriptions/emails/verify    # 驗證 Email（from 驗證連結）
 GET    /api/v1/subscriptions/unsubscribe      # 一鍵退訂（from Email 連結，無需登入）
 ```

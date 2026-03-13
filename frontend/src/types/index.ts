@@ -206,3 +206,27 @@ export interface ApiError {
   detail: string;
   status_code: number;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Subscriptions                                                      */
+/* ------------------------------------------------------------------ */
+
+export type SubscriptionType = "bug_fare" | "price_drop" | "deal_digest";
+
+export interface SubscriptionEmail {
+  id: string;
+  email: string;
+  is_verified: boolean;
+  verified_at: string | null;
+  created_at: string;
+}
+
+export interface Subscription {
+  id: string;
+  email_id: string;
+  type: SubscriptionType;
+  config: Record<string, unknown>;
+  is_active: boolean;
+  last_sent_at: string | null;
+  created_at: string;
+}

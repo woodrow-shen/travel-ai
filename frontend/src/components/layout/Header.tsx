@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -48,20 +48,7 @@ export function Header() {
           {isLoading ? (
             <span className="text-sm text-[var(--color-muted)]">Loading...</span>
           ) : isAuthenticated && user ? (
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium">{user.name}</span>
-              {user.picture && (
-                <img
-                  src={user.picture}
-                  alt=""
-                  className="h-8 w-8 rounded-full"
-                  aria-hidden="true"
-                />
-              )}
-              <Button variant="outline" size="sm" onClick={logout}>
-                Sign out
-              </Button>
-            </div>
+            <UserMenu user={user} onLogout={logout} />
           ) : (
             <Button onClick={login} size="sm">
               Sign in with Google
@@ -121,6 +108,25 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          {isAuthenticated && (
+            <>
+              <div className="my-1 border-t border-[var(--color-border)]" />
+              <Link
+                href="/settings/subscriptions"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
+                onClick={() => setMobileOpen(false)}
+              >
+                Subscriptions
+              </Link>
+              <Link
+                href="/settings/preferences"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
+                onClick={() => setMobileOpen(false)}
+              >
+                Preferences
+              </Link>
+            </>
+          )}
           <div className="mt-2 border-t border-[var(--color-border)] pt-3">
             {isAuthenticated ? (
               <Button variant="outline" size="sm" onClick={logout} className="w-full">
@@ -135,5 +141,91 @@ export function Header() {
         </nav>
       </div>
     </header>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  User Dropdown Menu                                                 */
+/* ------------------------------------------------------------------ */
+
+function UserMenu({
+  user,
+  onLogout,
+}: {
+  user: { name: string; picture?: string };
+  onLogout: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const menuItems = [
+    { href: "/settings/subscriptions", label: "Subscriptions" },
+    { href: "/settings/preferences", label: "Preferences" },
+  ];
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[var(--color-border)]/30"
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
+        {user.picture && (
+          <img
+            src={user.picture}
+            alt=""
+            className="h-8 w-8 rounded-full"
+            aria-hidden="true"
+          />
+        )}
+        <span className="text-sm font-medium">{user.name}</span>
+        <svg
+          className={cn("h-4 w-4 text-[var(--color-muted)] transition-transform", open && "rotate-180")}
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] py-1 shadow-lg">
+          {menuItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block px-4 py-2 text-sm text-[var(--color-foreground)] hover:bg-[var(--color-border)]/30"
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="my-1 border-t border-[var(--color-border)]" />
+          <button
+            onClick={() => {
+              setOpen(false);
+              onLogout();
+            }}
+            className="block w-full px-4 py-2 text-left text-sm text-[var(--color-error)] hover:bg-[var(--color-border)]/30"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

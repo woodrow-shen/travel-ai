@@ -110,6 +110,37 @@ async def delete_subscription(
     await db.delete(subscription)
 
 
+@router.get("/emails", response_model=list[SubscriptionEmailResponse])
+async def list_emails(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(SubscriptionEmail).where(SubscriptionEmail.user_id == user.id)
+    )
+    return result.scalars().all()
+
+
+@router.delete("/emails/{email_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_email(
+    email_id: uuid.UUID,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(SubscriptionEmail).where(
+            SubscriptionEmail.id == email_id,
+            SubscriptionEmail.user_id == user.id,
+        )
+    )
+    email_record = result.scalar_one_or_none()
+    if email_record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Email not found"
+        )
+    await db.delete(email_record)
+
+
 @router.post(
     "/emails",
     response_model=SubscriptionEmailResponse,

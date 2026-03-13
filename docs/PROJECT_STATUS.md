@@ -16,20 +16,20 @@
 
 ```
 Features       ██████████████████░░░░  81%  (70/86 items)
-Infrastructure ███████████████░░░░░░░  77%  (10/13 items)
+Infrastructure ████████████████░░░░░░  85%  (11/13 items)
 Quality        █████████████░░░░░░░░░  63%  (17/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████░░░░░░  77%  (105/137 items)
+OVERALL        ████████████████░░░░░░  77%  (106/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
 | Features (§3) | 70 | 86 | 16 | 0 |
-| Infrastructure (§4) | 10 | 13 | 3 | 0 |
+| Infrastructure (§4) | 11 | 13 | 2 | 0 |
 | Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **105** | **137** | **32** | **1** |
+| **Total** | **106** | **137** | **31** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -209,7 +209,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] PostgreSQL service container in CI
 - [x] Frontend lint/type-check in CI (ESLint + TypeScript `--noEmit`)
 - [x] Frontend unit tests in CI (Vitest)
-- [ ] Redis service container in CI
+- [x] Redis service container in CI (redis:7-alpine for backend + monitor)
 
 ### 4.3 Deployment
 
@@ -292,7 +292,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | KI-03 | Low | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Open |
 | KI-04 | Low | Backend | `subscription_service.py` email sending is stubbed | Open |
 | KI-05 | Medium | Infra | Caddyfile for production TLS not created | Open |
-| KI-06 | Medium | CI | GitHub Actions does not spin up Redis service | Open |
+| KI-06 | Medium | CI | GitHub Actions does not spin up Redis service | **Fixed** |
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
 | KI-08 | Medium | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
 | KI-09 | Low | Infra | `alembic.ini` has hardcoded dev DB URL | Open |

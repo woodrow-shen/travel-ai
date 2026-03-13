@@ -83,7 +83,7 @@ travel-ai/
 │   └── workflows/
 │       ├── test.yml                  # CI: lint + type-check + pytest (backend + monitor)
 │       └── deploy.yml                # CD: test → deploy to Railway
-└── plan.md                           # Living design document (Traditional Chinese) — keep in sync with implementation
+└── PRD.md                           # Product Requirements Document (Traditional Chinese) — keep in sync with implementation
 ```
 
 ## Architecture
@@ -352,16 +352,16 @@ See `.github/COMMIT_CONVENTION.md` for full details.
 
 ### Rolling Plan Sync
 
-`plan.md` is the living design document (Traditional Chinese). **Whenever implementation changes deviate from or extend the plan, update `plan.md` accordingly.** The plan and codebase must always stay in sync — treat `plan.md` as the single source of truth for design decisions, not a static spec.
+`PRD.md` is the living design document (Traditional Chinese). **Whenever implementation changes deviate from or extend the plan, update `PRD.md` accordingly.** The plan and codebase must always stay in sync — treat `PRD.md` as the single source of truth for design decisions, not a static spec.
 
-**IMPORTANT**: When entering plan mode for a new feature or bug fix, after the plan is finalized and approved by the user, **automatically update `plan.md`** with the agreed-upon plan content before starting implementation. Do not wait until after coding — update the plan first so it reflects the latest design decisions at all times.
+**IMPORTANT**: When entering plan mode for a new feature or bug fix, after the plan is finalized and approved by the user, **automatically update `PRD.md`** with the agreed-upon plan content before starting implementation. Do not wait until after coding — update the plan first so it reflects the latest design decisions at all times.
 
 ### Checkpoint Validation
 
 **IMPORTANT**: After completing every feature or bug fix, perform a checkpoint validation before considering the task done. Verify that ALL of the following are consistent with each other:
 
 1. **Code** — the actual implementation matches the intended design
-2. **Design docs** — `plan.md` and `implementation.md` are updated to reflect the changes
+2. **Design docs** — `PRD.md` and `implementation.md` are updated to reflect the changes
 3. **Tests** — unit tests cover the new/changed code and all tests pass (`uv run pytest tests/ -x -q`)
 4. **Lint** — no lint errors in changed files (`uv run ruff check --no-cache <changed paths>`)
 

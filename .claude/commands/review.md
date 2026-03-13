@@ -16,7 +16,7 @@ Product requirement review and discussion command. Enter plan mode to collaborat
 2. Explore the current codebase for the area described in `$ARGUMENTS`.
 3. Provide insights on the current state: what exists, what's missing, what could be improved.
 4. Collaborate with the user on product requirements and design decisions.
-5. Finalize the plan and update `plan.md` before exiting plan mode.
+5. Finalize the plan and update `PRD.md` before exiting plan mode.
 
 ## Instructions
 
@@ -27,7 +27,7 @@ Product requirement review and discussion command. Enter plan mode to collaborat
 ### Step 2: Explore Current State
 
 - Read the relevant source files for the area in `$ARGUMENTS`.
-- Check `plan.md` and `implementation.md` for existing design context.
+- Check `PRD.md` and `implementation.md` for existing design context.
 - Summarize the current state to the user:
   - What's implemented
   - What's stubbed or incomplete
@@ -49,13 +49,13 @@ Product requirement review and discussion command. Enter plan mode to collaborat
 ### Step 5: Finalize Plan
 
 - Write the agreed-upon plan to the plan file.
-- Update `plan.md` with the finalized design decisions before exiting plan mode.
+- Update `PRD.md` with the finalized design decisions before exiting plan mode.
 - Exit plan mode with `ExitPlanMode`.
 
 ### After Plan Mode
 
 - Once approved, follow the Checkpoint Validation process in CLAUDE.md after implementation:
   1. Code matches the plan
-  2. `plan.md` and `implementation.md` are in sync
+  2. `PRD.md` and `implementation.md` are in sync
   3. Tests cover the changes
   4. Lint passes

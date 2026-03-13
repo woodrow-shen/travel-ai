@@ -25,7 +25,7 @@ Automated bug triage, fix, and PR workflow. The user is reporting a bug — act 
 Before diving in, assess severity:
 
 - **Trivial**: Typo, styling glitch, minor UI issue, single-line fix.
-- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Design the fix with the user, then update `plan.md` after the fix is complete.
+- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Design the fix with the user, then update `PRD.md` after the fix is complete.
 
 Use your judgement. When in doubt, treat it as critical.
 
@@ -156,6 +156,6 @@ git checkout main && git pull
 
 For critical bugs, run the full Checkpoint Validation per CLAUDE.md:
 1. **Code** — implementation matches the intended fix
-2. **Design docs** — `plan.md` and `implementation.md` updated to reflect the change
+2. **Design docs** — `PRD.md` and `implementation.md` updated to reflect the change
 3. **Tests** — relevant tests added/updated and all pass
 4. **Lint** — no lint errors in changed files

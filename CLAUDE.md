@@ -458,6 +458,5 @@ When the user reports their token usage level, adjust behavior:
 - **Price history**: `PriceAgent._get_price_history()` not wired to DB (TODO)
 - **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` not querying DB (TODO)
 - **Subscription email sending**: Stub in `subscription_service.py` (TODO)
-- **Frontend tests**: No unit tests or E2E tests written yet
+- **Frontend tests**: Store tests done (57 passing), but no component/hook tests or E2E tests yet
 - **Caddyfile**: Referenced in `docker-compose.prod.yml` but not created
-- **No Redis in CI**: GitHub Actions test workflow does not spin up Redis

@@ -15,21 +15,21 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████░░░░  81%  (70/86 items)
+Features       ██████████████████░░░░  82%  (71/86 items)
 Infrastructure ████████████████░░░░░░  85%  (11/13 items)
 Quality        █████████████░░░░░░░░░  63%  (17/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████░░░░░░  77%  (106/137 items)
+OVERALL        ████████████████░░░░░░  78%  (107/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 70 | 86 | 16 | 0 |
+| Features (§3) | 71 | 86 | 15 | 0 |
 | Infrastructure (§4) | 11 | 13 | 2 | 0 |
 | Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **106** | **137** | **31** | **1** |
+| **Total** | **107** | **137** | **30** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -58,7 +58,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Metric                  | Value      |
 |-------------------------|------------|
 | Backend test count      | 105        |
-| Monitor test count      | 10         |
+| Monitor test count      | 20         |
 | Frontend test count     | 57         |
 | E2E test count          | 0          |
 | Total API endpoints     | 25+        |
@@ -307,8 +307,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
 | Hotel search integration | Wire SearchService/PriceService hotel methods to Skyscanner + Kiwi APIs | Large | — |
-| Redis in CI | Add Redis service container to GitHub Actions `test.yml` | Small | — |
-| Frontend test coverage | Add Vitest tests for subscription, preferences, search stores | Medium | — |
+| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | — |
 
 ### Priority: Medium
 
@@ -317,7 +316,6 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | E2E test suite | Playwright tests for core user flows | Large | — |
 | Production deployment | Verify end-to-end Railway deployment, set up monitoring | Medium | — |
 | Caddyfile | Create TLS configuration for VM deployment option | Small | — |
-| Frontend CI | Add lint + type-check + unit tests to `test.yml` | Small | — |
 
 ### Priority: Low
 

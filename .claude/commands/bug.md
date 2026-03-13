@@ -1,3 +1,8 @@
+---
+name: bug
+description: "Bug triage → GitHub issue → fix → PR → merge. Usage: /bug <description>"
+---
+
 # Claude Code User Command: Bug
 
 Automated bug triage, fix, and PR workflow. The user is reporting a bug — act fast.
@@ -25,7 +30,7 @@ Automated bug triage, fix, and PR workflow. The user is reporting a bug — act 
 Before diving in, assess severity:
 
 - **Trivial**: Typo, styling glitch, minor UI issue, single-line fix.
-- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Design the fix with the user, then update `PRD.md` after the fix is complete.
+- **Critical**: Infinite loop, data loss, crash, security issue, architectural flaw, multi-file systemic bug. → Enter **plan mode** first. Read `docs/PROJECT_STATUS.md` for known issues context. Design the fix with the user, then update `docs/*.md` after the fix is complete.
 
 Use your judgement. When in doubt, treat it as critical.
 
@@ -152,10 +157,18 @@ gh pr merge <number> --squash --delete-branch
 git checkout main && git pull
 ```
 
-### Step 9: Checkpoint (critical bugs only)
+### Step 9: Update Project Status
+
+After the fix is merged, update `docs/PROJECT_STATUS.md`:
+- Check off resolved items in the Known Issues table (set status to "Fixed")
+- Update relevant feature checklists if the bug revealed missing items
+- Add to Release History if this is a significant fix
+
+### Step 10: Checkpoint (critical bugs only)
 
 For critical bugs, run the full Checkpoint Validation per CLAUDE.md:
 1. **Code** — implementation matches the intended fix
-2. **Design docs** — `PRD.md` and `ARCHITECTURE.md` updated to reflect the change
-3. **Tests** — relevant tests added/updated and all pass
-4. **Lint** — no lint errors in changed files
+2. **Design docs** — `docs/PRD.md` and `docs/ARCHITECTURE.md` updated to reflect the change
+3. **Project status** — `docs/PROJECT_STATUS.md` known issues and checklists updated
+4. **Tests** — relevant tests added/updated and all pass
+5. **Lint** — no lint errors in changed files

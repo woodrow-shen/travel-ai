@@ -1,3 +1,8 @@
+---
+name: clean-dev-cache
+description: "Clean up dev caches, build artifacts, Docker dangling images, and temp files"
+---
+
 # Claude Code User Command: Clean Dev Cache
 
 Clean up all development caches, build artifacts, and temporary files from the project.

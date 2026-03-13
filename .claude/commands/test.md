@@ -1,3 +1,8 @@
+---
+name: test
+description: "Run tests, fix failures, add coverage. Usage: /test <file|feature|all>"
+---
+
 # Claude Code User Command: Test
 
 This command helps you run and improve the test suite for the scope specified in $ARGUMENTS.

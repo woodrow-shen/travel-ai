@@ -1,3 +1,8 @@
+---
+name: reviewpr
+description: "Deep review a GitHub PR: code quality, tests, security. Usage: /reviewpr <number>"
+---
+
 # Claude Code User Command: Reviewpr
 
 This command helps you thoroughly review GitHub pull requests specified in $ARGUMENTS.

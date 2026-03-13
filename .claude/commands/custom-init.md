@@ -1,3 +1,8 @@
+---
+name: custom-init
+description: "Generate or refresh CLAUDE.md with full codebase analysis and docs/ sync"
+---
+
 # Claude Code User Command: Custom Init
 
 This command helps you initialize a new, well-formatted CLAUDE.md file with codebase documentation.
@@ -69,6 +74,11 @@ Follow these steps:
    - Identify primary language and framework.
    - Scan directory structure for architecture patterns.
    - Find existing documentation (README.md, docs/).
+2. **Docs Directory Sync** (CRITICAL for refresh mode)
+   - Read ALL files in `docs/` directory (`docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/PROJECT_STATUS.md`, etc.).
+   - Extract: current milestone status, known issues, feature completion, architecture overview, technology decisions.
+   - Use this data to update CLAUDE.md sections: Project Structure, Known Issues, Architecture, API Endpoints.
+   - Ensure CLAUDE.md and `docs/` tell the same story — resolve any conflicts by treating `docs/` as authoritative.
 
 ## Phase 2: Core Section Generation
 
@@ -140,6 +150,11 @@ Each feature sub-agent specializes in detecting patterns:
    - Find additional markdown files.
    - Check for inline documentation patterns.
    - List external documentation links.
+5. **Docs Directory Reconciliation**
+   - Compare CLAUDE.md Known Issues against `docs/PROJECT_STATUS.md` Known Issues table — sync any differences.
+   - Compare CLAUDE.md project structure against actual filesystem — update stale entries.
+   - Compare CLAUDE.md architecture overview against `docs/ARCHITECTURE.md` — update if diverged.
+   - Verify all `docs/*.md` paths referenced in `.claude/commands/*.md` and `.claude/agents/*.md` are correct.
 
 ## Phase 5: Content Assembly
 

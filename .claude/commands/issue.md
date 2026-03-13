@@ -1,3 +1,8 @@
+---
+name: issue
+description: "Analyze, plan, implement, and PR a GitHub issue. Usage: /issue <number>"
+---
+
 # Claude Code User Command: Issue
 
 This command helps you analyze and fix GitHub issues specified in $ARGUMENTS following GitHub flow best practices.
@@ -61,7 +66,9 @@ Follow these steps to understand and plan your approach:
 2. Understand the problem described in the issue.
 3. Ask clarifying questions if necessary.
 4. Understand the prior art for this issue:
-    - Search the scratchpads for previous thoughts related to the issue.
+    - Read `docs/PROJECT_STATUS.md` for known issues, backlog, and current milestone status.
+    - Read `docs/PRD.md` for product requirements and roadmap context.
+    - Read `docs/ARCHITECTURE.md` if the issue involves architectural components.
     - Search PRs to see if you can find history on this issue.
     - Search the codebase for relevant files.
 5. Think harder about how to break the issue down into a series of small, manageable tasks.
@@ -131,4 +138,5 @@ When creating a PR, the template will automatically appear - simply fill in the 
 
 Prepare your changes for review and merge:
 
-1. Open a PR following the PR format requirements above and request a review.
+1. Update `docs/PROJECT_STATUS.md` — check off completed items, update known issues, adjust backlog.
+2. Open a PR following the PR format requirements above and request a review.

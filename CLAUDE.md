@@ -57,10 +57,10 @@ travel-ai/
 │   ├── package.json
 │   ├── next.config.ts                # API proxy: /api/* → backend:8000/api/v1/*
 │   └── src/
-│       ├── app/                      # Pages: landing, search, compare, trip, chat, auth/callback
-│       ├── components/               # UI components (search, compare, chat, itinerary, layout)
-│       ├── hooks/                    # useAuth, useSearch, useChat (SSE), useTrip, useCompare
-│       ├── stores/                   # Zustand v5 stores (search, trip, chat)
+│       ├── app/                      # Pages: landing, search, compare, trip, chat, auth/callback, settings/*
+│       ├── components/               # UI components (search, compare, chat, itinerary, layout, UserMenu)
+│       ├── hooks/                    # useAuth, useSearch, useChat (SSE), useTrip, useCompare, useSubscription, usePreferences
+│       ├── stores/                   # Zustand v5 stores (search, trip, chat, auth, compare, subscription, preferences)
 │       ├── lib/                      # API client, utilities (cn helper)
 │       └── types/                    # TypeScript type definitions
 ├── monitor/                          # Price monitoring daemon (Python 3.12)
@@ -71,9 +71,9 @@ travel-ai/
 │       ├── config.py                 # Monitoring settings (frequencies, thresholds)
 │       ├── scheduler.py              # APScheduler: 3 jobs (scan, digest, cleanup)
 │       ├── detector.py               # Bug fare / price drop anomaly detection
-│       ├── notifier.py               # Notification dispatch (stub)
+│       ├── notifier.py               # Notification dispatch (email sending + trigger conditions)
 │       ├── clients/                  # Amadeus + RapidAPI clients, rate limiter (token bucket)
-│       └── tasks/                    # price_scan, deal_digest, cleanup (stubs)
+│       └── tasks/                    # price_scan, deal_digest, cleanup (implemented)
 ├── docker-compose.yml                # 5 services: backend, frontend, monitor, db, redis
 ├── docker-compose.override.yml       # Dev overrides: hot-reload, volume mounts, .env mount
 ├── docker-compose.prod.yml           # Production: Caddy proxy, no volumes, env vars only
@@ -83,7 +83,11 @@ travel-ai/
 │   └── workflows/
 │       ├── test.yml                  # CI: lint + type-check + pytest (backend + monitor)
 │       └── deploy.yml                # CD: test → deploy to Railway
-└── PRD.md                           # Product Requirements Document (Traditional Chinese) — keep in sync with implementation
+├── docs/
+│   ├── PRD.md                            # Product Requirements Document (Traditional Chinese) — keep in sync with implementation
+│   ├── ARCHITECTURE.md                   # Technical Architecture Document — system design, ADRs, data flow
+│   └── PROJECT_STATUS.md                 # Project management tracker — milestones, checklists, backlog
+├── CHANGELOG.md                          # Version history (Keep a Changelog format)
 ```
 
 ## Architecture
@@ -147,7 +151,7 @@ All IDs are UUIDs. JSONB columns for flexible data (`raw_data`, `metadata`, `sch
 | Trips | `GET /`, `POST /`, `GET /{id}`, `PATCH /{id}`, `DELETE /{id}` | JWT |
 | Itineraries | `POST /` | JWT |
 | Chat | `POST /` (SSE stream: `text`, `data`, `done` events) | JWT |
-| Subscriptions | CRUD + `POST /emails`, `GET /emails/verify`, `GET /unsubscribe` | JWT (verify/unsub are token-based) |
+| Subscriptions | CRUD + `POST /emails`, `GET /emails`, `DELETE /emails/{id}`, `GET /emails/verify`, `GET /unsubscribe` | JWT (verify/unsub are token-based) |
 | Users | `GET /preferences`, `PATCH /preferences` | JWT |
 
 ### Currency Conversion
@@ -264,7 +268,7 @@ Each service has a `railway.toml` with Dockerfile builder. CI/CD via GitHub Acti
 
 Required GitHub secret: `RAILWAY_TOKEN`
 
-Railway environment variables to set: see `PLAN.md` section 5 or `.env.example`.
+Railway environment variables to set: see `docs/PRD.md` or `.env.example`.
 
 ### VM with Caddy (Alternative)
 
@@ -350,20 +354,52 @@ Rules:
 
 See `.github/COMMIT_CONVENTION.md` for full details.
 
-### Rolling Plan Sync
+### Post-Push CI Check
 
-`PRD.md` is the living design document (Traditional Chinese). **Whenever implementation changes deviate from or extend the plan, update `PRD.md` accordingly.** The plan and codebase must always stay in sync — treat `PRD.md` as the single source of truth for design decisions, not a static spec.
+After every `git push`, **automatically check GitHub Actions CI status**:
 
-**IMPORTANT**: When entering plan mode for a new feature or bug fix, after the plan is finalized and approved by the user, **automatically update `PRD.md`** with the agreed-upon plan content before starting implementation. Do not wait until after coding — update the plan first so it reflects the latest design decisions at all times.
+```bash
+gh run list --limit 1          # Check if run started
+gh run watch <run-id> --exit-status  # Watch until completion
+```
+
+Report the result to the user. If CI fails, diagnose and offer to fix before moving on.
+
+### Documentation as Source of Truth (`docs/`)
+
+The `docs/` directory contains the project's authoritative design and management documents. **All commands, agents, and workflows MUST stay in sync with these docs.**
+
+| Document | Purpose | Update Trigger |
+|---|---|---|
+| `docs/PRD.md` | Product Requirements Document (Traditional Chinese) — features, roadmap, acceptance criteria | Entering/leaving plan mode, new feature, requirement change |
+| `docs/ARCHITECTURE.md` | Technical Architecture Document — system design, ADRs, data flow | Architectural change, new service/component, technology decision |
+| `docs/PROJECT_STATUS.md` | Project management tracker — milestones, checklists, backlog, known issues | Feature completed, bug fixed, milestone reached, status change |
+
+#### Sync Rules
+
+1. **Plan mode entry** — Before designing, read all `docs/*.md` to understand current state. Reference them in the plan.
+2. **Plan mode exit** — After the plan is finalized and approved, update the relevant `docs/*.md` files **before** starting implementation:
+   - `docs/PRD.md`: new/changed requirements, roadmap updates
+   - `docs/ARCHITECTURE.md`: architectural decisions, new components
+   - `docs/PROJECT_STATUS.md`: move backlog items to in-progress, add new checklist items
+3. **After implementation** — Update `docs/PROJECT_STATUS.md` checklists (mark items complete, update known issues, add to release history).
+4. **Commands** — All `.claude/commands/*.md` that reference design docs MUST use `docs/` paths and instruct reading them during triage/planning steps.
+5. **Agents** — All `.claude/agents/*.md` MUST be aware of the `docs/` directory and consult relevant docs when making architectural or product decisions.
+6. **`/custom-init` refresh** — When refreshing `CLAUDE.md`, the flow MUST read all `docs/*.md` files and ensure CLAUDE.md accurately reflects their content (project structure, known issues, milestone status, architecture overview).
+
+#### Principle: Docs ↔ Code Consistency
+
+The `docs/` directory and codebase must always tell the same story. If they diverge, the docs are stale and must be updated. Never treat docs as static specs — they are living documents that evolve with every feature and fix.
 
 ### Checkpoint Validation
 
 **IMPORTANT**: After completing every feature or bug fix, perform a checkpoint validation before considering the task done. Verify that ALL of the following are consistent with each other:
 
 1. **Code** — the actual implementation matches the intended design
-2. **Design docs** — `PRD.md` and `ARCHITECTURE.md` are updated to reflect the changes
-3. **Tests** — unit tests cover the new/changed code and all tests pass (`uv run pytest tests/ -x -q`)
-4. **Lint** — no lint errors in changed files (`uv run ruff check --no-cache <changed paths>`)
+2. **Design docs** — `docs/PRD.md` and `docs/ARCHITECTURE.md` are updated to reflect the changes
+3. **Project status** — `docs/PROJECT_STATUS.md` checklists updated (items checked, known issues resolved, backlog adjusted)
+4. **Tests** — unit tests cover the new/changed code and all tests pass (`uv run pytest tests/ -x -q`)
+5. **Lint** — no lint errors in changed files (`uv run ruff check --no-cache <changed paths>`)
 
 If any of these are out of sync, fix them before reporting the task as complete. Do not skip this step.
 
@@ -421,8 +457,6 @@ When the user reports their token usage level, adjust behavior:
 - **Hotel search**: `SearchAgent`, `SearchService`, `PriceService` hotel methods are stubs returning empty (TODO)
 - **Price history**: `PriceAgent._get_price_history()` not wired to DB (TODO)
 - **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` not querying DB (TODO)
-- **Monitor tasks**: `price_scan`, `deal_digest`, `cleanup` task bodies are stubs (TODO)
-- **Monitor notifier**: Does not actually send emails yet (TODO)
 - **Subscription email sending**: Stub in `subscription_service.py` (TODO)
 - **Frontend tests**: No unit tests or E2E tests written yet
 - **Caddyfile**: Referenced in `docker-compose.prod.yml` but not created

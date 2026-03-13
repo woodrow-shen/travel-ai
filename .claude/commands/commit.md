@@ -1,3 +1,8 @@
+---
+name: commit
+description: "Create well-formatted conventional commits with auto-staging and sign-off"
+---
+
 # Claude Code User Command: Commit
 
 This command helps you create well-formatted commits with conventional commit messages.

@@ -1,3 +1,8 @@
+---
+name: help-commands
+description: "List all available slash commands with usage and descriptions"
+---
+
 # Claude Code User Command: Help Commands
 
 This command provides comprehensive help for all available custom commands in this Claude Code Best Practices repository.

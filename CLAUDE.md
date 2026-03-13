@@ -361,7 +361,7 @@ See `.github/COMMIT_CONVENTION.md` for full details.
 **IMPORTANT**: After completing every feature or bug fix, perform a checkpoint validation before considering the task done. Verify that ALL of the following are consistent with each other:
 
 1. **Code** — the actual implementation matches the intended design
-2. **Design docs** — `PRD.md` and `implementation.md` are updated to reflect the changes
+2. **Design docs** — `PRD.md` and `ARCHITECTURE.md` are updated to reflect the changes
 3. **Tests** — unit tests cover the new/changed code and all tests pass (`uv run pytest tests/ -x -q`)
 4. **Lint** — no lint errors in changed files (`uv run ruff check --no-cache <changed paths>`)
 

@@ -27,7 +27,7 @@ Product requirement review and discussion command. Enter plan mode to collaborat
 ### Step 2: Explore Current State
 
 - Read the relevant source files for the area in `$ARGUMENTS`.
-- Check `PRD.md` and `implementation.md` for existing design context.
+- Check `PRD.md` and `ARCHITECTURE.md` for existing design context.
 - Summarize the current state to the user:
   - What's implemented
   - What's stubbed or incomplete
@@ -56,6 +56,6 @@ Product requirement review and discussion command. Enter plan mode to collaborat
 
 - Once approved, follow the Checkpoint Validation process in CLAUDE.md after implementation:
   1. Code matches the plan
-  2. `PRD.md` and `implementation.md` are in sync
+  2. `PRD.md` and `ARCHITECTURE.md` are in sync
   3. Tests cover the changes
   4. Lint passes

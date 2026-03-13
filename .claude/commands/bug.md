@@ -156,6 +156,6 @@ git checkout main && git pull
 
 For critical bugs, run the full Checkpoint Validation per CLAUDE.md:
 1. **Code** — implementation matches the intended fix
-2. **Design docs** — `PRD.md` and `implementation.md` updated to reflect the change
+2. **Design docs** — `PRD.md` and `ARCHITECTURE.md` updated to reflect the change
 3. **Tests** — relevant tests added/updated and all pass
 4. **Lint** — no lint errors in changed files

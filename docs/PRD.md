@@ -635,7 +635,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 |---|---|---|
 | Backend 測試 | 已完成 | 105 tests（models、agents、API、services、clients、normalizer、currency） |
 | Monitor 測試 | 已完成 | 10 tests（detector、clients、rate_limiter） |
-| Frontend 單元測試 | 已完成 | Vitest — auth store、compare store（14 tests） |
+| Frontend 單元測試 | 已完成 | Vitest — auth、compare、search、subscription、preferences stores（57 tests） |
 | CI 自動化 | 已完成 | GitHub Actions 執行 backend + monitor 測試 |
 | Frontend E2E 測試 | 待開發 | Playwright E2E 測試 |
 | CI Redis | 待開發 | GitHub Actions 尚未啟用 Redis service |

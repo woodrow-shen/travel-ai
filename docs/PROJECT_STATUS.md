@@ -17,19 +17,19 @@
 ```
 Features       ██████████████████░░░░  81%  (70/86 items)
 Infrastructure ██████████████░░░░░░░░  62%  (8/13 items)
-Quality        ██████████░░░░░░░░░░░░  52%  (14/27 items)
+Quality        █████████████░░░░░░░░░  63%  (17/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ██████████████░░░░░░░░  73%  (100/137 items)
+OVERALL        ███████████████░░░░░░░  75%  (103/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
 | Features (§3) | 70 | 86 | 16 | 0 |
 | Infrastructure (§4) | 8 | 13 | 5 | 0 |
-| Quality Assurance (§5) | 14 | 27 | 13 | 0 |
+| Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **100** | **137** | **37** | **1** |
+| **Total** | **103** | **137** | **34** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -59,7 +59,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 |-------------------------|------------|
 | Backend test count      | 105        |
 | Monitor test count      | 10         |
-| Frontend test count     | 14         |
+| Frontend test count     | 57         |
 | E2E test count          | 0          |
 | Total API endpoints     | 25+        |
 | Database tables         | 11         |
@@ -239,13 +239,13 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Client tests
 - [x] Rate limiter tests
 
-### 5.3 Frontend Tests (14 passing)
+### 5.3 Frontend Tests (57 passing)
 
 - [x] Auth store tests (Vitest)
 - [x] Compare store tests (Vitest)
-- [ ] Subscription store tests
-- [ ] Preferences store tests
-- [ ] Search store tests
+- [x] Subscription store tests (Vitest — 18 tests: CRUD, error handling, cascade delete)
+- [x] Preferences store tests (Vitest — 8 tests: fetch, update, error paths)
+- [x] Search store tests (Vitest — 17 tests: params, results, sorting, reset)
 - [ ] Component tests (@testing-library/react)
 - [ ] Hook tests
 

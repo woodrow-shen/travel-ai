@@ -230,3 +230,16 @@ export interface Subscription {
   last_sent_at: string | null;
   created_at: string;
 }
+
+/* ------------------------------------------------------------------ */
+/*  User Preferences                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface UserPreferences {
+  preferred_airlines: string[] | null;
+  excluded_airlines: string[] | null;
+  preferred_alliances: string[] | null;
+  cabin_classes: string[] | null;
+  max_stops: number | null;
+  home_airports: string[] | null;
+}

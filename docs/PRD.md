@@ -4,7 +4,7 @@
 |---|---|
 | **產品名稱** | Travel-AI |
 | **文件版本** | 2.0 |
-| **最後更新** | 2026-03-13 |
+| **最後更新** | 2026-03-14 |
 | **負責人** | Woodrow Shen (woodrow.shen@gmail.com) |
 | **授權** | MIT |
 | **狀態** | 開發中 |
@@ -61,6 +61,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 | 行程規劃 | AI 生成日程行程表，包含路線優化 | 行程生成 |
 | 價格追蹤 | 訂閱特定航線，價格下降或出現 Bug Fare 時收到通知 | 郵件訂閱系統 |
 | 多段銜接 | 搜尋無直飛的二線城市，自動拆解國際線 + 國內線 | 多段銜接搜尋 |
+| ~~飯店搜尋~~ | ~~搜尋飯店，跨來源比較價格~~ | ~~暫時停用（見 §3.12）~~ |
 
 ---
 
@@ -182,6 +183,24 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 - Price Drop Alert：在自訂路線基礎上再用航空公司篩選
 - Deal Digest：精選摘要依偏好排序，偏好航空置頂
 
+### 3.12 飯店功能（⏸️ 暫時停用）
+
+> **狀態**：暫時停用（2026-03-14）
+> **原因**：Skyscanner / Kiwi RapidAPI 的飯店搜尋端點尚未驗證是否可在免費方案下正常使用。在確認 API 可用性之前，所有飯店相關功能暫停開發。
+
+**影響範圍**：
+- `POST /search/hotels`：端點存在但回傳空結果（stub）
+- `POST /compare/hotels`：端點存在但回傳空結果（stub）
+- `SearchAgent.search_hotels` 工具：未接入實際 API
+- 前端搜尋頁面：飯店搜尋 tab 保留但功能未實作
+
+**恢復條件**：
+1. 驗證 Skyscanner `/hotels/search` 端點在免費方案下可正常回傳結果
+2. 驗證 Kiwi `/stays/search/by-dest` 端點在免費方案下可正常回傳結果
+3. 確認任一來源可用後，重新啟用飯店搜尋整合
+
+---
+
 ### 3.10 認證系統
 
 Google OAuth 2.0 登入，JWT session 管理。
@@ -243,7 +262,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 代理 | 職責 | 工具 |
 |---|---|---|
 | **Coordinator** | 接收查詢、解析意圖、分派子代理（可並行）、合成結果 | — |
-| **Search** | 機票/飯店/活動搜尋、Gateway Hub 解析、多段銜接 | `search_flights`, `search_hotels`, `search_activities`, `search_domestic_flights`, `resolve_gateway_hubs`, `combine_segments` |
+| **Search** | 機票/活動搜尋、Gateway Hub 解析、多段銜接（飯店暫時停用） | `search_flights`, ~~`search_hotels`~~, `search_activities`, `search_domestic_flights`, `resolve_gateway_hubs`, `combine_segments` |
 | **Price** | 多來源比價分析、價格歷史 | `compare_prices`, `get_price_history` |
 | **Recommendation** | 個人化推薦、航空公司評等、品質評分 | `get_user_preferences`, `analyze_reviews` |
 | **Itinerary** | 日程行程規劃、最近鄰 TSP 路線優化 | `create_itinerary`, `optimize_route` |
@@ -305,12 +324,12 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | Auth | `PATCH /auth/me/tier` | JWT | 切換等級（僅 dev/test） |
 | Auth | `POST /auth/logout` | JWT | 登出 |
 | Search | `POST /search/flights` | JWT | 多來源機票搜尋 |
-| Search | `POST /search/hotels` | JWT | 飯店搜尋 |
+| Search | `POST /search/hotels` | JWT | 飯店搜尋 ⚠️ **暫時停用** |
 | Search | `POST /search/direct` | JWT (Premium) | 直達模式 |
 | Search | `POST /search/adventure` | JWT | 冒險模式 |
 | Compare | `POST /compare` | JWT | 統一比價端點 |
 | Compare | `POST /compare/flights` | JWT | 機票比價 |
-| Compare | `POST /compare/hotels` | JWT | 飯店比價 |
+| Compare | `POST /compare/hotels` | JWT | 飯店比價 ⚠️ **暫時停用** |
 | Trips | CRUD `/trips` | JWT | 行程管理 |
 | Itineraries | `POST /itineraries` | JWT | 行程表生成 |
 | Chat | `POST /chat` | JWT | SSE 串流聊天 |
@@ -466,8 +485,8 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | API | 用途 | 額度 | 認證方式 |
 |---|---|---|---|
 | **Amadeus** | 主力來源：機票搜尋 + 報價 + Flight Inspiration | 5,000 次/月（免費） | OAuth token |
-| **Skyscanner** (RapidAPI: fly-scraper) | 輔助來源：航班搜尋、Anywhere 模式、飯店 | 50 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
-| **Kiwi** (RapidAPI: flights-scraper) | 輔助來源：航班搜尋、虛擬聯程、特惠搜尋、飯店 | 120 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
+| **Skyscanner** (RapidAPI: fly-scraper) | 輔助來源：航班搜尋、Anywhere 模式（飯店 API 存在但未驗證） | 50 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
+| **Kiwi** (RapidAPI: flights-scraper) | 輔助來源：航班搜尋、虛擬聯程、特惠搜尋（飯店 API 存在但未驗證） | 120 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
 | **Anthropic Claude** | AI 多代理系統 | 依方案 | API Key |
 | **Google OAuth 2.0** | 用戶認證 | 無限 | Client ID + Secret |
 | **open.er-api.com** | 匯率轉換 | 無限（免費） | 無需 key |
@@ -479,7 +498,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 頁面 | 路由 | 功能 |
 |---|---|---|
 | 首頁 | `/` | 搜尋表單 + 登入入口 |
-| 搜尋結果 | `/search` | 機票/飯店搜尋結果展示、排序、來源標記 |
+| 搜尋結果 | `/search` | 機票搜尋結果展示、排序、來源標記（飯店暫時停用） |
 | 比價 | `/compare` | 多來源價格比較表，標記最低價 |
 | 行程管理 | `/trip` | 行程 CRUD + 行程表瀏覽 |
 | AI 聊天 | `/chat` | SSE 串流聊天（多 Agent 協作） |
@@ -624,32 +643,36 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 專案結構 | 已完成 | 獨立 Python service、pyproject.toml、Dockerfile |
 | Scheduler | 已完成 | APScheduler 3 個 job（price_scan、deal_digest、cleanup） |
 | Anomaly Detector | 已完成 | Bug Fare 偵測演算法 |
-| price_scan 任務 | 已完成 | Amadeus 搜尋 → price_history 寫入 → 異常偵測 → 通知 |
+| price_scan 任務 | 已完成 | Amadeus + Skyscanner + Kiwi 多來源並行搜尋 → price_history 寫入 → 異常偵測 → 通知 |
 | deal_digest 任務 | 已完成 | price_history + Amadeus inspiration → 用戶偏好過濾 → digest 寄信 |
 | cleanup 任務 | 已完成 | price_history 180天 + notification_log 90天 清除 |
 | Notifier 寄信 | 已完成 | bug_fare + price_drop + deal_digest，含路線過濾、偏好過濾、cooldown |
+| Monitor 多來源 | 已完成 | Skyscanner + Kiwi 客戶端 + 多來源交叉驗證 bug fare 偵測 |
 
-### Phase 6：測試覆蓋 -- 部分完成
+### Phase 6：測試覆蓋與 CI -- 已完成
 
 | 里程碑 | 狀態 | 內容 |
 |---|---|---|
 | Backend 測試 | 已完成 | 105 tests（models、agents、API、services、clients、normalizer、currency） |
-| Monitor 測試 | 已完成 | 10 tests（detector、clients、rate_limiter） |
+| Monitor 測試 | 已完成 | 10+ tests（detector、clients、rate_limiter、RapidAPI clients、normalizer） |
 | Frontend 單元測試 | 已完成 | Vitest — auth、compare、search、subscription、preferences stores（57 tests） |
-| CI 自動化 | 已完成 | GitHub Actions 執行 backend + monitor 測試 |
-| Frontend E2E 測試 | 待開發 | Playwright E2E 測試 |
-| CI Redis | 待開發 | GitHub Actions 尚未啟用 Redis service |
+| CI 自動化 | 已完成 | GitHub Actions：backend + monitor + frontend（lint + type-check + unit tests） |
+| CI Redis | 已完成 | GitHub Actions Redis 7 service container（backend + monitor jobs） |
 
 ### Phase 7：待開發功能
 
-| 里程碑 | 優先級 | 內容 |
-|---|---|---|
-| Monitor 多來源 | 高 | Monitor 加入 Skyscanner + Kiwi 客戶端，price_scan 多來源交叉驗證 |
-| 飯店搜尋實作 | 高 | SearchService/PriceService hotel 方法從 stub 改為實際整合 Skyscanner + Kiwi |
-| Agent 層整合 Service | 低 | SearchAgent/PriceAgent 改用 SearchService/PriceService（Chat 為次要功能） |
-| Price History DB 連接 | 低 | PriceAgent._get_price_history() 接上資料庫 |
-| Recommendation DB 連接 | 低 | RecommendationAgent._get_user_preferences() 接上資料庫 |
-| Caddyfile | 低 | docker-compose.prod.yml 參考的 TLS 設定 |
+| 里程碑 | 優先級 | 工作量 | 內容 |
+|---|---|---|---|
+| Production 部署驗證 | 中 | 中 | Railway 端到端驗證（env vars、health check、DB migration、域名設定） |
+| Price History DB 連接 | 中 | 小 | PriceAgent._get_price_history() 接上 price_history 資料表，提升 Chat 歷史價格查詢品質 |
+| Recommendation DB 連接 | 中 | 小 | RecommendationAgent._get_user_preferences() 接上 user_preferences 資料表，使推薦考慮用戶偏好 |
+| Subscription email 寄送 | 中 | 小 | subscription_service.py 的 email sending 從 stub 改為實際寄送 |
+| Frontend E2E 測試 | 低 | 大 | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 |
+| Agent 層整合 Service | 低 | 中 | SearchAgent/PriceAgent 改用 SearchService/PriceService（僅影響 Chat 功能） |
+| Caddyfile | 低 | 小 | docker-compose.prod.yml 參考的 TLS 設定（僅 VM 部署需要，Railway 不需要） |
+| 部署 Runbook | 低 | 小 | 上線 SOP、環境設定、rollback 流程文件 |
+| Incident Playbook | 低 | 小 | 常見問題排查指引（API 配額耗盡、DB 連線失敗、email 寄送失敗等） |
+| 飯店搜尋實作 | ⏸️ 暫停 | 大 | SearchService/PriceService hotel 方法——Skyscanner/Kiwi 飯店 API 尚未驗證可用性，待確認後再啟用 |
 
 ---
 

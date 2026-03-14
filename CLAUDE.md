@@ -454,7 +454,7 @@ When the user reports their token usage level, adjust behavior:
 ## Known Issues & Incomplete Areas
 
 - **RapidAPI clients**: Skyscanner + Kiwi clients are implemented but subject to rate limits (429 errors on free tier)
-- **Hotel search**: `SearchAgent`, `SearchService`, `PriceService` hotel methods are stubs returning empty (TODO)
+- **Hotel search**: ⏸️ On hold — Skyscanner/Kiwi hotel APIs not verified on free tier. All hotel endpoints are stubs returning empty.
 - **Price history**: `PriceAgent._get_price_history()` not wired to DB (TODO)
 - **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` not querying DB (TODO)
 - **Subscription email sending**: Stub in `subscription_service.py` (TODO)

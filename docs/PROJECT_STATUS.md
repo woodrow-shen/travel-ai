@@ -4,7 +4,7 @@
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
 | **Version**   | 0.2.0                                  |
-| **Date**      | 2026-03-13                             |
+| **Date**      | 2026-03-14                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
 
@@ -25,15 +25,15 @@ OVERALL        ████████████████░░░░░�
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 71 | 86 | 15 | 0 |
+| Features (§3) | 71 | 86 | 10 | 5 (hotel, on hold) |
 | Infrastructure (§4) | 11 | 13 | 2 | 0 |
 | Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **107** | **137** | **30** | **1** |
+| **Total** | **107** | **137** | **25** | **6** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
-**Next priorities**: Hotel search integration (High), Frontend test coverage (High), Redis in CI (High, Small effort).
+**Next priorities**: E2E test suite (Medium), Production deployment (Medium), Caddyfile (Medium, Small effort). Hotel search is **on hold** pending Skyscanner/Kiwi hotel API verification.
 
 ---
 
@@ -53,7 +53,7 @@ OVERALL        ████████████████░░░░░�
 
 ## 1. Executive Summary
 
-Travel-AI is an intelligent travel aggregation platform targeting Taiwanese travelers. The core platform (multi-agent AI, flight search, price monitoring, subscription alerts) is **feature-complete for MVP**. Current focus is on expanding data sources, implementing hotel search, and hardening test coverage for production readiness.
+Travel-AI is an intelligent travel aggregation platform targeting Taiwanese travelers. The core platform (multi-agent AI, flight search, price monitoring, subscription alerts) is **feature-complete for MVP**. Current focus is on hardening test coverage and production readiness. Hotel search is **on hold** pending verification of Skyscanner/Kiwi hotel API availability on free tier.
 
 | Metric                  | Value      |
 |-------------------------|------------|
@@ -116,13 +116,15 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Roundtrip compare label
 - [x] 429 backoff handling for RapidAPI
 
-### 3.4 Hotel Search
+### 3.4 Hotel Search (⏸️ On Hold)
 
-- [ ] SearchService hotel method (stub → real integration)
-- [ ] PriceService hotel method (stub → real integration)
-- [ ] Hotel comparison endpoint
-- [ ] Frontend hotel search page
-- [ ] Frontend hotel comparison
+> **On hold since 2026-03-14**: Skyscanner/Kiwi hotel APIs not yet verified on free tier. All hotel items deferred until API availability is confirmed.
+
+- [ ] ~~SearchService hotel method (stub → real integration)~~
+- [ ] ~~PriceService hotel method (stub → real integration)~~
+- [ ] ~~Hotel comparison endpoint~~
+- [ ] ~~Frontend hotel search page~~
+- [ ] ~~Frontend hotel comparison~~
 
 ### 3.5 AI Chat System
 
@@ -288,44 +290,45 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 | ID | Severity | Area | Description | Status |
 |----|----------|------|-------------|--------|
-| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | Open |
-| KI-02 | Low | Backend | `PriceAgent._get_price_history()` not wired to DB | Open |
-| KI-03 | Low | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Open |
-| KI-04 | Low | Backend | `subscription_service.py` email sending is stubbed | Open |
-| KI-05 | Medium | Infra | Caddyfile for production TLS not created | Open |
+| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | **On Hold** — pending Skyscanner/Kiwi hotel API verification |
+| KI-02 | Medium | Backend | `PriceAgent._get_price_history()` not wired to DB | Open |
+| KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Open |
+| KI-04 | Medium | Backend | `subscription_service.py` email sending is stubbed | Open |
+| KI-05 | Low | Infra | Caddyfile for production TLS not created (Railway 不需要) | Open |
 | KI-06 | Medium | CI | GitHub Actions does not spin up Redis service | **Fixed** |
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
-| KI-08 | Medium | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
+| KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
 | KI-09 | Low | Infra | `alembic.ini` has hardcoded dev DB URL | Open |
 
 ---
 
 ## 8. Upcoming Work (Prioritized Backlog)
 
-### Priority: High
+### Priority: Medium — 上線路徑（Launch Path）
 
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
-| Hotel search integration | Wire SearchService/PriceService hotel methods to Skyscanner + Kiwi APIs | Large | — |
-| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | — |
-
-### Priority: Medium
-
-| Item | Description | Estimated Effort | Blocked By |
-|------|-------------|-----------------|------------|
-| E2E test suite | Playwright tests for core user flows | Large | — |
-| Production deployment | Verify end-to-end Railway deployment, set up monitoring | Medium | — |
-| Caddyfile | Create TLS configuration for VM deployment option | Small | — |
+| Production deployment | Railway 端到端驗證（env vars、health check、DB migration、域名設定） | Medium | — |
+| Price History DB wiring | PriceAgent._get_price_history() 接上 price_history 資料表 | Small | — |
+| Recommendation DB wiring | RecommendationAgent._get_user_preferences() 接上 user_preferences | Small | — |
+| Subscription email sending | subscription_service.py email sending 從 stub 改為實際寄送 | Small | — |
 
 ### Priority: Low
 
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
-| Agent ↔ Service integration | Wire SearchAgent/PriceAgent to use SearchService/PriceService | Medium | — |
-| PriceAgent DB wiring | Connect `_get_price_history()` to price_history table | Small | — |
-| RecommendationAgent DB | Connect `_get_user_preferences()` to user preferences | Small | — |
+| E2E test suite | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 | Large | — |
+| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | — |
+| Agent ↔ Service integration | Wire SearchAgent/PriceAgent to use SearchService/PriceService（僅影響 Chat） | Medium | — |
+| Caddyfile | TLS config for VM deployment（僅 VM 部署需要，Railway 不需要） | Small | — |
 | Deployment runbook | Step-by-step production deployment documentation | Small | — |
 | Incident playbook | Monitoring alerts and response procedures | Small | Production deployment |
+
+### On Hold
+
+| Item | Description | Estimated Effort | Blocked By |
+|------|-------------|-----------------|------------|
+| Hotel search integration | Skyscanner/Kiwi hotel APIs not verified on free tier | Large | API verification |
 
 ---
 

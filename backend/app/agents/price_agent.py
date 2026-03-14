@@ -1,9 +1,14 @@
 import logging
+from statistics import mean
 from typing import Any
+
+from sqlalchemy import select
 
 from app.agents.base import BaseAgent
 from app.agents.tools.price_tools import PRICE_TOOLS
 from app.clients.amadeus_client import AmadeusClient
+from app.db.session import async_session_factory
+from app.models.price_history import PriceHistory
 
 logger = logging.getLogger(__name__)
 
@@ -66,16 +71,71 @@ class PriceAgent(BaseAgent):
         return {"comparisons": [], "sources_checked": []}
 
     async def _get_price_history(self, params: dict) -> dict:
-        # Would query price_history table in a real implementation
+        origin = params["origin"]
+        destination = params["destination"]
+        days_back = params.get("days_back", 90)
+
+        async with async_session_factory() as db:
+            stmt = (
+                select(
+                    PriceHistory.price_amount,
+                    PriceHistory.price_currency,
+                    PriceHistory.created_at,
+                )
+                .where(
+                    PriceHistory.origin == origin,
+                    PriceHistory.destination == destination,
+                )
+                .order_by(PriceHistory.created_at.desc())
+                .limit(days_back)
+            )
+            result = await db.execute(stmt)
+            rows = result.all()
+
+        if not rows:
+            return {
+                "origin": origin,
+                "destination": destination,
+                "days_back": days_back,
+                "history": [],
+                "average": 0,
+                "min": 0,
+                "max": 0,
+                "trend": "insufficient_data",
+            }
+
+        prices = [row[0] for row in rows]
+        currency = rows[0][1]
+        history = [
+            {"price": row[0], "currency": row[1], "date": row[2].isoformat()}
+            for row in rows
+        ]
+
+        avg = mean(prices)
+        # Simple trend: compare first half average vs second half average
+        mid = len(prices) // 2
+        if mid > 0:
+            recent_avg = mean(prices[:mid])
+            older_avg = mean(prices[mid:])
+            if recent_avg < older_avg * 0.95:
+                trend = "decreasing"
+            elif recent_avg > older_avg * 1.05:
+                trend = "increasing"
+            else:
+                trend = "stable"
+        else:
+            trend = "insufficient_data"
+
         return {
-            "origin": params["origin"],
-            "destination": params["destination"],
-            "days_back": params.get("days_back", 90),
-            "history": [],
-            "average": 0,
-            "min": 0,
-            "max": 0,
-            "trend": "insufficient_data",
+            "origin": origin,
+            "destination": destination,
+            "days_back": days_back,
+            "currency": currency,
+            "history": history,
+            "average": round(avg, 2),
+            "min": round(min(prices), 2),
+            "max": round(max(prices), 2),
+            "trend": trend,
         }
 
     def _extract_cheapest_amadeus(self, offers: list[dict]) -> float:

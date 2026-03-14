@@ -1,8 +1,13 @@
 import logging
+import uuid
 from typing import Any
+
+from sqlalchemy import select
 
 from app.agents.base import BaseAgent
 from app.agents.tools.recommendation_tools import RECOMMENDATION_TOOLS
+from app.db.session import async_session_factory
+from app.models.user import UserPreference
 
 logger = logging.getLogger(__name__)
 
@@ -43,12 +48,44 @@ class RecommendationAgent(BaseAgent):
         return {"error": f"Unknown tool: {tool_name}"}
 
     async def _get_user_preferences(self, params: dict) -> dict:
-        # In a full implementation, this would query the DB
-        # The coordinator should pass user preferences as context
+        user_id_str = params.get("user_id")
+        if not user_id_str:
+            return {
+                "user_id": None,
+                "preferences": {},
+                "note": "No user_id provided",
+            }
+
+        try:
+            user_uuid = uuid.UUID(user_id_str)
+        except (ValueError, TypeError):
+            return {
+                "user_id": user_id_str,
+                "preferences": {},
+                "note": "Invalid user_id format",
+            }
+
+        async with async_session_factory() as db:
+            stmt = select(UserPreference).where(UserPreference.user_id == user_uuid)
+            result = await db.execute(stmt)
+            pref = result.scalar_one_or_none()
+
+        if not pref:
+            return {
+                "user_id": user_id_str,
+                "preferences": {},
+                "note": "No preferences set",
+            }
+
         return {
-            "user_id": params.get("user_id"),
+            "user_id": user_id_str,
             "preferences": {
-                "note": "Preferences should be passed via coordinator context",
+                "preferred_airlines": pref.preferred_airlines or [],
+                "excluded_airlines": pref.excluded_airlines or [],
+                "preferred_alliances": pref.preferred_alliances or [],
+                "cabin_classes": pref.cabin_classes or [],
+                "max_stops": pref.max_stops,
+                "home_airports": pref.home_airports or [],
             },
         }
 

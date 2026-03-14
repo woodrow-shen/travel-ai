@@ -664,8 +664,8 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 里程碑 | 優先級 | 工作量 | 內容 |
 |---|---|---|---|
 | Production 部署驗證 | 中 | 中 | Railway 端到端驗證（env vars、health check、DB migration、域名設定） |
-| Price History DB 連接 | 中 | 小 | PriceAgent._get_price_history() 接上 price_history 資料表，提升 Chat 歷史價格查詢品質 |
-| Recommendation DB 連接 | 中 | 小 | RecommendationAgent._get_user_preferences() 接上 user_preferences 資料表，使推薦考慮用戶偏好 |
+| Price History DB 連接 | 已完成 | 小 | PriceAgent._get_price_history() 接上 price_history 資料表，含趨勢分析 |
+| Recommendation DB 連接 | 已完成 | 小 | RecommendationAgent._get_user_preferences() 接上 user_preferences 資料表 |
 | Subscription email 寄送 | 已完成 | 小 | FastMail + SMTP + Jinja2 templates 完整實作 |
 | Frontend E2E 測試 | 低 | 大 | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 |
 | Agent 層整合 Service | 低 | 中 | SearchAgent/PriceAgent 改用 SearchService/PriceService（僅影響 Chat 功能） |

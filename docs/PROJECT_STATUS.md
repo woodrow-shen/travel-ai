@@ -291,8 +291,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | ID | Severity | Area | Description | Status |
 |----|----------|------|-------------|--------|
 | KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | On Hold — pending Skyscanner/Kiwi hotel API verification |
-| KI-02 | Medium | Backend | `PriceAgent._get_price_history()` not wired to DB | Open |
-| KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Open |
+| KI-02 | Medium | Backend | `PriceAgent._get_price_history()` not wired to DB | Fixed |
+| KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Fixed |
 | KI-05 | Low | Infra | Caddyfile for production TLS not created (Railway 不需要) | Open |
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
 | KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
@@ -307,8 +307,6 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
 | Production deployment | Railway 端到端驗證（env vars、health check、DB migration、域名設定） | Medium | — |
-| Price History DB wiring | PriceAgent._get_price_history() 接上 price_history 資料表 | Small | — |
-| Recommendation DB wiring | RecommendationAgent._get_user_preferences() 接上 user_preferences | Small | — |
 
 ### Priority: Low
 

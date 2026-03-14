@@ -455,7 +455,7 @@ When the user reports their token usage level, adjust behavior:
 
 - **RapidAPI clients**: Skyscanner + Kiwi clients are implemented but subject to rate limits (429 errors on free tier)
 - **Hotel search**: ⏸️ On hold — Skyscanner/Kiwi hotel APIs not verified on free tier. All hotel endpoints are stubs returning empty.
-- **Price history**: `PriceAgent._get_price_history()` not wired to DB (TODO)
-- **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` not querying DB (TODO)
+- **Price history**: `PriceAgent._get_price_history()` wired to price_history table with trend analysis
+- **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` wired to user_preferences table
 - **Frontend tests**: Store tests done (57 passing), but no component/hook tests or E2E tests yet
 - **Caddyfile**: Referenced in `docker-compose.prod.yml` but not created

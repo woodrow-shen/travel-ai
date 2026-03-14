@@ -14,7 +14,7 @@ export function Header() {
     { href: "/search", label: "Search" },
     { href: "/compare", label: "Compare" },
     { href: "/trip", label: "Trips" },
-    { href: "/chat", label: "Chat" },
+    { href: "/chat", label: "Chat", disabled: true },
   ];
 
   return (
@@ -37,7 +37,14 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[var(--color-muted)] transition-colors hover:text-[var(--color-foreground)]"
+              className={cn(
+                "text-sm font-medium transition-colors",
+                "disabled" in link && link.disabled
+                  ? "text-[var(--color-muted)]/40"
+                  : "text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+              )}
+              aria-disabled={"disabled" in link && link.disabled ? true : undefined}
+              tabIndex={"disabled" in link && link.disabled ? -1 : undefined}
             >
               {link.label}
             </Link>
@@ -102,8 +109,15 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
+              className={cn(
+                "rounded-md px-3 py-2 text-sm font-medium",
+                "disabled" in link && link.disabled
+                  ? "text-[var(--color-muted)]/40"
+                  : "text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
+              )}
               onClick={() => setMobileOpen(false)}
+              aria-disabled={"disabled" in link && link.disabled ? true : undefined}
+              tabIndex={"disabled" in link && link.disabled ? -1 : undefined}
             >
               {link.label}
             </Link>

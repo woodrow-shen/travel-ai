@@ -37,14 +37,7 @@ export function Footer() {
                   Price Comparison
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/chat"
-                  className="text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-                >
-                  AI Chat Assistant
-                </Link>
-              </li>
+              {/* AI Chat Assistant — disabled pending API provider decision */}
             </ul>
           </div>
 

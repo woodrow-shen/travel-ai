@@ -61,7 +61,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 | 行程規劃 | AI 生成日程行程表，包含路線優化 | 行程生成 |
 | 價格追蹤 | 訂閱特定航線，價格下降或出現 Bug Fare 時收到通知 | 郵件訂閱系統 |
 | 多段銜接 | 搜尋無直飛的二線城市，自動拆解國際線 + 國內線 | 多段銜接搜尋 |
-| ~~飯店搜尋~~ | ~~搜尋飯店，跨來源比較價格~~ | ~~暫時停用（見 §3.12）~~ |
+| 飯店搜尋 | 搜尋飯店，跨來源比較價格 | ⏸️ 暫時停用（見 §3.12） |
 
 ---
 
@@ -262,7 +262,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 代理 | 職責 | 工具 |
 |---|---|---|
 | **Coordinator** | 接收查詢、解析意圖、分派子代理（可並行）、合成結果 | — |
-| **Search** | 機票/活動搜尋、Gateway Hub 解析、多段銜接（飯店暫時停用） | `search_flights`, ~~`search_hotels`~~, `search_activities`, `search_domestic_flights`, `resolve_gateway_hubs`, `combine_segments` |
+| **Search** | 機票/活動搜尋、Gateway Hub 解析、多段銜接（飯店暫時停用） | `search_flights`, `search_hotels` (⏸️), `search_activities`, `search_domestic_flights`, `resolve_gateway_hubs`, `combine_segments` |
 | **Price** | 多來源比價分析、價格歷史 | `compare_prices`, `get_price_history` |
 | **Recommendation** | 個人化推薦、航空公司評等、品質評分 | `get_user_preferences`, `analyze_reviews` |
 | **Itinerary** | 日程行程規劃、最近鄰 TSP 路線優化 | `create_itinerary`, `optimize_route` |
@@ -666,7 +666,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | Production 部署驗證 | 中 | 中 | Railway 端到端驗證（env vars、health check、DB migration、域名設定） |
 | Price History DB 連接 | 中 | 小 | PriceAgent._get_price_history() 接上 price_history 資料表，提升 Chat 歷史價格查詢品質 |
 | Recommendation DB 連接 | 中 | 小 | RecommendationAgent._get_user_preferences() 接上 user_preferences 資料表，使推薦考慮用戶偏好 |
-| Subscription email 寄送 | 中 | 小 | subscription_service.py 的 email sending 從 stub 改為實際寄送 |
+| Subscription email 寄送 | 已完成 | 小 | FastMail + SMTP + Jinja2 templates 完整實作 |
 | Frontend E2E 測試 | 低 | 大 | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 |
 | Agent 層整合 Service | 低 | 中 | SearchAgent/PriceAgent 改用 SearchService/PriceService（僅影響 Chat 功能） |
 | Caddyfile | 低 | 小 | docker-compose.prod.yml 參考的 TLS 設定（僅 VM 部署需要，Railway 不需要） |

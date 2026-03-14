@@ -120,11 +120,11 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 > **On hold since 2026-03-14**: Skyscanner/Kiwi hotel APIs not yet verified on free tier. All hotel items deferred until API availability is confirmed.
 
-- [ ] ~~SearchService hotel method (stub → real integration)~~
-- [ ] ~~PriceService hotel method (stub → real integration)~~
-- [ ] ~~Hotel comparison endpoint~~
-- [ ] ~~Frontend hotel search page~~
-- [ ] ~~Frontend hotel comparison~~
+- [ ] SearchService hotel method (stub → real integration) — ⏸️ on hold
+- [ ] PriceService hotel method (stub → real integration) — ⏸️ on hold
+- [ ] Hotel comparison endpoint — ⏸️ on hold
+- [ ] Frontend hotel search page — ⏸️ on hold
+- [ ] Frontend hotel comparison — ⏸️ on hold
 
 ### 3.5 AI Chat System
 
@@ -290,12 +290,10 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 | ID | Severity | Area | Description | Status |
 |----|----------|------|-------------|--------|
-| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | **On Hold** — pending Skyscanner/Kiwi hotel API verification |
+| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | On Hold — pending Skyscanner/Kiwi hotel API verification |
 | KI-02 | Medium | Backend | `PriceAgent._get_price_history()` not wired to DB | Open |
 | KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Open |
-| KI-04 | Medium | Backend | `subscription_service.py` email sending is stubbed | Open |
 | KI-05 | Low | Infra | Caddyfile for production TLS not created (Railway 不需要) | Open |
-| KI-06 | Medium | CI | GitHub Actions does not spin up Redis service | **Fixed** |
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
 | KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
 | KI-09 | Low | Infra | `alembic.ini` has hardcoded dev DB URL | Open |
@@ -311,7 +309,6 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Production deployment | Railway 端到端驗證（env vars、health check、DB migration、域名設定） | Medium | — |
 | Price History DB wiring | PriceAgent._get_price_history() 接上 price_history 資料表 | Small | — |
 | Recommendation DB wiring | RecommendationAgent._get_user_preferences() 接上 user_preferences | Small | — |
-| Subscription email sending | subscription_service.py email sending 從 stub 改為實際寄送 | Small | — |
 
 ### Priority: Low
 

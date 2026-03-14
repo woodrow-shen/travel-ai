@@ -15,25 +15,25 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████░░░░  82%  (71/86 items)
+Features       ██████████████████░░░░  85%  (73/86 items)
 Infrastructure ████████████████░░░░░░  85%  (11/13 items)
 Quality        █████████████░░░░░░░░░  63%  (17/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████░░░░░░  78%  (107/137 items)
+OVERALL        █████████████████░░░░░  80%  (109/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 71 | 86 | 10 | 5 (hotel, on hold) |
+| Features (§3) | 73 | 86 | 8 | 5 (hotel, on hold) |
 | Infrastructure (§4) | 11 | 13 | 2 | 0 |
 | Quality Assurance (§5) | 17 | 27 | 10 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **107** | **137** | **25** | **6** |
+| **Total** | **109** | **137** | **23** | **6** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
-**Next priorities**: E2E test suite (Medium), Production deployment (Medium), Caddyfile (Medium, Small effort). Hotel search is **on hold** pending Skyscanner/Kiwi hotel API verification.
+**Next priorities**: Production deployment (Medium). Hotel search is **on hold** pending Skyscanner/Kiwi hotel API verification.
 
 ---
 
@@ -137,8 +137,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] SSE streaming chat endpoint
 - [x] Multi-turn conversation support
 - [ ] Agent layer integrated with SearchService (deprioritized)
-- [ ] PriceAgent wired to price_history DB
-- [ ] RecommendationAgent wired to user preferences DB
+- [x] PriceAgent wired to price_history DB (trend analysis: increasing/decreasing/stable)
+- [x] RecommendationAgent wired to user preferences DB
 
 ### 3.6 Trip Management
 

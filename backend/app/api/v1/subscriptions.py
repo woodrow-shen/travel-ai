@@ -1,6 +1,8 @@
+import logging
 import uuid
 from datetime import UTC
 
+from email_validator import EmailNotValidError, validate_email
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,6 +19,8 @@ from app.schemas.subscription import (
     SubscriptionUpdate,
 )
 from app.services.subscription_service import SubscriptionService
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -151,6 +155,16 @@ async def add_email(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    # Validate email deliverability (DNS/MX check)
+    try:
+        validate_email(body.email, check_deliverability=True)
+    except EmailNotValidError as e:
+        logger.warning("Email validation failed for %s: %s", body.email, e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid email address: {e}",
+        )
+
     # Check max 3 emails per user
     result = await db.execute(
         select(SubscriptionEmail).where(SubscriptionEmail.user_id == user.id)

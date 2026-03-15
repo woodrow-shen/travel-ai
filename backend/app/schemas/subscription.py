@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from app.models.subscription import SubscriptionType
 
@@ -30,7 +30,7 @@ class SubscriptionResponse(BaseModel):
 
 
 class SubscriptionEmailCreate(BaseModel):
-    email: str
+    email: EmailStr
 
 
 class SubscriptionEmailResponse(BaseModel):

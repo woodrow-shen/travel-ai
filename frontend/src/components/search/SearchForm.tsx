@@ -121,144 +121,128 @@ export function SearchForm() {
         ))}
       </div>
 
-      {/* Trip type sub-tabs (flights only) */}
-      {searchType === "flight" && (
-        <div className="mb-4 flex gap-1 rounded-md bg-[var(--color-border)]/20 p-0.5 w-fit" role="tablist" aria-label="Trip type">
-          {([
-            { value: "roundtrip" as TripType, label: "Roundtrip" },
-            { value: "one_way" as TripType, label: "One-way" },
-          ]).map((tab) => (
-            <button
-              key={tab.value}
-              type="button"
-              role="tab"
-              aria-selected={tripType === tab.value}
-              className={cn(
-                "rounded px-3 py-1 text-xs font-medium transition-colors",
-                tripType === tab.value
-                  ? "bg-[var(--color-card)] text-[var(--color-foreground)] shadow-sm"
-                  : "text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-              )}
-              onClick={() => setTripType(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* Hotel search disabled notice */}
+      {searchType === "hotel" && (
+        <div className="mb-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-border)]/10 p-4 text-center">
+          <p className="text-sm text-[var(--color-muted)]">
+            Hotel search is temporarily unavailable while we verify API provider support.
+          </p>
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {searchType === "flight" && (
-          <Input
-            label="From"
-            placeholder="City or airport"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            required
-          />
-        )}
-
-        <Input
-          label={searchType === "flight" ? "To" : "Destination"}
-          placeholder={searchType === "flight" ? "City or airport" : "City or hotel name"}
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          required
-        />
-
-        <Input
-          label={searchType === "flight" ? "Departure" : "Check-in"}
-          type="date"
-          value={departureDate}
-          onChange={(e) => setDepartureDate(e.target.value)}
-          required
-        />
-
-        {(searchType === "hotel" || tripType === "roundtrip") && (
-          <Input
-            label={searchType === "flight" ? "Return" : "Check-out"}
-            type="date"
-            value={returnDate}
-            onChange={(e) => setReturnDate(e.target.value)}
-          />
-        )}
-
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="adults"
-            className="text-sm font-medium text-[var(--color-foreground)]"
-          >
-            Adults
-          </label>
-          <select
-            id="adults"
-            value={adults}
-            onChange={(e) => setAdults(Number(e.target.value))}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
-          >
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
+      {searchType === "flight" && (
+        <>
+          {/* Trip type sub-tabs */}
+          <div className="mb-4 flex gap-1 rounded-md bg-[var(--color-border)]/20 p-0.5 w-fit" role="tablist" aria-label="Trip type">
+            {([
+              { value: "roundtrip" as TripType, label: "Roundtrip" },
+              { value: "one_way" as TripType, label: "One-way" },
+            ]).map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                role="tab"
+                aria-selected={tripType === tab.value}
+                className={cn(
+                  "rounded px-3 py-1 text-xs font-medium transition-colors",
+                  tripType === tab.value
+                    ? "bg-[var(--color-card)] text-[var(--color-foreground)] shadow-sm"
+                    : "text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                )}
+                onClick={() => setTripType(tab.value)}
+              >
+                {tab.label}
+              </button>
             ))}
-          </select>
-        </div>
-
-        {searchType === "flight" ? (
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="cabin-class"
-              className="text-sm font-medium text-[var(--color-foreground)]"
-            >
-              Cabin Class
-            </label>
-            <select
-              id="cabin-class"
-              value={cabinClass}
-              onChange={(e) =>
-                setCabinClass(
-                  e.target.value as typeof cabinClass
-                )
-              }
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
-            >
-              <option value="economy">Economy</option>
-              <option value="premium_economy">Premium Economy</option>
-              <option value="business">Business</option>
-              <option value="first">First Class</option>
-            </select>
           </div>
-        ) : (
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="rooms"
-              className="text-sm font-medium text-[var(--color-foreground)]"
-            >
-              Rooms
-            </label>
-            <select
-              id="rooms"
-              value={rooms}
-              onChange={(e) => setRooms(Number(e.target.value))}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
 
-      <div className="mt-6">
-        <Button type="submit" size="lg" isLoading={isSearching} className="w-full sm:w-auto min-w-[180px]">
-          {isSearching
-            ? (searchType === "flight" ? "Searching Flights..." : "Searching Hotels...")
-            : `Search ${searchType === "flight" ? "Flights" : "Hotels"}`}
-        </Button>
-      </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Input
+              label="From"
+              placeholder="City or airport"
+              value={origin}
+              onChange={(e) => setOrigin(e.target.value)}
+              required
+            />
+
+            <Input
+              label="To"
+              placeholder="City or airport"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Departure"
+              type="date"
+              value={departureDate}
+              onChange={(e) => setDepartureDate(e.target.value)}
+              required
+            />
+
+            {tripType === "roundtrip" && (
+              <Input
+                label="Return"
+                type="date"
+                value={returnDate}
+                onChange={(e) => setReturnDate(e.target.value)}
+              />
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="adults"
+                className="text-sm font-medium text-[var(--color-foreground)]"
+              >
+                Adults
+              </label>
+              <select
+                id="adults"
+                value={adults}
+                onChange={(e) => setAdults(Number(e.target.value))}
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              >
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="cabin-class"
+                className="text-sm font-medium text-[var(--color-foreground)]"
+              >
+                Cabin Class
+              </label>
+              <select
+                id="cabin-class"
+                value={cabinClass}
+                onChange={(e) =>
+                  setCabinClass(
+                    e.target.value as typeof cabinClass
+                  )
+                }
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              >
+                <option value="economy">Economy</option>
+                <option value="premium_economy">Premium Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <Button type="submit" size="lg" isLoading={isSearching} className="w-full sm:w-auto min-w-[180px]">
+              {isSearching ? "Searching Flights..." : "Search Flights"}
+            </Button>
+          </div>
+        </>
+      )}
     </form>
   );
 }

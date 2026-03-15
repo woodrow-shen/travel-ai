@@ -109,15 +109,30 @@ describe("FlightCard", () => {
     expect(screen.getByText("roundtrip")).toBeInTheDocument();
   });
 
-  it("shows booking link when available", () => {
+  it("shows Book now button when booking_url is available", () => {
     const flightWithUrl = {
       ...mockFlight,
       booking_url: "https://example.com/book",
     };
     render(<FlightCard flight={flightWithUrl} />);
-    const link = screen.getByText("Book now");
-    expect(link).toHaveAttribute("href", "https://example.com/book");
-    expect(link).toHaveAttribute("target", "_blank");
+    const btn = screen.getByText("Book now");
+    expect(btn).toBeInTheDocument();
+    expect(btn.tagName).toBe("BUTTON");
+  });
+
+  it("shows Book now button when booking_token is available", () => {
+    const flightWithToken = {
+      ...mockFlight,
+      booking_token: "some-token-123",
+    };
+    render(<FlightCard flight={flightWithToken} />);
+    const btn = screen.getByText("Book now");
+    expect(btn).toBeInTheDocument();
+  });
+
+  it("hides Book now when neither booking_url nor booking_token", () => {
+    render(<FlightCard flight={mockFlight} />);
+    expect(screen.queryByText("Book now")).not.toBeInTheDocument();
   });
 
   it("has accessible aria-label", () => {

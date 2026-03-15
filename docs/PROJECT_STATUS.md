@@ -46,8 +46,9 @@ OVERALL        █████████████████░░░░�
 5. [Quality Assurance Checklist](#5-quality-assurance-checklist)
 6. [Documentation Checklist](#6-documentation-checklist)
 7. [Known Issues & Technical Debt](#7-known-issues--technical-debt)
-8. [Upcoming Work (Prioritized Backlog)](#8-upcoming-work-prioritized-backlog)
-9. [Release History](#9-release-history)
+8. [Bug Fixes](#8-bug-fixes)
+9. [Upcoming Work (Prioritized Backlog)](#9-upcoming-work-prioritized-backlog)
+10. [Release History](#10-release-history)
 
 ---
 
@@ -301,7 +302,15 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 ---
 
-## 8. Upcoming Work (Prioritized Backlog)
+## 8. Bug Fixes
+
+| ID | Date | Issue | Description | Fix | PR |
+|----|------|-------|-------------|-----|----|
+| BF-01 | 2026-03-15 | [#1](https://github.com/woodrow/travel-ai/issues/1) | Subscription tests sent real SMTP emails to `example.com` addresses, causing bounce-back notifications to the project owner | Added `conftest.py` auto-mock for `send_verification_email` in subscription tests + `ENV=test` safety guard in `EmailService.send_email` + DNS/MX deliverability validation via `email-validator` in the add-email endpoint | [#2](https://github.com/woodrow/travel-ai/pull/2) |
+
+---
+
+## 9. Upcoming Work (Prioritized Backlog)
 
 ### Priority: Medium — 上線路徑（Launch Path）
 
@@ -328,7 +337,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 ---
 
-## 9. Release History
+## 10. Release History
 
 | Version | Date       | Highlights |
 |---------|------------|------------|
@@ -337,4 +346,4 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 ---
 
-*Last updated: 2026-03-13*
+*Last updated: 2026-03-15*

@@ -298,6 +298,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
 | KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Open |
 | KI-09 | Low | Infra | `alembic.ini` has hardcoded dev DB URL | Open |
+| KI-10 | Critical | Testing | Subscription tests sent real emails via SMTP (no mock/guard) | Fixed (#1, PR #2) |
 
 ---
 
@@ -337,4 +338,4 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 ---
 
-*Last updated: 2026-03-13*
+*Last updated: 2026-03-15*

@@ -17,6 +17,7 @@ const mockFlight: FlightResult = {
       departure_time: "2026-04-01T08:30:00",
       arrival_time: "2026-04-01T12:30:00",
       duration_minutes: 180,
+      cabin_class: "economy",
     },
   ],
   total_duration_minutes: 180,
@@ -35,6 +36,7 @@ const mockRoundtrip: FlightResult = {
       departure_time: "2026-04-05T14:00:00",
       arrival_time: "2026-04-05T17:00:00",
       duration_minutes: 180,
+      cabin_class: "economy",
     },
   ],
 };

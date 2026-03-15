@@ -4,7 +4,7 @@
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
 | **Version**   | 0.2.0                                  |
-| **Date**      | 2026-03-14                             |
+| **Date**      | 2026-03-15                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
 
@@ -15,19 +15,19 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████░░░░  85%  (73/86 items)
+Features       ██████████████████░░░░  86%  (74/86 items)
 Infrastructure ████████████████░░░░░░  85%  (11/13 items)
-Quality        █████████████░░░░░░░░░  63%  (17/27 items)
+Quality        ███████████████░░░░░░░  70%  (19/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        █████████████████░░░░░  80%  (109/137 items)
+OVERALL        █████████████████░░░░░  82%  (112/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 73 | 86 | 8 | 5 (hotel, on hold) |
+| Features (§3) | 74 | 86 | 7 | 5 (hotel, on hold) |
 | Infrastructure (§4) | 11 | 13 | 2 | 0 |
-| Quality Assurance (§5) | 17 | 27 | 10 | 0 |
+| Quality Assurance (§5) | 19 | 27 | 8 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
 | **Total** | **109** | **137** | **23** | **6** |
 
@@ -59,7 +59,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 |-------------------------|------------|
 | Backend test count      | 105        |
 | Monitor test count      | 20         |
-| Frontend test count     | 57         |
+| Frontend test count     | 111        |
 | E2E test count          | 0          |
 | Total API endpoints     | 25+        |
 | Database tables         | 11         |
@@ -136,7 +136,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] BudgetAgent — per-country daily cost estimates (TWD)
 - [x] SSE streaming chat endpoint
 - [x] Multi-turn conversation support
-- [ ] Agent layer integrated with SearchService (deprioritized)
+- [x] Agent layer integrated with multi-source search (Amadeus + Skyscanner + Kiwi)
 - [x] PriceAgent wired to price_history DB (trend analysis: increasing/decreasing/stable)
 - [x] RecommendationAgent wired to user preferences DB
 
@@ -242,15 +242,15 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Rate limiter tests
 - [x] Normalizer tests (Skyscanner + Kiwi price extraction)
 
-### 5.3 Frontend Tests (57 passing)
+### 5.3 Frontend Tests (111 passing)
 
 - [x] Auth store tests (Vitest)
 - [x] Compare store tests (Vitest)
 - [x] Subscription store tests (Vitest — 18 tests: CRUD, error handling, cascade delete)
 - [x] Preferences store tests (Vitest — 8 tests: fetch, update, error paths)
 - [x] Search store tests (Vitest — 17 tests: params, results, sorting, reset)
-- [ ] Component tests (@testing-library/react)
-- [ ] Hook tests
+- [x] Component tests (Button, Input, Card, FlightCard, Footer — 40 tests)
+- [x] Hook tests (useCompare, useTrip — 14 tests)
 
 ### 5.4 End-to-End Tests
 
@@ -313,8 +313,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
 | E2E test suite | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 | Large | — |
-| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | — |
-| Agent ↔ Service integration | Wire SearchAgent/PriceAgent to use SearchService/PriceService（僅影響 Chat） | Medium | — |
+| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | Done |
+| Agent ↔ Service integration | Wire SearchAgent/PriceAgent to multi-source search（僅影響 Chat） | Medium | Done |
 | Caddyfile | TLS config for VM deployment（僅 VM 部署需要，Railway 不需要） | Small | — |
 | Deployment runbook | Step-by-step production deployment documentation | Small | — |
 | Incident playbook | Monitoring alerts and response procedures | Small | Production deployment |

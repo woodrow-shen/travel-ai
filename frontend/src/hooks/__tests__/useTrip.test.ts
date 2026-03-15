@@ -16,11 +16,14 @@ import { api } from "@/lib/api";
 
 const mockTrip = {
   id: "trip-1",
+  user_id: "user-1",
   title: "Tokyo Trip",
   description: "Spring vacation",
   destination: "Tokyo",
   start_date: "2026-04-01",
   end_date: "2026-04-07",
+  status: "planning" as const,
+  itinerary: [],
   created_at: "2026-03-01T00:00:00Z",
   updated_at: "2026-03-01T00:00:00Z",
 };

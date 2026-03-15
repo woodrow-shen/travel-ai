@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
@@ -5,6 +6,8 @@ from jinja2 import Environment, FileSystemLoader
 from pydantic import SecretStr
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 TEMPLATE_DIR = Path(__file__).parent.parent / "templates" / "emails"
 
@@ -30,6 +33,11 @@ class EmailService:
     async def send_email(
         self, to: str, subject: str, template_name: str, context: dict
     ) -> bool:
+        # Safety guard: never send real emails in test environment
+        if getattr(settings, "ENV", "") == "test":
+            logger.warning("EmailService.send_email blocked in test env (to=%s)", to)
+            return False
+
         template = jinja_env.get_template(template_name)
         html = template.render(**context)
 

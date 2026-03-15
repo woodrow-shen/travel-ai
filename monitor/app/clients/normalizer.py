@@ -35,6 +35,33 @@ def extract_skyscanner_price(itinerary: dict) -> dict | None:
         return None
 
 
+def extract_google_flights_price(itinerary: dict) -> dict | None:
+    """Extract price info from a Google Flights Data itinerary.
+
+    Google Flights Data API returns flat flight objects with
+    ``price``, ``airlineCode``, ``departureDate``, ``stops``.
+    """
+    try:
+        price = itinerary.get("price")
+        if price is None or price <= 0:
+            return None
+
+        airline = itinerary.get("airlineCode")
+        departure = itinerary.get("departureDate", "")[:10]
+        stop_count = itinerary.get("stops", 0)
+
+        return {
+            "price": float(price),
+            "currency": "TWD",
+            "airline": airline,
+            "stops": stop_count,
+            "departure_date": departure,
+        }
+    except (IndexError, KeyError, TypeError, ValueError):
+        logger.debug("Failed to extract Google Flights price", exc_info=True)
+        return None
+
+
 def extract_kiwi_price(itinerary: dict) -> dict | None:
     """Extract price info from a Kiwi itinerary.
 

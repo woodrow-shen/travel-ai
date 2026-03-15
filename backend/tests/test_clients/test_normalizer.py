@@ -4,6 +4,7 @@ from app.clients.normalizer import (
     _skyscanner_datetime,
     deduplicate_flights,
     normalize_amadeus_flight,
+    normalize_google_flights_flight,
     normalize_kiwi_flight,
     normalize_skyscanner_flight,
 )
@@ -378,6 +379,135 @@ def test_normalize_amadeus_flight_multi_segment():
     assert len(result["segments"]) == 2
     assert result["segments"][0]["flight_number"] == "CI160"
     assert result["segments"][1]["flight_number"] == "KE705"
+
+
+# --- Google Flights Normalization ---
+
+
+GOOGLE_FLIGHTS_ITINERARY = {
+    "airlineCode": "CI",
+    "airlineName": "China Airlines",
+    "departureAirport": "TPE",
+    "arrivalAirport": "NRT",
+    "departureDate": "2026-04-01",
+    "arrivalDate": "2026-04-01",
+    "durationMinutes": 255,
+    "hasStop": False,
+    "stops": 0,
+    "price": 6790,
+    "segments": [
+        {
+            "departureAirportCode": "TPE",
+            "departureAirportName": "Taiwan Taoyuan International Airport",
+            "arrivalAirportCode": "NRT",
+            "arrivalAirportName": "Narita International Airport",
+            "departureTime": "08:30",
+            "arrivalTime": "12:45",
+            "departureDate": "2026-04-01",
+            "arrivalDate": "2026-04-01",
+            "airlineCode": "CI",
+            "flightNumber": "100",
+            "airlineName": "China Airlines",
+            "duration": 255,
+        }
+    ],
+    "departureTime": "08:30",
+    "arrivalTime": "12:45",
+}
+
+GOOGLE_FLIGHTS_MULTISEG_ITINERARY = {
+    "airlineCode": "KE",
+    "airlineName": "Korean Air",
+    "departureAirport": "TPE",
+    "arrivalAirport": "NRT",
+    "departureDate": "2026-04-01",
+    "arrivalDate": "2026-04-01",
+    "durationMinutes": 435,
+    "hasStop": True,
+    "stops": 1,
+    "price": 5200,
+    "segments": [
+        {
+            "departureAirportCode": "TPE",
+            "arrivalAirportCode": "ICN",
+            "departureTime": "14:00",
+            "arrivalTime": "17:30",
+            "departureDate": "2026-04-01",
+            "arrivalDate": "2026-04-01",
+            "airlineCode": "KE",
+            "flightNumber": "186",
+            "airlineName": "Korean Air",
+            "duration": 150,
+        },
+        {
+            "departureAirportCode": "ICN",
+            "arrivalAirportCode": "NRT",
+            "departureTime": "19:00",
+            "arrivalTime": "21:15",
+            "departureDate": "2026-04-01",
+            "arrivalDate": "2026-04-01",
+            "airlineCode": "KE",
+            "flightNumber": "703",
+            "airlineName": "Korean Air",
+            "duration": 135,
+        },
+    ],
+    "departureTime": "14:00",
+    "arrivalTime": "21:15",
+}
+
+
+def test_normalize_google_flights_flight():
+    result = normalize_google_flights_flight(GOOGLE_FLIGHTS_ITINERARY)
+
+    assert result["source"] == "google_flights"
+    assert result["price"] == 6790
+    assert result["currency"] == "TWD"
+    assert result["airline"] == "CI"
+    assert result["airline_name"] == "China Airlines"
+    assert result["flight_number"] == "CI100"
+    assert result["origin"] == "TPE"
+    assert result["destination"] == "NRT"
+    assert result["departure_time"] == "2026-04-01T08:30"
+    assert result["arrival_time"] == "2026-04-01T12:45"
+    assert result["duration_minutes"] == 255
+    assert result["stops"] == 0
+    assert len(result["segments"]) == 1
+    assert result["segments"][0]["airline"] == "CI"
+    assert result["segments"][0]["flight_number"] == "CI100"
+    assert result["return_segments"] == []
+    assert result["booking_url"] == ""
+
+
+def test_normalize_google_flights_flight_multi_segment():
+    result = normalize_google_flights_flight(GOOGLE_FLIGHTS_MULTISEG_ITINERARY)
+
+    assert result["stops"] == 1
+    assert result["duration_minutes"] == 435
+    assert result["origin"] == "TPE"
+    assert result["destination"] == "NRT"
+    assert len(result["segments"]) == 2
+    assert result["segments"][0]["flight_number"] == "KE186"
+    assert result["segments"][0]["origin"] == "TPE"
+    assert result["segments"][0]["destination"] == "ICN"
+    assert result["segments"][1]["flight_number"] == "KE703"
+    assert result["segments"][1]["origin"] == "ICN"
+    assert result["segments"][1]["destination"] == "NRT"
+
+
+def test_normalize_google_flights_flight_empty():
+    result = normalize_google_flights_flight({"segments": [], "price": 0})
+
+    assert result["source"] == "google_flights"
+    assert result["price"] == 0
+    assert result["origin"] == ""
+    assert result["destination"] == ""
+    assert result["segments"] == []
+
+
+def test_normalize_google_flights_flight_currency():
+    result = normalize_google_flights_flight(GOOGLE_FLIGHTS_ITINERARY, currency="USD")
+    assert result["currency"] == "USD"
 
 
 # --- ISO Duration Parser ---

@@ -7,8 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
-from app.clients.normalizer import extract_kiwi_price, extract_skyscanner_price
+from app.clients.normalizer import (
+    extract_google_flights_price,
+    extract_kiwi_price,
+    extract_skyscanner_price,
+)
 from app.clients.skyscanner_client import SkyscannerClient
 from app.config import settings
 from app.db import async_session
@@ -148,6 +153,11 @@ def _min_price_from_offers(offers: list[dict], source: str) -> float | None:
             extracted = extract_kiwi_price(itin)
             if extracted:
                 prices.append(extracted["price"])
+    elif source == "google_flights":
+        for itin in offers:
+            extracted = extract_google_flights_price(itin)
+            if extracted:
+                prices.append(extracted["price"])
     return min(prices) if prices else None
 
 
@@ -170,6 +180,17 @@ async def _search_kiwi(
         return await client.search_flights(origin, destination, search_date)
     except Exception:
         logger.debug("Kiwi search failed for %s->%s", origin, destination)
+        return []
+
+
+async def _search_google_flights(
+    client: GoogleFlightsClient, origin: str, destination: str, search_date: str
+) -> list[dict]:
+    """Search Google Flights, returning empty list on any failure."""
+    try:
+        return await client.search_flights(origin, destination, search_date)
+    except Exception:
+        logger.debug("Google Flights search failed for %s->%s", origin, destination)
         return []
 
 
@@ -302,6 +323,7 @@ async def scan_prices():
     amadeus = AmadeusClient()
     skyscanner = SkyscannerClient() if settings.RAPIDAPI_KEY else None
     kiwi = KiwiClient() if settings.RAPIDAPI_KEY else None
+    google_flights = GoogleFlightsClient() if settings.RAPIDAPI_KEY else None
 
     try:
         async with async_session() as db:
@@ -346,31 +368,55 @@ async def scan_prices():
                                 kiwi, origin, destination, search_date
                             )
                         )
+                    if google_flights:
+                        tasks.append(
+                            _search_google_flights(
+                                google_flights, origin, destination, search_date
+                            )
+                        )
 
                     results = await asyncio.gather(
                         *tasks, return_exceptions=True
                     )
 
                     # Unpack results (graceful: exceptions become empty)
+                    idx = 0
                     amadeus_offers = (
-                        results[0]
-                        if not isinstance(results[0], BaseException)
+                        results[idx]
+                        if not isinstance(results[idx], BaseException)
                         else []
                     )
-                    sky_itins = (
-                        results[1]
-                        if len(results) > 1
-                        and not isinstance(results[1], BaseException)
-                        else []
-                    )
-                    kiwi_itins = (
-                        results[2]
-                        if len(results) > 2
-                        and not isinstance(results[2], BaseException)
-                        else []
-                    )
+                    idx += 1
+                    sky_itins = []
+                    if skyscanner:
+                        sky_itins = (
+                            results[idx]
+                            if not isinstance(results[idx], BaseException)
+                            else []
+                        )
+                        idx += 1
+                    kiwi_itins = []
+                    if kiwi:
+                        kiwi_itins = (
+                            results[idx]
+                            if not isinstance(results[idx], BaseException)
+                            else []
+                        )
+                        idx += 1
+                    gf_itins = []
+                    if google_flights:
+                        gf_itins = (
+                            results[idx]
+                            if not isinstance(results[idx], BaseException)
+                            else []
+                        )
 
-                    if not amadeus_offers and not sky_itins and not kiwi_itins:
+                    if (
+                        not amadeus_offers
+                        and not sky_itins
+                        and not kiwi_itins
+                        and not gf_itins
+                    ):
                         continue
 
                     previous_price = await _get_previous_price(
@@ -386,11 +432,12 @@ async def scan_prices():
                     )
                     sky_min = _min_price_from_offers(sky_itins, "skyscanner")
                     kiwi_min = _min_price_from_offers(kiwi_itins, "kiwi")
+                    gf_min = _min_price_from_offers(gf_itins, "google_flights")
 
                     # For cross-source validation, use the min from other sources
                     other_prices = [
                         p
-                        for p in [amadeus_min, sky_min, kiwi_min]
+                        for p in [amadeus_min, sky_min, kiwi_min, gf_min]
                         if p is not None
                     ]
 
@@ -442,6 +489,21 @@ async def scan_prices():
                         )
                         total_notifications += n
 
+                    # Process Google Flights itineraries
+                    if gf_itins:
+                        n = await _process_rapidapi_itineraries(
+                            db,
+                            gf_itins,
+                            "google_flights",
+                            extract_google_flights_price,
+                            origin,
+                            destination,
+                            search_date,
+                            history,
+                            _other_min(gf_min),
+                        )
+                        total_notifications += n
+
                 except Exception:
                     logger.exception(
                         "Error scanning route %s->%s",
@@ -465,3 +527,5 @@ async def scan_prices():
             await skyscanner.close()
         if kiwi:
             await kiwi.close()
+        if google_flights:
+            await google_flights.close()

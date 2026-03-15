@@ -32,7 +32,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 
 **核心價值主張**：
 
-- **多來源聚合**：整合 Amadeus、Skyscanner、Kiwi 等多個資料來源，提供最全面的搜尋結果
+- **多來源聚合**：整合 Amadeus、Skyscanner、Kiwi、Google Flights 等多個資料來源，提供最全面的搜尋結果
 - **AI 智能推薦**：透過多代理協作系統，以自然語言對話方式協助用戶規劃旅程
 - **價格監控**：24/7 背景監控機票價格，偵測 Bug Fare 與價格下跌，即時通知用戶
 - **台灣旅客優先**：預設 TWD 幣別、亞太轉機樞紐、外國人票價優惠整合
@@ -76,7 +76,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 
 ### 3.2 機票搜尋
 
-多來源聚合搜尋，整合 Amadeus + Skyscanner + Kiwi 三個資料源，並行查詢後合併去重。
+多來源聚合搜尋，整合 Amadeus + Skyscanner + Kiwi + Google Flights 四個資料源，並行查詢後合併去重。
 
 - 支援單程、來回搜尋
 - 結果標記來源（`provider`），支援依價格、時間、轉機次數排序
@@ -97,7 +97,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 
 用戶只提供日期區間，系統從出發地搜尋全球任意目的地，列出最便宜的前 10 個目的地航班。
 
-- 搜尋策略：Amadeus Flight Inspiration Search + Skyscanner Anywhere + Kiwi Deals
+- 搜尋策略：Amadeus Flight Inspiration Search + Skyscanner Anywhere + Kiwi Deals + Google Flights
 - 合併多來源結果，按價格排序
 - 整合用戶偏好（偏好航空標註、排除航空過濾）
 
@@ -302,6 +302,8 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 
 假設 50 條活躍航線：每條每天查 3 次 = 150 次/天，Amadeus 4,500 次/月（在免費額度內）。
 
+RapidAPI 免費額度（每月）：Skyscanner 50 次、Kiwi 120 次、Google Flights 110 次。Monitor 以 Amadeus 為主力，RapidAPI 來源為輔助交叉驗證，超額時自動跳過（429 backoff 1 小時）。
+
 自動調節：
 - 訂閱航線 > 55 條 → 降頻為每 12 小時
 - 訂閱航線 > 100 條 → 降頻為每日 + 升級提醒
@@ -487,6 +489,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | **Amadeus** | 主力來源：機票搜尋 + 報價 + Flight Inspiration | 5,000 次/月（免費） | OAuth token |
 | **Skyscanner** (RapidAPI: fly-scraper) | 輔助來源：航班搜尋、Anywhere 模式（飯店 API 存在但未驗證） | 50 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
 | **Kiwi** (RapidAPI: flights-scraper) | 輔助來源：航班搜尋、虛擬聯程、特惠搜尋（飯店 API 存在但未驗證） | 120 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
+| **Google Flights** (RapidAPI: google-flights-api) | 第 4 來源：航班搜尋，補充其他來源不足 | 110 次/月（免費） | `x-rapidapi-key` + `x-rapidapi-host` |
 | **Anthropic Claude** | AI 多代理系統 | 依方案 | API Key |
 | **Google OAuth 2.0** | 用戶認證 | 無限 | Client ID + Secret |
 | **open.er-api.com** | 匯率轉換 | 無限（免費） | 無需 key |
@@ -620,7 +623,8 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | RapidAPI 基礎 Client | 已完成 | 共用 HTTP client + header 管理 + 429 自動 backoff |
 | Skyscanner Client | 已完成 | 航班搜尋（one-way / roundtrip / incomplete） |
 | Kiwi Client | 已完成 | 航班搜尋（oneway / return） |
-| Normalizer | 已完成 | 三來源回應正規化為統一 FlightResult 格式 |
+| Google Flights Client | 已完成 | 第 4 航班搜尋來源（RapidAPI） |
+| Normalizer | 已完成 | 四來源回應正規化為統一 FlightResult 格式 |
 | 匯率轉換 | 已完成 | open.er-api.com + Redis 快取 6h + Amadeus EUR→用戶幣別 |
 | IP 偵測幣別 | 已完成 | ip-api.com + Redis 快取 24h |
 
@@ -628,7 +632,7 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 
 | 里程碑 | 狀態 | 內容 |
 |---|---|---|
-| SearchService 多來源 | 已完成 | Amadeus + Skyscanner + Kiwi 並行搜尋 + 合併去重 + Redis 快取 |
+| SearchService 多來源 | 已完成 | Amadeus + Skyscanner + Kiwi + Google Flights 並行搜尋 + 合併去重 + Redis 快取 |
 | PriceService 多來源 | 已完成 | 多來源並行比價 + 統一 Compare 端點 |
 | Schema 對齊 | 已完成 | FlightResult、FlightSegment、SearchResponse、CompareResult 對齊前端 types |
 | 訂閱系統 | 已完成 | CRUD + Email 驗證 + 退訂 + 通知寄信 |
@@ -643,11 +647,11 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 | 專案結構 | 已完成 | 獨立 Python service、pyproject.toml、Dockerfile |
 | Scheduler | 已完成 | APScheduler 3 個 job（price_scan、deal_digest、cleanup） |
 | Anomaly Detector | 已完成 | Bug Fare 偵測演算法 |
-| price_scan 任務 | 已完成 | Amadeus + Skyscanner + Kiwi 多來源並行搜尋 → price_history 寫入 → 異常偵測 → 通知 |
+| price_scan 任務 | 已完成 | Amadeus + Skyscanner + Kiwi + Google Flights 多來源並行搜尋 → price_history 寫入 → 異常偵測 → 通知 |
 | deal_digest 任務 | 已完成 | price_history + Amadeus inspiration → 用戶偏好過濾 → digest 寄信 |
 | cleanup 任務 | 已完成 | price_history 180天 + notification_log 90天 清除 |
 | Notifier 寄信 | 已完成 | bug_fare + price_drop + deal_digest，含路線過濾、偏好過濾、cooldown |
-| Monitor 多來源 | 已完成 | Skyscanner + Kiwi 客戶端 + 多來源交叉驗證 bug fare 偵測 |
+| Monitor 多來源 | 已完成 | Skyscanner + Kiwi + Google Flights 客戶端 + 多來源交叉驗證 bug fare 偵測 |
 
 ### Phase 6：測試覆蓋與 CI -- 已完成
 

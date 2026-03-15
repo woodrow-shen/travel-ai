@@ -63,6 +63,7 @@ export interface FlightResult {
   total_duration_minutes: number;
   stops: number;
   booking_url?: string;
+  booking_token?: string;
   expires_at?: string;
 }
 

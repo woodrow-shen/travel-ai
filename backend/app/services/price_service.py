@@ -4,10 +4,12 @@ import logging
 from typing import Any
 
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
     normalize_amadeus_flight,
+    normalize_google_flights_flight,
     normalize_kiwi_flight,
     normalize_skyscanner_flight,
 )
@@ -33,6 +35,7 @@ class PriceService:
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
+        self.google_flights = GoogleFlightsClient()
 
     async def unified_compare(
         self, request: UnifiedCompareRequest, user: User
@@ -144,17 +147,26 @@ class PriceService:
             return_date=return_date,
             adults=request.passengers,
         )
+        google_flights_task = self.google_flights.search_flights(
+            origin=request.origin,
+            destination=request.destination,
+            departure_date=departure_date,
+            return_date=return_date,
+            adults=request.passengers,
+        )
 
         rates_task = get_exchange_rates("EUR")
 
         gather_results = await asyncio.gather(
-            amadeus_task, skyscanner_task, kiwi_task, rates_task,
+            amadeus_task, skyscanner_task, kiwi_task, google_flights_task,
+            rates_task,
             return_exceptions=True,
         )
         amadeus_raw: Any = gather_results[0]
         skyscanner_raw: Any = gather_results[1]
         kiwi_raw: Any = gather_results[2]
-        rates_raw = gather_results[3]
+        google_flights_raw: Any = gather_results[3]
+        rates_raw = gather_results[4]
         exchange_rates: dict[str, float] = rates_raw if isinstance(rates_raw, dict) else {}
 
         if isinstance(rates_raw, BaseException):
@@ -198,6 +210,18 @@ class PriceService:
                     normalized.append(normalize_kiwi_flight(itin))
                 except Exception:
                     logger.debug("Failed to normalize Kiwi compare offer", exc_info=True)
+
+        if isinstance(google_flights_raw, list) and google_flights_raw:
+            sources.append("google_flights")
+            for itin in google_flights_raw:
+                try:
+                    normalized.append(
+                        normalize_google_flights_flight(itin, currency=currency)
+                    )
+                except Exception:
+                    logger.debug(
+                        "Failed to normalize Google Flights compare offer", exc_info=True
+                    )
 
         deduped = deduplicate_flights(normalized)
         results = [normalized_dict_to_flight_result(d) for d in deduped]

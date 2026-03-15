@@ -8,10 +8,12 @@ from sqlalchemy import select
 from app.agents.base import BaseAgent
 from app.agents.tools.price_tools import PRICE_TOOLS
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
     normalize_amadeus_flight,
+    normalize_google_flights_flight,
     normalize_kiwi_flight,
     normalize_skyscanner_flight,
 )
@@ -29,6 +31,7 @@ class PriceAgent(BaseAgent):
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
+        self.google_flights = GoogleFlightsClient()
 
     @property
     def name(self) -> str:
@@ -51,6 +54,8 @@ class PriceAgent(BaseAgent):
             return await self._compare_prices(tool_input)
         elif tool_name == "get_price_history":
             return await self._get_price_history(tool_input)
+        elif tool_name == "get_price_graph":
+            return await self._get_price_graph(tool_input)
         return {"error": f"Unknown tool: {tool_name}"}
 
     async def _compare_prices(self, params: dict) -> dict:
@@ -81,10 +86,15 @@ class PriceAgent(BaseAgent):
                 destination_sky_id=destination,
                 departure_date=date,
             ),
+            self.google_flights.search_flights(
+                origin=origin,
+                destination=destination,
+                departure_date=date,
+            ),
             get_exchange_rates("EUR"),
             return_exceptions=True,
         )
-        amadeus_raw, skyscanner_raw, kiwi_raw, rates_raw = results
+        amadeus_raw, skyscanner_raw, kiwi_raw, google_flights_raw, rates_raw = results
         exchange_rates = (
             rates_raw if isinstance(rates_raw, dict) else {}
         )
@@ -133,6 +143,17 @@ class PriceAgent(BaseAgent):
             sources.append({
                 "name": "kiwi",
                 "results_count": len(kiwi_raw),
+            })
+
+        if isinstance(google_flights_raw, list) and google_flights_raw:
+            for itin in google_flights_raw:
+                try:
+                    normalized.append(normalize_google_flights_flight(itin))
+                except Exception:
+                    pass
+            sources.append({
+                "name": "google_flights",
+                "results_count": len(google_flights_raw),
             })
 
         deduped = deduplicate_flights(normalized)
@@ -215,6 +236,50 @@ class PriceAgent(BaseAgent):
             "min": round(min(prices), 2),
             "max": round(max(prices), 2),
             "trend": trend,
+        }
+
+    async def _get_price_graph(self, params: dict) -> dict:
+        """Get daily lowest prices from Google Flights price graph."""
+        origin = params["origin"]
+        destination = params["destination"]
+        departure_range = params["departure_range"]
+        return_date = params.get("return_date")
+        currency = params.get("currency", "TWD")
+
+        try:
+            points = await self.google_flights.get_price_graph(
+                origin=origin,
+                destination=destination,
+                departure_range=departure_range,
+                return_date=return_date,
+                currency=currency,
+            )
+        except Exception:
+            logger.exception("Google Flights price graph failed for %s->%s", origin, destination)
+            return {"error": "Failed to fetch price graph", "points": []}
+
+        if not points:
+            return {
+                "origin": origin,
+                "destination": destination,
+                "points": [],
+                "message": "No price data available for this route/range.",
+            }
+
+        prices = [p["price"] for p in points]
+        cheapest = min(points, key=lambda p: p["price"])
+
+        return {
+            "origin": origin,
+            "destination": destination,
+            "currency": currency,
+            "points": points,
+            "total_days": len(points),
+            "cheapest_date": cheapest["departureDate"],
+            "cheapest_price": cheapest["price"],
+            "average_price": round(mean(prices), 2),
+            "min_price": min(prices),
+            "max_price": max(prices),
         }
 
     def _extract_cheapest_amadeus(self, offers: list[dict]) -> float:

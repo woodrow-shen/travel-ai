@@ -12,6 +12,9 @@ async def test_search_flights_returns_response(test_user):
             service.skyscanner, "search_flights", new_callable=AsyncMock, return_value=[]
         ),
         patch.object(service.kiwi, "search_flights", new_callable=AsyncMock, return_value=[]),
+        patch.object(
+            service.google_flights, "search_flights", new_callable=AsyncMock, return_value=[]
+        ),
     ):
         request = FlightSearchRequest(
             origin="TPE",

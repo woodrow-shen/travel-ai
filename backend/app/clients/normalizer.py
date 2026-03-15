@@ -264,6 +264,83 @@ def normalize_amadeus_flight(
     }
 
 
+def normalize_google_flights_flight(
+    itinerary: dict,
+    currency: str = "TWD",
+) -> dict:
+    """Normalize a Google Flights Data itinerary into the common flight format.
+
+    Google Flights Data API (``google-flights-data.p.rapidapi.com``) returns
+    flat flight objects with ``airlineCode``, ``departureAirport`` (IATA code),
+    ``segments[]`` with ``departureAirportCode``, ``flightNumber``, etc.
+    """
+    price = itinerary.get("price", 0) or 0
+
+    airline_code = itinerary.get("airlineCode", "")
+    airline_name = itinerary.get("airlineName", "")
+    origin = itinerary.get("departureAirport", "")
+    destination = itinerary.get("arrivalAirport", "")
+    total_duration = itinerary.get("durationMinutes", 0)
+    stops = itinerary.get("stops", 0)
+
+    segments_raw = itinerary.get("segments", [])
+    first_seg = segments_raw[0] if segments_raw else {}
+
+    # Build flight_number: airlineCode + first segment flightNumber
+    first_flight_num = first_seg.get("flightNumber", "")
+    flight_number = f"{airline_code}{first_flight_num}" if first_flight_num else ""
+
+    # Build departure/arrival datetime from date + time
+    dep_date = itinerary.get("departureDate", "")
+    dep_time = itinerary.get("departureTime", "")
+    arr_date = itinerary.get("arrivalDate", "")
+    arr_time = itinerary.get("arrivalTime", "")
+    departure_dt = f"{dep_date}T{dep_time}" if dep_date and dep_time else ""
+    arrival_dt = f"{arr_date}T{arr_time}" if arr_date and arr_time else ""
+
+    normalized_segments = []
+    for seg in segments_raw:
+        seg_dep_date = seg.get("departureDate", "")
+        seg_dep_time = seg.get("departureTime", "")
+        seg_arr_date = seg.get("arrivalDate", "")
+        seg_arr_time = seg.get("arrivalTime", "")
+        seg_code = seg.get("airlineCode", "")
+        seg_num = seg.get("flightNumber", "")
+        normalized_segments.append({
+            "airline": seg_code,
+            "airline_name": seg.get("airlineName", ""),
+            "flight_number": f"{seg_code}{seg_num}" if seg_num else "",
+            "origin": seg.get("departureAirportCode", ""),
+            "destination": seg.get("arrivalAirportCode", ""),
+            "departure_time": f"{seg_dep_date}T{seg_dep_time}"
+            if seg_dep_date and seg_dep_time
+            else "",
+            "arrival_time": f"{seg_arr_date}T{seg_arr_time}"
+            if seg_arr_date and seg_arr_time
+            else "",
+            "duration_minutes": seg.get("duration", 0),
+        })
+
+    return {
+        "source": "google_flights",
+        "price": price,
+        "currency": currency,
+        "airline": airline_code,
+        "airline_name": airline_name,
+        "flight_number": flight_number,
+        "origin": origin,
+        "destination": destination,
+        "departure_time": departure_dt,
+        "arrival_time": arrival_dt,
+        "duration_minutes": total_duration,
+        "stops": stops,
+        "segments": normalized_segments,
+        "return_segments": [],
+        "booking_url": "",
+        "booking_token": itinerary.get("bookingToken", ""),
+    }
+
+
 def _parse_iso_duration(duration: str) -> int:
     """Parse ISO 8601 duration (e.g. 'PT5H30M') into minutes."""
     if not duration or not duration.startswith("PT"):

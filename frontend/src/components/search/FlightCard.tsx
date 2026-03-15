@@ -1,7 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import type { FlightResult } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { formatPrice, formatDuration } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 interface FlightCardProps {
   flight: FlightResult;
@@ -10,12 +14,26 @@ interface FlightCardProps {
   isSelected?: boolean;
 }
 
+interface BookingOption {
+  airline_code: string;
+  flight_number: string;
+  airline_name: string;
+  price: number | null;
+  booking_link: string;
+}
+
+interface BookingDetailsResponse {
+  options: BookingOption[];
+}
+
 export function FlightCard({
   flight,
   onSelect,
   onCompare,
   isSelected = false,
 }: FlightCardProps) {
+  const [bookingLoading, setBookingLoading] = useState(false);
+
   const outbound = flight.outbound_segments;
   const firstSegment = outbound[0];
   const lastSegment = outbound[outbound.length - 1];
@@ -23,6 +41,39 @@ export function FlightCard({
   const returnSegs = flight.return_segments;
   const returnFirst = returnSegs?.[0];
   const returnLast = returnSegs?.[returnSegs.length - 1];
+
+  const hasDirectBookingUrl = !!flight.booking_url;
+  const hasBookingToken = !!flight.booking_token;
+  const showBookNow = hasDirectBookingUrl || hasBookingToken;
+
+  async function handleBookNow() {
+    if (flight.booking_url) {
+      window.open(flight.booking_url, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    if (!flight.booking_token) return;
+
+    setBookingLoading(true);
+    try {
+      const res = await api.post<BookingDetailsResponse>(
+        "/search/booking-details",
+        {
+          booking_token: flight.booking_token,
+          currency: flight.currency || "TWD",
+        }
+      );
+
+      const firstOption = res.options?.[0];
+      if (firstOption?.booking_link) {
+        window.open(firstOption.booking_link, "_blank", "noopener,noreferrer");
+      }
+    } catch {
+      // Silently fail — booking link unavailable
+    } finally {
+      setBookingLoading(false);
+    }
+  }
 
   return (
     <Card
@@ -166,15 +217,14 @@ export function FlightCard({
             Compare
           </Button>
         )}
-        {flight.booking_url && (
-          <a
-            href={flight.booking_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-sm text-[var(--color-primary)] hover:underline"
+        {showBookNow && (
+          <button
+            onClick={handleBookNow}
+            disabled={bookingLoading}
+            className="ml-auto text-sm text-[var(--color-primary)] hover:underline disabled:opacity-50"
           >
-            Book now
-          </a>
+            {bookingLoading ? "Loading..." : "Book now"}
+          </button>
         )}
       </CardFooter>
     </Card>

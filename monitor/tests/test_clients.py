@@ -204,3 +204,128 @@ def test_extract_kiwi_price_invalid():
 
     assert extract_kiwi_price({}) is None
     assert extract_kiwi_price({"price": {"raw": None}}) is None
+
+
+# --- Google Flights client tests ---
+
+
+async def test_google_flights_search_flights():
+    from app.clients.google_flights_client import GoogleFlightsClient
+
+    with patch("app.clients.google_flights_client.settings") as mock_settings:
+        mock_settings.RAPIDAPI_KEY = "test-key"
+        mock_settings.RAPIDAPI_GOOGLE_FLIGHTS_HOST = "google-flights-data.p.rapidapi.com"
+        client = GoogleFlightsClient()
+
+    mock_response = _mock_response(200, {
+        "status": True,
+        "data": {
+            "topFlights": [
+                {
+                    "airlineCode": "CI",
+                    "airlineName": "China Airlines",
+                    "departureAirport": "TPE",
+                    "arrivalAirport": "NRT",
+                    "price": 6790,
+                    "stops": 0,
+                    "segments": [],
+                }
+            ],
+            "otherFlights": [],
+        },
+    })
+
+    with patch.object(client._client, "get", new_callable=AsyncMock, return_value=mock_response):
+        results = await client.search_flights("TPE", "NRT", "2026-04-01")
+    assert len(results) == 1
+    assert results[0]["price"] == 6790
+    await client.close()
+
+
+async def test_google_flights_get_price_graph():
+    from app.clients.google_flights_client import GoogleFlightsClient
+
+    with patch("app.clients.google_flights_client.settings") as mock_settings:
+        mock_settings.RAPIDAPI_KEY = "test-key"
+        mock_settings.RAPIDAPI_GOOGLE_FLIGHTS_HOST = "google-flights-data.p.rapidapi.com"
+        client = GoogleFlightsClient()
+
+    mock_response = _mock_response(200, {
+        "status": True,
+        "data": [
+            {"departureDate": "2026-04-01", "arrivalDate": None, "price": 10795},
+            {"departureDate": "2026-04-02", "arrivalDate": None, "price": None},
+            {"departureDate": "2026-04-03", "arrivalDate": None, "price": 6538},
+        ],
+    })
+
+    with patch.object(client._client, "get", new_callable=AsyncMock, return_value=mock_response):
+        results = await client.get_price_graph("TPE", "NRT", "2026-04-01,2026-04-03")
+    # price=None filtered out
+    assert len(results) == 2
+    assert results[0]["price"] == 10795
+    await client.close()
+
+
+async def test_google_flights_get_price_graph_empty():
+    from app.clients.google_flights_client import GoogleFlightsClient
+
+    with patch("app.clients.google_flights_client.settings") as mock_settings:
+        mock_settings.RAPIDAPI_KEY = "test-key"
+        mock_settings.RAPIDAPI_GOOGLE_FLIGHTS_HOST = "google-flights-data.p.rapidapi.com"
+        client = GoogleFlightsClient()
+
+    mock_response = _mock_response(200, {"status": False})
+
+    with patch.object(client._client, "get", new_callable=AsyncMock, return_value=mock_response):
+        results = await client.get_price_graph("TPE", "NRT", "2026-04-01,2026-04-03")
+    assert results == []
+    await client.close()
+
+
+async def test_google_flights_search_flights_empty():
+    from app.clients.google_flights_client import GoogleFlightsClient
+
+    with patch("app.clients.google_flights_client.settings") as mock_settings:
+        mock_settings.RAPIDAPI_KEY = "test-key"
+        mock_settings.RAPIDAPI_GOOGLE_FLIGHTS_HOST = "google-flights-data.p.rapidapi.com"
+        client = GoogleFlightsClient()
+
+    mock_response = _mock_response(200, {"status": False})
+
+    with patch.object(client._client, "get", new_callable=AsyncMock, return_value=mock_response):
+        results = await client.search_flights("TPE", "NRT", "2026-04-01")
+    assert results == []
+    await client.close()
+
+
+# --- Google Flights normalizer tests ---
+
+
+def test_extract_google_flights_price():
+    from app.clients.normalizer import extract_google_flights_price
+
+    itin = {
+        "airlineCode": "CI",
+        "airlineName": "China Airlines",
+        "departureAirport": "TPE",
+        "arrivalAirport": "NRT",
+        "departureDate": "2026-04-01",
+        "price": 6790,
+        "stops": 0,
+        "durationMinutes": 255,
+    }
+    result = extract_google_flights_price(itin)
+    assert result is not None
+    assert result["price"] == 6790.0
+    assert result["airline"] == "CI"
+    assert result["stops"] == 0
+    assert result["departure_date"] == "2026-04-01"
+
+
+def test_extract_google_flights_price_invalid():
+    from app.clients.normalizer import extract_google_flights_price
+
+    assert extract_google_flights_price({}) is None
+    assert extract_google_flights_price({"price": 0}) is None
+    assert extract_google_flights_price({"price": -1}) is None

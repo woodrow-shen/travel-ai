@@ -56,8 +56,17 @@ async def test_search_flights():
             ],
         }
     ]
-    with patch.object(
-        agent.amadeus, "search_flights", new_callable=AsyncMock, return_value=mock_results
+    with (
+        patch.object(
+            agent.amadeus, "search_flights", new_callable=AsyncMock, return_value=mock_results
+        ),
+        patch.object(
+            agent.skyscanner, "search_flights", new_callable=AsyncMock, return_value=[]
+        ),
+        patch.object(agent.kiwi, "search_flights", new_callable=AsyncMock, return_value=[]),
+        patch.object(
+            agent.google_flights, "search_flights", new_callable=AsyncMock, return_value=[]
+        ),
     ):
         result = await agent.execute_tool(
             "search_flights",

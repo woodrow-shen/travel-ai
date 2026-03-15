@@ -6,10 +6,12 @@ from datetime import UTC, datetime
 from typing import Any
 
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
     normalize_amadeus_flight,
+    normalize_google_flights_flight,
     normalize_kiwi_flight,
     normalize_skyscanner_flight,
 )
@@ -43,6 +45,7 @@ class SearchService:
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
+        self.google_flights = GoogleFlightsClient()
 
     async def search_flights(
         self, request: FlightSearchRequest, user: User
@@ -77,17 +80,27 @@ class SearchService:
             return_date=return_date,
             adults=request.passengers,
         )
+        google_flights_task = self.google_flights.search_flights(
+            origin=origin,
+            destination=destination,
+            departure_date=departure_date,
+            return_date=return_date,
+            adults=request.passengers,
+            currency=currency,
+        )
 
         rates_task = get_exchange_rates("EUR")
 
         gather_results = await asyncio.gather(
-            amadeus_task, skyscanner_task, kiwi_task, rates_task,
+            amadeus_task, skyscanner_task, kiwi_task, google_flights_task,
+            rates_task,
             return_exceptions=True,
         )
         amadeus_raw: Any = gather_results[0]
         skyscanner_raw: Any = gather_results[1]
         kiwi_raw: Any = gather_results[2]
-        rates_raw = gather_results[3]
+        google_flights_raw: Any = gather_results[3]
+        rates_raw = gather_results[4]
         exchange_rates: dict[str, float] = rates_raw if isinstance(rates_raw, dict) else {}
 
         # Log exchange rate fetch failure
@@ -134,6 +147,17 @@ class SearchService:
                     logger.debug("Failed to normalize Kiwi offer", exc_info=True)
         elif isinstance(kiwi_raw, BaseException):
             logger.warning("Kiwi search failed: %s", kiwi_raw)
+
+        if isinstance(google_flights_raw, list):
+            for itin in google_flights_raw:
+                try:
+                    normalized.append(
+                        normalize_google_flights_flight(itin, currency=currency)
+                    )
+                except Exception:
+                    logger.debug("Failed to normalize Google Flights offer", exc_info=True)
+        elif isinstance(google_flights_raw, BaseException):
+            logger.warning("Google Flights search failed: %s", google_flights_raw)
 
         # Deduplicate and convert to FlightResult
         deduped = deduplicate_flights(normalized)

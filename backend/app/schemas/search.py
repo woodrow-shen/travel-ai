@@ -82,6 +82,7 @@ class FlightResult(BaseModel):
     total_duration_minutes: int
     stops: int = 0
     booking_url: str = ""
+    booking_token: str = ""
     expires_at: str | None = None
 
 
@@ -159,6 +160,7 @@ def normalized_dict_to_flight_result(d: dict, expires_at: str = "") -> FlightRes
         total_duration_minutes=d.get("duration_minutes", 0),
         stops=d.get("stops", 0),
         booking_url=d.get("booking_url", ""),
+        booking_token=d.get("booking_token", ""),
         expires_at=expires_at or None,
     )
 
@@ -243,3 +245,40 @@ class AdventureSearchResponse(BaseModel):
     adventures: list[AdventureDestination]
     search_coverage: str
     origin: str
+
+
+class BookingDetailsRequest(BaseModel):
+    booking_token: str
+    currency: str = "TWD"
+
+
+class BookingOption(BaseModel):
+    airline_code: str = ""
+    flight_number: str = ""
+    airline_name: str = ""
+    price: float | None = None
+    booking_link: str = ""
+
+
+class BookingDetailsResponse(BaseModel):
+    options: list[BookingOption]
+
+
+class PriceGraphRequest(BaseModel):
+    origin: str
+    destination: str
+    departure_range: str  # "2026-04-01,2026-04-30"
+    return_date: str | None = None
+    currency: str = "TWD"
+
+
+class PriceGraphPoint(BaseModel):
+    departure_date: str
+    arrival_date: str | None = None
+    price: float
+
+
+class PriceGraphResponse(BaseModel):
+    points: list[PriceGraphPoint]
+    origin: str
+    destination: str

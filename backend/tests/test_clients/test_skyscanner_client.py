@@ -12,11 +12,16 @@ BASE_URL = f"https://{SKYSCANNER_HOST}"
 
 @pytest.fixture
 def skyscanner():
-    with patch("app.clients.rapidapi_base.settings") as mock_settings:
+    from app.clients.rapidapi_base import RapidAPIBaseClient
+
+    # Clear any backoff state leaked from other tests (e.g. integration tests)
+    RapidAPIBaseClient._blocked_until.pop(SKYSCANNER_HOST, None)
+    with patch("app.clients.skyscanner_client.settings") as mock_settings:
         mock_settings.RAPIDAPI_KEY = "test-key"
         mock_settings.RAPIDAPI_SKYSCANNER_HOST = SKYSCANNER_HOST
         client = SkyscannerClient()
     yield client
+    RapidAPIBaseClient._blocked_until.pop(SKYSCANNER_HOST, None)
 
 
 # --- Mock response fixtures ---
@@ -334,8 +339,12 @@ async def test_api_returns_status_false(skyscanner):
 
 
 def test_missing_api_key():
-    with patch("app.clients.rapidapi_base.settings") as mock_settings:
-        mock_settings.RAPIDAPI_KEY = ""
-        mock_settings.RAPIDAPI_SKYSCANNER_HOST = SKYSCANNER_HOST
+    with (
+        patch("app.clients.skyscanner_client.settings") as mock_sky,
+        patch("app.clients.rapidapi_base.settings") as mock_base,
+    ):
+        mock_sky.RAPIDAPI_KEY = ""
+        mock_sky.RAPIDAPI_SKYSCANNER_HOST = SKYSCANNER_HOST
+        mock_base.RAPIDAPI_KEY = ""
         client = SkyscannerClient()
         assert client._headers["x-rapidapi-key"] == ""

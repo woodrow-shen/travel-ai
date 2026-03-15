@@ -46,7 +46,7 @@ travel-ai/
 │       ├── agents/                   # AI agents: base, coordinator, 5 specialists
 │       │   └── tools/                # Agent tool implementations
 │       ├── services/                 # Business logic layer
-│       ├── clients/                  # External API clients (Amadeus + RapidAPI: Skyscanner, Kiwi)
+│       ├── clients/                  # External API clients (Amadeus + RapidAPI: Skyscanner, Kiwi, Google Flights)
 │       ├── lib/                      # Shared utilities (currency conversion, etc.)
 │       ├── models/                   # SQLAlchemy ORM (11 models)
 │       ├── schemas/                  # Pydantic request/response schemas
@@ -291,7 +291,7 @@ See `.env.example` for the complete list. Key groups:
 | JWT | `JWT_SECRET_KEY`, `JWT_ALGORITHM`, `JWT_ACCESS_TOKEN_EXPIRE_MINUTES`, `JWT_REFRESH_TOKEN_EXPIRE_DAYS` |
 | AI | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 | Amadeus | `AMADEUS_API_KEY`, `AMADEUS_API_SECRET`, `AMADEUS_BASE_URL` |
-| RapidAPI | `RAPIDAPI_KEY` (Skyscanner + Kiwi flight search) |
+| RapidAPI | `RAPIDAPI_KEY` (Skyscanner + Kiwi + Google Flights flight search), `RAPIDAPI_GOOGLE_FLIGHTS_HOST` |
 | Email | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_FROM`, `EMAIL_FROM_NAME` |
 | Frontend (prod) | `NEXT_PUBLIC_API_URL` (not set in dev — uses Docker DNS fallback) |
 
@@ -453,7 +453,7 @@ When the user reports their token usage level, adjust behavior:
 
 ## Known Issues & Incomplete Areas
 
-- **RapidAPI clients**: Skyscanner + Kiwi clients are implemented but subject to rate limits (429 errors on free tier)
+- **RapidAPI clients**: Skyscanner + Kiwi + Google Flights clients are implemented but subject to rate limits (429 errors on free tier); Google Flights API is subject to the same RapidAPI rate limits as Skyscanner and Kiwi
 - **Hotel search**: ⏸️ On hold — Skyscanner/Kiwi hotel APIs not verified on free tier. All hotel endpoints are stubs returning empty.
 - **Price history**: `PriceAgent._get_price_history()` wired to price_history table with trend analysis
 - **Recommendation preferences**: `RecommendationAgent._get_user_preferences()` wired to user_preferences table

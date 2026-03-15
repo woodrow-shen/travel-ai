@@ -7,10 +7,12 @@ from app.agents.base import BaseAgent
 from app.agents.tools.flight_tools import FLIGHT_TOOLS
 from app.agents.tools.hotel_tools import HOTEL_TOOLS
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
     normalize_amadeus_flight,
+    normalize_google_flights_flight,
     normalize_kiwi_flight,
     normalize_skyscanner_flight,
 )
@@ -49,6 +51,7 @@ class SearchAgent(BaseAgent):
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
+        self.google_flights = GoogleFlightsClient()
 
     @property
     def name(self) -> str:
@@ -118,10 +121,17 @@ class SearchAgent(BaseAgent):
                 return_date=return_date,
                 adults=passengers,
             ),
+            self.google_flights.search_flights(
+                origin=origin,
+                destination=destination,
+                departure_date=departure_date,
+                return_date=return_date,
+                adults=passengers,
+            ),
             get_exchange_rates("EUR"),
             return_exceptions=True,
         )
-        amadeus_raw, skyscanner_raw, kiwi_raw, rates_raw = results
+        amadeus_raw, skyscanner_raw, kiwi_raw, google_flights_raw, rates_raw = results
         exchange_rates = (
             rates_raw if isinstance(rates_raw, dict) else {}
         )
@@ -167,6 +177,16 @@ class SearchAgent(BaseAgent):
                     logger.debug("Normalize Kiwi failed", exc_info=True)
         elif isinstance(kiwi_raw, BaseException):
             logger.warning("Kiwi search failed: %s", kiwi_raw)
+
+        if isinstance(google_flights_raw, list) and google_flights_raw:
+            sources_used.append("google_flights")
+            for itin in google_flights_raw:
+                try:
+                    normalized.append(normalize_google_flights_flight(itin))
+                except Exception:
+                    logger.debug("Normalize Google Flights failed", exc_info=True)
+        elif isinstance(google_flights_raw, BaseException):
+            logger.warning("Google Flights search failed: %s", google_flights_raw)
 
         deduped = deduplicate_flights(normalized)
         deduped.sort(key=lambda f: f.get("price", float("inf")))

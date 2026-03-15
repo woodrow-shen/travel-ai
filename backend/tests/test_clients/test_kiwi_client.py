@@ -12,11 +12,15 @@ BASE_URL = f"https://{KIWI_HOST}"
 
 @pytest.fixture
 def kiwi():
-    with patch("app.clients.rapidapi_base.settings") as mock_settings:
+    from app.clients.rapidapi_base import RapidAPIBaseClient
+
+    RapidAPIBaseClient._blocked_until.pop(KIWI_HOST, None)
+    with patch("app.clients.kiwi_client.settings") as mock_settings:
         mock_settings.RAPIDAPI_KEY = "test-key"
         mock_settings.RAPIDAPI_KIWI_HOST = KIWI_HOST
         client = KiwiClient()
     yield client
+    RapidAPIBaseClient._blocked_until.pop(KIWI_HOST, None)
 
 
 # --- Mock response fixtures ---
@@ -295,8 +299,12 @@ async def test_api_returns_status_false(kiwi):
 
 
 def test_missing_api_key():
-    with patch("app.clients.rapidapi_base.settings") as mock_settings:
-        mock_settings.RAPIDAPI_KEY = ""
-        mock_settings.RAPIDAPI_KIWI_HOST = KIWI_HOST
+    with (
+        patch("app.clients.kiwi_client.settings") as mock_kiwi,
+        patch("app.clients.rapidapi_base.settings") as mock_base,
+    ):
+        mock_kiwi.RAPIDAPI_KEY = ""
+        mock_kiwi.RAPIDAPI_KIWI_HOST = KIWI_HOST
+        mock_base.RAPIDAPI_KEY = ""
         client = KiwiClient()
         assert client._headers["x-rapidapi-key"] == ""

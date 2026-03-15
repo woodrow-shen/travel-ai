@@ -64,7 +64,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Total API endpoints     | 25+        |
 | Database tables         | 11         |
 | AI agents               | 6 (1 coordinator + 5 specialists) |
-| External data sources   | 3 (Amadeus, Skyscanner, Kiwi)     |
+| External data sources   | 4 (Amadeus, Skyscanner, Kiwi, Google Flights) |
 | Docker services         | 5          |
 
 ---
@@ -100,6 +100,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Amadeus Flight Offers Search (one-way, roundtrip)
 - [x] Skyscanner flight search (one-way, roundtrip, incomplete)
 - [x] Kiwi flight search (one-way, return)
+- [x] Google Flights API integration as 4th flight search source (RapidAPI)
 - [x] Multi-source parallel search with unified normalizer
 - [x] Search results deduplication
 - [x] Redis caching for search results
@@ -136,7 +137,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] BudgetAgent — per-country daily cost estimates (TWD)
 - [x] SSE streaming chat endpoint
 - [x] Multi-turn conversation support
-- [x] Agent layer integrated with multi-source search (Amadeus + Skyscanner + Kiwi)
+- [x] Agent layer integrated with multi-source search (Amadeus + Skyscanner + Kiwi + Google Flights)
 - [x] PriceAgent wired to price_history DB (trend analysis: increasing/decreasing/stable)
 - [x] RecommendationAgent wired to user preferences DB
 
@@ -167,7 +168,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] cleanup — price_history 180d + notification_log 90d purge
 - [x] Notifier — email dispatch with trigger conditions + cooldown
 - [x] Route filtering + user preference filtering
-- [x] Multi-source monitoring (Skyscanner + Kiwi in addition to Amadeus)
+- [x] Multi-source monitoring (Skyscanner + Kiwi + Google Flights in addition to Amadeus)
 
 ### 3.9 Frontend Pages
 
@@ -231,16 +232,16 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Auth API tests (Google OAuth, JWT, tiers)
 - [x] Agent tests (BaseAgent, Coordinator, specialists)
 - [x] Service tests (search, compare, subscription, email)
-- [x] Client tests (Amadeus, Skyscanner, Kiwi)
+- [x] Client tests (Amadeus, Skyscanner, Kiwi, Google Flights)
 - [x] Normalizer tests (multi-source → unified format)
 - [x] Currency conversion tests
 
 ### 5.2 Monitor Tests (20 passing)
 
 - [x] Anomaly detector tests
-- [x] Client tests (Amadeus, RapidAPI base, Skyscanner, Kiwi)
+- [x] Client tests (Amadeus, RapidAPI base, Skyscanner, Kiwi, Google Flights)
 - [x] Rate limiter tests
-- [x] Normalizer tests (Skyscanner + Kiwi price extraction)
+- [x] Normalizer tests (Skyscanner + Kiwi + Google Flights price extraction)
 
 ### 5.3 Frontend Tests (111 passing)
 

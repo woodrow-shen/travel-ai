@@ -19,6 +19,7 @@ class MonitorSettings(BaseSettings):
     RAPIDAPI_KEY: str = ""
     RAPIDAPI_SKYSCANNER_HOST: str = "fly-scraper.p.rapidapi.com"
     RAPIDAPI_KIWI_HOST: str = "flights-scraper-real-time.p.rapidapi.com"
+    RAPIDAPI_GOOGLE_FLIGHTS_HOST: str = "google-flights-data.p.rapidapi.com"
 
     # Email
     SMTP_HOST: str = "smtp.gmail.com"

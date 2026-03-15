@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from statistics import mean
 from typing import Any
@@ -7,7 +8,16 @@ from sqlalchemy import select
 from app.agents.base import BaseAgent
 from app.agents.tools.price_tools import PRICE_TOOLS
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.kiwi_client import KiwiClient
+from app.clients.normalizer import (
+    deduplicate_flights,
+    normalize_amadeus_flight,
+    normalize_kiwi_flight,
+    normalize_skyscanner_flight,
+)
+from app.clients.skyscanner_client import SkyscannerClient
 from app.db.session import async_session_factory
+from app.lib.currency import get_exchange_rates
 from app.models.price_history import PriceHistory
 
 logger = logging.getLogger(__name__)
@@ -17,6 +27,8 @@ class PriceAgent(BaseAgent):
     def __init__(self):
         super().__init__()
         self.amadeus = AmadeusClient()
+        self.skyscanner = SkyscannerClient()
+        self.kiwi = KiwiClient()
 
     @property
     def name(self) -> str:
@@ -45,30 +57,97 @@ class PriceAgent(BaseAgent):
         item_type = params["item_type"]
         search_params = params["search_params"]
 
-        if item_type == "flight":
-            origin = search_params.get("origin", "")
-            destination = search_params.get("destination", "")
-            date = search_params.get("date", "")
+        if item_type != "flight":
+            return {"comparisons": [], "sources_checked": []}
 
-            amadeus_raw = await self.amadeus.search_flights(
-                origin=origin, destination=destination, departure_date=date
-            )
+        origin = search_params.get("origin", "")
+        destination = search_params.get("destination", "")
+        date = search_params.get("date", "")
 
-            sources = []
-            if isinstance(amadeus_raw, list) and amadeus_raw:
-                sources.append({
-                    "name": "amadeus",
-                    "results_count": len(amadeus_raw),
-                    "cheapest": self._extract_cheapest_amadeus(amadeus_raw),
-                })
+        # Multi-source parallel search
+        results = await asyncio.gather(
+            self.amadeus.search_flights(
+                origin=origin,
+                destination=destination,
+                departure_date=date,
+            ),
+            self.skyscanner.search_flights(
+                origin_sky_id=origin,
+                destination_sky_id=destination,
+                departure_date=date,
+            ),
+            self.kiwi.search_flights(
+                origin_sky_id=origin,
+                destination_sky_id=destination,
+                departure_date=date,
+            ),
+            get_exchange_rates("EUR"),
+            return_exceptions=True,
+        )
+        amadeus_raw, skyscanner_raw, kiwi_raw, rates_raw = results
+        exchange_rates = (
+            rates_raw if isinstance(rates_raw, dict) else {}
+        )
 
-            return {
-                "comparisons": sources,
-                "sources_checked": [s["name"] for s in sources],
-                "best_source": sources[0]["name"] if sources else None,
-            }
+        sources = []
+        normalized: list[dict] = []
 
-        return {"comparisons": [], "sources_checked": []}
+        if isinstance(amadeus_raw, list) and amadeus_raw:
+            for offer in amadeus_raw:
+                try:
+                    normalized.append(
+                        normalize_amadeus_flight(
+                            offer, exchange_rates=exchange_rates
+                        )
+                    )
+                except Exception:
+                    pass
+            sources.append({
+                "name": "amadeus",
+                "results_count": len(amadeus_raw),
+            })
+
+        if isinstance(skyscanner_raw, list) and skyscanner_raw:
+            for itin in skyscanner_raw:
+                try:
+                    normalized.append(
+                        normalize_skyscanner_flight(
+                            itin,
+                            origin=origin,
+                            destination=destination,
+                        )
+                    )
+                except Exception:
+                    pass
+            sources.append({
+                "name": "skyscanner",
+                "results_count": len(skyscanner_raw),
+            })
+
+        if isinstance(kiwi_raw, list) and kiwi_raw:
+            for itin in kiwi_raw:
+                try:
+                    normalized.append(normalize_kiwi_flight(itin))
+                except Exception:
+                    pass
+            sources.append({
+                "name": "kiwi",
+                "results_count": len(kiwi_raw),
+            })
+
+        deduped = deduplicate_flights(normalized)
+        deduped.sort(key=lambda f: f.get("price", float("inf")))
+
+        cheapest = deduped[0] if deduped else None
+        best_source = cheapest.get("source") if cheapest else None
+
+        return {
+            "comparisons": deduped,
+            "sources_checked": [s["name"] for s in sources],
+            "best_source": best_source,
+            "cheapest_price": cheapest.get("price") if cheapest else None,
+            "total_options": len(deduped),
+        }
 
     async def _get_price_history(self, params: dict) -> dict:
         origin = params["origin"]

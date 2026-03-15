@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import datetime
 from typing import Any
@@ -6,6 +7,15 @@ from app.agents.base import BaseAgent
 from app.agents.tools.flight_tools import FLIGHT_TOOLS
 from app.agents.tools.hotel_tools import HOTEL_TOOLS
 from app.clients.amadeus_client import AmadeusClient
+from app.clients.kiwi_client import KiwiClient
+from app.clients.normalizer import (
+    deduplicate_flights,
+    normalize_amadeus_flight,
+    normalize_kiwi_flight,
+    normalize_skyscanner_flight,
+)
+from app.clients.skyscanner_client import SkyscannerClient
+from app.lib.currency import get_exchange_rates
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +47,8 @@ class SearchAgent(BaseAgent):
     def __init__(self):
         super().__init__()
         self.amadeus = AmadeusClient()
+        self.skyscanner = SkyscannerClient()
+        self.kiwi = KiwiClient()
 
     @property
     def name(self) -> str:
@@ -73,21 +85,97 @@ class SearchAgent(BaseAgent):
         return {"error": f"Unknown tool: {tool_name}"}
 
     async def _search_flights(self, params: dict) -> dict:
-        amadeus_raw = await self.amadeus.search_flights(
-            origin=params["origin"],
-            destination=params["destination"],
-            departure_date=params["date_from"],
-            return_date=params.get("date_to"),
-            adults=params.get("passengers", 1),
-            cabin_class=params.get("cabin_class"),
-            max_stops=params.get("max_stops"),
+        origin = params["origin"]
+        destination = params["destination"]
+        departure_date = params["date_from"]
+        return_date = params.get("date_to")
+        passengers = params.get("passengers", 1)
+        cabin_class = params.get("cabin_class")
+        max_stops = params.get("max_stops")
+
+        # Multi-source parallel search
+        results = await asyncio.gather(
+            self.amadeus.search_flights(
+                origin=origin,
+                destination=destination,
+                departure_date=departure_date,
+                return_date=return_date,
+                adults=passengers,
+                cabin_class=cabin_class,
+                max_stops=max_stops,
+            ),
+            self.skyscanner.search_flights(
+                origin_sky_id=origin,
+                destination_sky_id=destination,
+                departure_date=departure_date,
+                return_date=return_date,
+                adults=passengers,
+            ),
+            self.kiwi.search_flights(
+                origin_sky_id=origin,
+                destination_sky_id=destination,
+                departure_date=departure_date,
+                return_date=return_date,
+                adults=passengers,
+            ),
+            get_exchange_rates("EUR"),
+            return_exceptions=True,
+        )
+        amadeus_raw, skyscanner_raw, kiwi_raw, rates_raw = results
+        exchange_rates = (
+            rates_raw if isinstance(rates_raw, dict) else {}
         )
 
-        flights = []
-        if isinstance(amadeus_raw, list):
-            flights.extend([{"source": "amadeus", "data": f} for f in amadeus_raw])
+        # Normalize all sources
+        normalized: list[dict] = []
+        sources_used: list[str] = []
 
-        return {"flights": flights, "total": len(flights)}
+        if isinstance(amadeus_raw, list) and amadeus_raw:
+            sources_used.append("amadeus")
+            for offer in amadeus_raw:
+                try:
+                    normalized.append(
+                        normalize_amadeus_flight(
+                            offer, exchange_rates=exchange_rates
+                        )
+                    )
+                except Exception:
+                    logger.debug("Normalize Amadeus failed", exc_info=True)
+        elif isinstance(amadeus_raw, BaseException):
+            logger.warning("Amadeus search failed: %s", amadeus_raw)
+
+        if isinstance(skyscanner_raw, list) and skyscanner_raw:
+            sources_used.append("skyscanner")
+            for itin in skyscanner_raw:
+                try:
+                    normalized.append(
+                        normalize_skyscanner_flight(
+                            itin, origin=origin, destination=destination
+                        )
+                    )
+                except Exception:
+                    logger.debug("Normalize Skyscanner failed", exc_info=True)
+        elif isinstance(skyscanner_raw, BaseException):
+            logger.warning("Skyscanner search failed: %s", skyscanner_raw)
+
+        if isinstance(kiwi_raw, list) and kiwi_raw:
+            sources_used.append("kiwi")
+            for itin in kiwi_raw:
+                try:
+                    normalized.append(normalize_kiwi_flight(itin))
+                except Exception:
+                    logger.debug("Normalize Kiwi failed", exc_info=True)
+        elif isinstance(kiwi_raw, BaseException):
+            logger.warning("Kiwi search failed: %s", kiwi_raw)
+
+        deduped = deduplicate_flights(normalized)
+        deduped.sort(key=lambda f: f.get("price", float("inf")))
+
+        return {
+            "flights": deduped,
+            "total": len(deduped),
+            "sources": sources_used,
+        }
 
     async def _search_hotels(self, params: dict) -> dict:
         # Hotel API integration placeholder

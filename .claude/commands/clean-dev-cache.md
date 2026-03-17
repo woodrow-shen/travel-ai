@@ -15,30 +15,35 @@ Clean up all development caches, build artifacts, and temporary files from the p
 docker compose down 2>/dev/null || true
 ```
 
-2. Remove all known cache and build artifact directories (including root-owned files from Docker):
+2. Remove root-owned directories created by Docker containers (e.g. `.next` from the frontend dev server). Use a disposable Alpine container to delete as root without requiring sudo:
 
 ```bash
-sudo find . -type d \( \
+docker run --rm -v "$(pwd)/frontend:/workspace" alpine rm -rf /workspace/.next 2>/dev/null || true
+```
+
+3. Remove all known cache and build artifact directories:
+
+```bash
+find . -maxdepth 4 -type d \( \
   -name "__pycache__" \
   -o -name ".pytest_cache" \
   -o -name ".mypy_cache" \
   -o -name ".ruff_cache" \
-  -o -name ".next" \
   -o -name "node_modules" \
   -o -name ".turbo" \
-  -o -name "dist" \
-  -o -name "build" \
   -o -name ".eggs" \
   -o -name "*.egg-info" \
   -o -name ".tox" \
   -o -name ".coverage_cache" \
+  -o -name "playwright-report" \
+  -o -name "test-results" \
 \) -exec rm -rf {} + 2>/dev/null
 ```
 
-3. Remove stale temporary and generated files:
+4. Remove stale temporary and generated files:
 
 ```bash
-sudo find . -type f \( \
+find . -type f \( \
   -name "*.pyc" \
   -o -name "*.pyo" \
   -o -name ".coverage" \
@@ -48,10 +53,10 @@ sudo find . -type f \( \
 \) -delete 2>/dev/null
 ```
 
-4. Optionally prune Docker build cache if disk space is a concern:
+5. Optionally prune Docker build cache if disk space is a concern:
 
 ```bash
 docker builder prune -f 2>/dev/null || true
 ```
 
-5. Report what was cleaned.
+6. Report what was cleaned.

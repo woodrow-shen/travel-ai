@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.3.0] - 2026-03-17
+
+### Added
+
+- **Hotel search integration**: Skyscanner + Kiwi hotel APIs as 2 search sources, parallel execution with unified normalizer and deduplication
+- **Hotel autocomplete**: Location name → API-specific IDs with 7-day Redis cache
+- **Hotel normalizer**: Source-specific raw data → unified HotelResult (17 fields), dedup by name + lowest price
+- **Hotel comparison**: Cache-based `POST /compare/hotels` endpoint with cheapest/best-rated picks
+- **Google Flights**: 4th flight search source via RapidAPI (one-way + roundtrip), booking details, price graph
+- **Frontend hotel form**: Destination, check-in/check-out, guests, rooms fields in SearchForm
+- **Agent hotel support**: SearchAgent and PriceAgent wired to multi-source hotel search
+- **Frontend component tests**: HotelCard (19), SearchForm (12), Header (10), CompareTable (6) — 49 new tests
+- **Email validation**: DNS/MX deliverability check via `email-validator` in add-email endpoint
+
+### Fixed
+
+- Subscription tests sending real SMTP emails to `example.com` (added auto-mock + `ENV=test` guard)
+- mypy type error in Skyscanner hotel image extraction (`Any | None` → `str`)
+
 ## [0.2.0] - 2026-03-13
 
 ### Added

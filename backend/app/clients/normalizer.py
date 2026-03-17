@@ -413,7 +413,7 @@ def normalize_skyscanner_hotel(
         if isinstance(img, str):
             images.append(img)
         elif isinstance(img, dict):
-            images.append(img.get("url", img.get("thumbnail", "")))
+            images.append(img.get("url") or img.get("thumbnail") or "")
 
     return {
         "source": "skyscanner",

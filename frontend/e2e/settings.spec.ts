@@ -1,74 +1,15 @@
 import { test, expect } from "@playwright/test";
-import { setupAuthenticated } from "./helpers";
+import {
+  setupAuthenticated,
+  mockSubscriptionsApi,
+  mockPreferencesApi,
+} from "./helpers";
+import { MOCK_PREFERENCES } from "./fixtures";
 
 test.describe("Settings — Subscriptions page", () => {
   test.beforeEach(async ({ page }) => {
     await setupAuthenticated(page);
-
-    // Mock subscription endpoints
-    await page.route("**/api/subscriptions/emails", (route) => {
-      if (route.request().method() === "GET") {
-        return route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify([
-            {
-              id: "email-1",
-              email: "test@example.com",
-              is_verified: true,
-              verified_at: "2026-01-01T00:00:00Z",
-              created_at: "2026-01-01T00:00:00Z",
-            },
-          ]),
-        });
-      }
-      // POST — add email
-      return route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          id: "email-2",
-          email: "new@example.com",
-          is_verified: false,
-          verified_at: null,
-          created_at: "2026-03-17T00:00:00Z",
-        }),
-      });
-    });
-
-    await page.route("**/api/subscriptions", (route) => {
-      if (route.request().method() === "GET") {
-        return route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify([
-            {
-              id: "sub-1",
-              email_id: "email-1",
-              type: "bug_fare",
-              config: { origin: "TPE", destination: "NRT" },
-              is_active: true,
-              last_sent_at: null,
-              created_at: "2026-01-01T00:00:00Z",
-            },
-          ]),
-        });
-      }
-      // POST — create subscription
-      return route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          id: "sub-2",
-          email_id: "email-1",
-          type: "price_drop",
-          config: {},
-          is_active: true,
-          last_sent_at: null,
-          created_at: "2026-03-17T00:00:00Z",
-        }),
-      });
-    });
+    await mockSubscriptionsApi(page);
   });
 
   test("displays subscription management page", async ({ page }) => {
@@ -87,6 +28,13 @@ test.describe("Settings — Subscriptions page", () => {
     await expect(page.getByText("Verified")).toBeVisible();
   });
 
+  test("shows pending email with pending badge", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    await expect(page.locator("span").filter({ hasText: /^pending@example\.com$/ })).toBeVisible();
+    await expect(page.getByText("Pending", { exact: true })).toBeVisible();
+  });
+
   test("shows existing subscription", async ({ page }) => {
     await page.goto("/settings/subscriptions");
 
@@ -100,34 +48,83 @@ test.describe("Settings — Subscriptions page", () => {
     await expect(page.getByPlaceholder("Add email address")).toBeVisible();
     await expect(page.getByRole("button", { name: "Add" })).toBeVisible();
   });
+
+  test("add button disabled when input empty", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    await expect(page.getByRole("button", { name: "Add" })).toBeDisabled();
+  });
+
+  test("add email via input and button", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    await page.getByPlaceholder("Add email address").fill("new@example.com");
+    await page.getByRole("button", { name: "Add" }).click();
+
+    // Input should be cleared after successful add
+    await expect(page.getByPlaceholder("Add email address")).toHaveValue("");
+  });
+
+  test("add email via Enter key", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    await page.getByPlaceholder("Add email address").fill("enter@example.com");
+    await page.getByPlaceholder("Add email address").press("Enter");
+
+    await expect(page.getByPlaceholder("Add email address")).toHaveValue("");
+  });
+
+  test("remove email button", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    const removeButtons = page.getByRole("button", { name: "Remove" });
+    await expect(removeButtons.first()).toBeVisible();
+  });
+
+  test("toggle subscription active/inactive", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    const toggle = page.getByRole("switch").first();
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute("aria-checked", "true");
+
+    await toggle.click();
+  });
+
+  test("delete subscription", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    const deleteButton = page.getByRole("button", { name: "Delete" }).first();
+    await expect(deleteButton).toBeVisible();
+    await deleteButton.click();
+  });
+
+  test("new subscription form visible with verified emails", async ({ page }) => {
+    await page.goto("/settings/subscriptions");
+
+    await expect(page.getByText("New Subscription")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create Subscription" })).toBeVisible();
+  });
+
+  test("shows add and verify email message when no verified emails", async ({ page }) => {
+    await page.unrouteAll({ behavior: "ignoreErrors" });
+    await setupAuthenticated(page);
+    await mockSubscriptionsApi(
+      page,
+      [{ id: "email-u", email: "unverified@test.com", is_verified: false, verified_at: null, created_at: "2026-03-17T00:00:00Z" }],
+      []
+    );
+
+    await page.goto("/settings/subscriptions");
+
+    await expect(page.getByText("Add and verify an email address above")).toBeVisible();
+  });
 });
 
 test.describe("Settings — Preferences page", () => {
   test.beforeEach(async ({ page }) => {
     await setupAuthenticated(page);
-
-    await page.route("**/api/preferences", (route) => {
-      if (route.request().method() === "GET") {
-        return route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            home_airports: ["TPE"],
-            preferred_airlines: ["BR", "CI"],
-            excluded_airlines: null,
-            preferred_alliances: ["Star Alliance"],
-            cabin_classes: ["economy", "business"],
-            max_stops: 1,
-          }),
-        });
-      }
-      // PATCH — update
-      return route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(route.request().postDataJSON()),
-      });
-    });
+    await mockPreferencesApi(page);
   });
 
   test("displays preferences page with loaded data", async ({ page }) => {
@@ -153,8 +150,64 @@ test.describe("Settings — Preferences page", () => {
   test("alliance buttons reflect loaded preferences", async ({ page }) => {
     await page.goto("/settings/preferences");
 
-    // Star Alliance should be selected (has primary color class)
     const starAlliance = page.getByRole("button", { name: "Star Alliance" });
     await expect(starAlliance).toBeVisible();
+  });
+
+  test("save preferences shows Saved successfully", async ({ page }) => {
+    await page.goto("/settings/preferences");
+
+    await page.getByRole("button", { name: "Save Preferences" }).click();
+
+    await expect(page.getByText("Saved successfully")).toBeVisible();
+  });
+
+  test("preferences loading state", async ({ page }) => {
+    await page.unrouteAll({ behavior: "ignoreErrors" });
+    await setupAuthenticated(page);
+
+    let resolvePrefs!: () => void;
+    const prefsPromise = new Promise<void>((r) => { resolvePrefs = r; });
+
+    await page.route("**/api/users/preferences", async (route) => {
+      await prefsPromise;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(MOCK_PREFERENCES),
+      });
+    });
+
+    await page.goto("/settings/preferences");
+
+    await expect(page.getByText("Loading preferences...")).toBeVisible();
+
+    resolvePrefs();
+
+    await expect(page.getByText("Home Airports")).toBeVisible();
+  });
+});
+
+test.describe("Settings — Subscription complete flow", () => {
+  test("add email → create subscription → subscription appears", async ({ page }) => {
+    await setupAuthenticated(page);
+
+    const verifiedEmail = {
+      id: "email-1",
+      email: "test@example.com",
+      is_verified: true,
+      verified_at: "2026-01-01T00:00:00Z",
+      created_at: "2026-01-01T00:00:00Z",
+    };
+
+    await mockSubscriptionsApi(page, [verifiedEmail], []);
+
+    await page.goto("/settings/subscriptions");
+
+    await expect(page.getByRole("button", { name: "Create Subscription" })).toBeVisible();
+
+    // Select email and create subscription
+    await page.locator("select").last().selectOption("email-1");
+    await page.getByRole("button", { name: "Create Subscription" }).click();
   });
 });

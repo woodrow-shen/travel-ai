@@ -61,7 +61,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Backend test count      | 105        |
 | Monitor test count      | 20         |
 | Frontend test count     | 160        |
-| E2E test count          | 18         |
+| E2E test count          | 77         |
 | Total API endpoints     | 25+        |
 | Database tables         | 11         |
 | AI agents               | 6 (1 coordinator + 5 specialists) |
@@ -252,13 +252,15 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Component tests (Button, Input, Card, FlightCard, HotelCard, Footer, Header, SearchForm, CompareTable — 89 tests)
 - [x] Hook tests (useCompare, useTrip — 14 tests)
 
-### 5.4 End-to-End Tests (18 passing)
+### 5.4 End-to-End Tests (77 passing)
 
-- [x] Search → results → compare flow (flight + hotel search, sort, floating compare bar)
-- [x] Chat conversation flow (coming soon page, back link)
-- [x] Subscription management (email list, verified badge, subscription list, add form)
-- [x] Settings pages (preferences form, alliances, save button)
-- [x] Auth flow (sign in button, user name, logout, protected pages, navigation)
+- [x] Auth flow — sign in, user name, logout, protected pages, navigation, user menu, mobile menu (11 tests)
+- [x] Auth callback — success, error params, no token, return-to-home (4 tests)
+- [x] Search → Results → Compare flow — flight/hotel search, one-way/roundtrip, sort, compare bar, error/empty states (22 tests)
+- [x] Compare page — manual compare, loading, error, type switching, price highlighting (10 tests)
+- [x] Trip management — CRUD, status badges, itinerary view, confirm dialogs, empty/error states (14 tests)
+- [x] Settings — subscription CRUD, email add/remove, toggle, preferences save/load, complete flow (19 tests)
+- [x] Chat conversation flow — coming soon page, back link (2 tests)
 
 ### 5.5 Code Quality
 
@@ -295,7 +297,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Fixed |
 | KI-05 | Low | Infra | Caddyfile for production TLS not created (Railway 不需要) | Open |
 | KI-07 | Low | External | RapidAPI free tier rate limits (429 errors) — backoff implemented | Mitigated |
-| KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Fixed — 18 E2E tests (4 spec files) |
+| KI-08 | Low | Testing | Frontend E2E tests not written (Playwright configured but empty) | Fixed — 77 E2E tests (7 spec files) |
 | KI-09 | Low | Infra | `alembic.ini` has hardcoded dev DB URL | Open |
 
 ---

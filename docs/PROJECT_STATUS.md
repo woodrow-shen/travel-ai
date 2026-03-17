@@ -321,8 +321,6 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | Item | Description | Estimated Effort | Blocked By |
 |------|-------------|-----------------|------------|
 | E2E test suite | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 | Large | — |
-| Frontend test coverage | Add component and hook tests (Vitest + @testing-library/react) | Medium | Done |
-| Agent ↔ Service integration | Wire SearchAgent/PriceAgent to multi-source search（僅影響 Chat） | Medium | Done |
 | Caddyfile | TLS config for VM deployment（僅 VM 部署需要，Railway 不需要） | Small | — |
 | Deployment runbook | Step-by-step production deployment documentation | Small | — |
 | Incident playbook | Monitoring alerts and response procedures | Small | Production deployment |

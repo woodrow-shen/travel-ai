@@ -382,7 +382,7 @@ The `docs/` directory contains the project's authoritative design and management
    - `docs/PRD.md`: new/changed requirements, roadmap updates
    - `docs/ARCHITECTURE.md`: architectural decisions, new components
    - `docs/PROJECT_STATUS.md`: move backlog items to in-progress, add new checklist items
-3. **After implementation** — Update `docs/PROJECT_STATUS.md` checklists (mark items complete, update known issues, add to release history). Also update the **Overall Progress** section (progress bar, percentage, done/total counts).
+3. **After implementation** — Update `docs/PROJECT_STATUS.md` checklists (mark items complete, update known issues, add to release history). Also update the **Overall Progress** section (progress bar, percentage, done/total counts). When adding a release to `PROJECT_STATUS.md §10`, also add the corresponding entry to `CHANGELOG.md` (Keep a Changelog format).
 4. **Commands** — All `.claude/commands/*.md` that reference design docs MUST use `docs/` paths and instruct reading them during triage/planning steps.
 5. **Agents** — All `.claude/agents/*.md` MUST be aware of the `docs/` directory and consult relevant docs when making architectural or product decisions.
 6. **`/custom-init` refresh** — When refreshing `CLAUDE.md`, the flow MUST read all `docs/*.md` files and ensure CLAUDE.md accurately reflects their content (project structure, known issues, milestone status, architecture overview).

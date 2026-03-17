@@ -15,25 +15,25 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████░░░░  86%  (74/86 items)
+Features       ████████████████████░░  92%  (79/86 items)
 Infrastructure ████████████████░░░░░░  85%  (11/13 items)
 Quality        ███████████████░░░░░░░  70%  (19/27 items)
 Documentation  █████████████████░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        █████████████████░░░░░  82%  (112/137 items)
+OVERALL        ██████████████████░░░░  85%  (117/137 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 74 | 86 | 7 | 5 (hotel, on hold) |
+| Features (§3) | 79 | 86 | 7 | 0 |
 | Infrastructure (§4) | 11 | 13 | 2 | 0 |
 | Quality Assurance (§5) | 19 | 27 | 8 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **109** | **137** | **23** | **6** |
+| **Total** | **117** | **137** | **20** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
-**Next priorities**: Production deployment (Medium). Hotel search is **on hold** pending Skyscanner/Kiwi hotel API verification.
+**Next priorities**: Production deployment (Medium).
 
 ---
 
@@ -54,7 +54,7 @@ OVERALL        █████████████████░░░░�
 
 ## 1. Executive Summary
 
-Travel-AI is an intelligent travel aggregation platform targeting Taiwanese travelers. The core platform (multi-agent AI, flight search, price monitoring, subscription alerts) is **feature-complete for MVP**. Current focus is on hardening test coverage and production readiness. Hotel search is **on hold** pending verification of Skyscanner/Kiwi hotel API availability on free tier.
+Travel-AI is an intelligent travel aggregation platform targeting Taiwanese travelers. The core platform (multi-agent AI, flight + hotel search, price monitoring, subscription alerts) is **feature-complete for MVP**. Current focus is on hardening test coverage and production readiness.
 
 | Metric                  | Value      |
 |-------------------------|------------|
@@ -118,15 +118,13 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Roundtrip compare label
 - [x] 429 backoff handling for RapidAPI
 
-### 3.4 Hotel Search (⏸️ On Hold)
+### 3.4 Hotel Search
 
-> **On hold since 2026-03-14**: Skyscanner/Kiwi hotel APIs not yet verified on free tier. All hotel items deferred until API availability is confirmed.
-
-- [ ] SearchService hotel method (stub → real integration) — ⏸️ on hold
-- [ ] PriceService hotel method (stub → real integration) — ⏸️ on hold
-- [ ] Hotel comparison endpoint — ⏸️ on hold
-- [ ] Frontend hotel search page — ⏸️ on hold
-- [ ] Frontend hotel comparison — ⏸️ on hold
+- [x] SearchService hotel method (Skyscanner + Kiwi multi-source)
+- [x] PriceService hotel method (cache-based comparison)
+- [x] Hotel comparison endpoint (`POST /compare/hotels`)
+- [x] Frontend hotel search page (form + results)
+- [x] Frontend hotel comparison
 
 ### 3.5 AI Chat System
 

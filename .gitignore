@@ -27,6 +27,8 @@ out/
 htmlcov/
 test.db
 .pytest_cache/
+playwright-report/
+test-results/
 
 # OS
 .DS_Store

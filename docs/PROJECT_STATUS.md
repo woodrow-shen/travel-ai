@@ -60,7 +60,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 |-------------------------|------------|
 | Backend test count      | 105        |
 | Monitor test count      | 20         |
-| Frontend test count     | 111        |
+| Frontend test count     | 160        |
 | E2E test count          | 0          |
 | Total API endpoints     | 25+        |
 | Database tables         | 11         |
@@ -242,14 +242,14 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Rate limiter tests
 - [x] Normalizer tests (Skyscanner + Kiwi + Google Flights price extraction)
 
-### 5.3 Frontend Tests (111 passing)
+### 5.3 Frontend Tests (160 passing)
 
 - [x] Auth store tests (Vitest)
 - [x] Compare store tests (Vitest)
 - [x] Subscription store tests (Vitest — 18 tests: CRUD, error handling, cascade delete)
 - [x] Preferences store tests (Vitest — 8 tests: fetch, update, error paths)
 - [x] Search store tests (Vitest — 17 tests: params, results, sorting, reset)
-- [x] Component tests (Button, Input, Card, FlightCard, Footer — 40 tests)
+- [x] Component tests (Button, Input, Card, FlightCard, HotelCard, Footer, Header, SearchForm, CompareTable — 89 tests)
 - [x] Hook tests (useCompare, useTrip — 14 tests)
 
 ### 5.4 End-to-End Tests

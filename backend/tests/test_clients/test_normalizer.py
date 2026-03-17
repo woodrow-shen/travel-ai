@@ -3,12 +3,18 @@ from app.clients.normalizer import (
     _parse_iso_duration,
     _skyscanner_datetime,
     deduplicate_flights,
+    deduplicate_hotels,
     normalize_amadeus_flight,
     normalize_google_flights_flight,
     normalize_kiwi_flight,
+    normalize_kiwi_hotel,
     normalize_skyscanner_flight,
+    normalize_skyscanner_hotel,
 )
-from app.schemas.search import normalized_dict_to_flight_result
+from app.schemas.search import (
+    normalized_dict_to_flight_result,
+    normalized_dict_to_hotel_result,
+)
 
 # --- Skyscanner Normalization ---
 
@@ -771,3 +777,124 @@ def test_normalized_dict_to_flight_result_oneway_no_return():
     flight = normalized_dict_to_flight_result(d)
 
     assert flight.return_segments is None
+
+
+# --- Hotel Normalizers ---
+
+
+SKYSCANNER_HOTEL = {
+    "name": "Hotel Gracery Shinjuku",
+    "stars": 4,
+    "reviewsSummary": {"score": 8.5, "total": 1200},
+    "lowestPrice": "4500",
+    "coordinates": {"lat": 35.6938, "lng": 139.7034},
+    "images": [
+        {"url": "https://example.com/img1.jpg"},
+        "https://example.com/img2.jpg",
+    ],
+    "location": "Shinjuku, Tokyo",
+    "deepLink": "https://skyscanner.com/hotel/123",
+}
+
+
+def test_normalize_skyscanner_hotel():
+    result = normalize_skyscanner_hotel(
+        SKYSCANNER_HOTEL, currency="TWD", checkin="2026-04-01", checkout="2026-04-03"
+    )
+
+    assert result["source"] == "skyscanner"
+    assert result["name"] == "Hotel Gracery Shinjuku"
+    assert result["star_rating"] == 4
+    assert result["user_rating"] == 8.5
+    assert result["review_count"] == 1200
+    assert result["price_per_night"] == 4500.0
+    assert result["total_price"] == 9000.0  # 2 nights
+    assert result["currency"] == "TWD"
+    assert result["latitude"] == 35.6938
+    assert result["longitude"] == 139.7034
+    assert result["address"] == "Shinjuku, Tokyo"
+    assert len(result["images"]) == 2
+    assert result["booking_url"] == "https://skyscanner.com/hotel/123"
+
+
+KIWI_HOTEL = {
+    "hotel_name": "Shinjuku Granbell Hotel",
+    "address": "2-14-5 Kabuki-cho, Shinjuku-ku",
+    "class": 3,
+    "review_score": 8.2,
+    "review_nr": 850,
+    "price_breakdown": {"gross_price": 12000},
+    "main_photo_url": "https://example.com/kiwi-img.jpg",
+    "latitude": 35.6945,
+    "longitude": 139.7020,
+    "url": "https://kiwi.com/hotel/456",
+    "is_free_cancellable": True,
+    "hotel_facilities": "WiFi,Parking,Restaurant",
+}
+
+
+def test_normalize_kiwi_hotel():
+    result = normalize_kiwi_hotel(
+        KIWI_HOTEL, currency="TWD", checkin="2026-04-01", checkout="2026-04-04"
+    )
+
+    assert result["source"] == "kiwi"
+    assert result["name"] == "Shinjuku Granbell Hotel"
+    assert result["address"] == "2-14-5 Kabuki-cho, Shinjuku-ku"
+    assert result["star_rating"] == 3
+    assert result["user_rating"] == 8.2
+    assert result["review_count"] == 850
+    assert result["total_price"] == 12000.0
+    assert result["price_per_night"] == 4000.0  # 12000 / 3 nights
+    assert result["latitude"] == 35.6945
+    assert result["longitude"] == 139.7020
+    assert result["booking_url"] == "https://kiwi.com/hotel/456"
+    assert result["cancellation_policy"] == "Free cancellation"
+    assert "WiFi" in result["amenities"]
+    assert "Parking" in result["amenities"]
+    assert len(result["images"]) == 1
+
+
+def test_normalize_skyscanner_hotel_empty():
+    result = normalize_skyscanner_hotel({})
+    assert result["source"] == "skyscanner"
+    assert result["name"] == ""
+    assert result["price_per_night"] == 0.0
+
+
+def test_normalize_kiwi_hotel_empty():
+    result = normalize_kiwi_hotel({})
+    assert result["source"] == "kiwi"
+    assert result["name"] == ""
+    assert result["price_per_night"] == 0.0
+
+
+def test_deduplicate_hotels():
+    hotels = [
+        {"name": "Hotel Gracery Shinjuku", "price_per_night": 4500, "source": "skyscanner"},
+        {"name": "Hotel Gracery Shinjuku", "price_per_night": 4200, "source": "kiwi"},
+        {"name": "Shinjuku Granbell Hotel", "price_per_night": 4000, "source": "kiwi"},
+    ]
+    result = deduplicate_hotels(hotels)
+    assert len(result) == 2
+    gracery = [h for h in result if "gracery" in h["name"].lower()][0]
+    assert gracery["price_per_night"] == 4200
+    assert gracery["source"] == "kiwi"
+
+
+def test_deduplicate_hotels_empty():
+    assert deduplicate_hotels([]) == []
+
+
+def test_normalized_dict_to_hotel_result():
+    d = normalize_skyscanner_hotel(
+        SKYSCANNER_HOTEL, currency="TWD", checkin="2026-04-01", checkout="2026-04-03"
+    )
+    hotel = normalized_dict_to_hotel_result(d)
+
+    assert hotel.provider == "skyscanner"
+    assert hotel.name == "Hotel Gracery Shinjuku"
+    assert hotel.star_rating == 4
+    assert hotel.price_per_night == 4500.0
+    assert hotel.total_price == 9000.0
+    assert hotel.id  # non-empty hash

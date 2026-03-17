@@ -1,5 +1,4 @@
 import hashlib
-import uuid
 from datetime import date
 
 from pydantic import AliasChoices, BaseModel, Field
@@ -169,17 +168,60 @@ def normalized_dict_to_flight_result(d: dict, expires_at: str = "") -> FlightRes
 
 
 class HotelResult(BaseModel):
-    id: uuid.UUID | None = None
+    id: str  # stable hash of name+location
+    provider: str = ""  # "skyscanner" | "kiwi"
     name: str
-    location: str | None = None
-    stars: int | None = None
-    rating: float | None = None
-    price_per_night: float | None = None
-    price_currency: str | None = None
-    source: str | None = None
+    address: str = ""
+    latitude: float | None = None
+    longitude: float | None = None
+    star_rating: int = 0
+    user_rating: float | None = None
+    review_count: int | None = None
+    price_per_night: float = 0
+    total_price: float = 0
+    currency: str = "TWD"
+    amenities: list[str] = []
+    images: list[str] = []
+    booking_url: str = ""
+    cancellation_policy: str | None = None
+    expires_at: str | None = None
+
+
+def _stable_hotel_id(name: str, location: str) -> str:
+    """Generate deterministic ID from hotel name + location."""
+    key = f"{name.lower().strip()}_{location.lower().strip()}"
+    return hashlib.md5(key.encode()).hexdigest()[:12]
+
+
+def normalized_dict_to_hotel_result(
+    d: dict, expires_at: str = ""
+) -> HotelResult:
+    """Convert normalizer output dict -> HotelResult Pydantic model."""
+    name = d.get("name", "")
+    address = d.get("address", "")
+    return HotelResult(
+        id=_stable_hotel_id(name, address),
+        provider=d.get("source", ""),
+        name=name,
+        address=address,
+        latitude=d.get("latitude"),
+        longitude=d.get("longitude"),
+        star_rating=d.get("star_rating", 0),
+        user_rating=d.get("user_rating"),
+        review_count=d.get("review_count"),
+        price_per_night=float(d.get("price_per_night", 0)),
+        total_price=float(d.get("total_price", 0)),
+        currency=d.get("currency", "TWD"),
+        amenities=d.get("amenities", []),
+        images=d.get("images", []),
+        booking_url=d.get("booking_url", ""),
+        cancellation_policy=d.get("cancellation_policy"),
+        expires_at=expires_at or None,
+    )
 
 
 class HotelSearchResponse(BaseModel):
+    search_id: str = ""
     results: list[HotelResult]
     total: int
 

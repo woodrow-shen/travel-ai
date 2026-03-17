@@ -102,6 +102,18 @@ class KiwiClient(RapidAPIBaseClient):
             return {}
         return data.get("data", {})
 
+    async def stays_autocomplete(
+        self,
+        location: str,
+        language_code: str = "en-us",
+    ) -> list[dict]:
+        """Resolve a location name to Kiwi stays dest_id/dest_type."""
+        data = await self._get(
+            "/stays/autocomplete",
+            {"location": location, "language_code": language_code},
+        )
+        return data.get("data", [])
+
     async def search_hotels(
         self,
         dest_id: str,

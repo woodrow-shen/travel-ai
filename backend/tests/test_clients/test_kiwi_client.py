@@ -179,6 +179,18 @@ PRICE_TRENDS_RESPONSE = {
     },
 }
 
+STAYS_AUTOCOMPLETE_RESPONSE = {
+    "data": [
+        {
+            "dest_id": "20088325",
+            "dest_type": "city",
+            "label": "Tokyo, Japan",
+            "latitude": 35.6762,
+            "longitude": 139.6503,
+        },
+    ],
+}
+
 HOTELS_RESPONSE = {
     "status": True,
     "data": {
@@ -262,6 +274,29 @@ async def test_price_trends(kiwi):
     assert "trends" in result
     assert len(result["trends"]) == 2
     assert result["trends"][0]["price"] == 6790
+
+
+@respx.mock
+async def test_stays_autocomplete(kiwi):
+    respx.get(f"{BASE_URL}/stays/autocomplete").mock(
+        return_value=httpx.Response(200, json=STAYS_AUTOCOMPLETE_RESPONSE)
+    )
+
+    result = await kiwi.stays_autocomplete("Tokyo")
+
+    assert len(result) == 1
+    assert result[0]["dest_id"] == "20088325"
+    assert result[0]["dest_type"] == "city"
+
+
+@respx.mock
+async def test_stays_autocomplete_empty(kiwi):
+    respx.get(f"{BASE_URL}/stays/autocomplete").mock(
+        return_value=httpx.Response(200, json={"data": []})
+    )
+
+    result = await kiwi.stays_autocomplete("xyznonexistent")
+    assert result == []
 
 
 @respx.mock

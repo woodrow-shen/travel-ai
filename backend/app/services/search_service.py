@@ -10,10 +10,13 @@ from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
+    deduplicate_hotels,
     normalize_amadeus_flight,
     normalize_google_flights_flight,
     normalize_kiwi_flight,
+    normalize_kiwi_hotel,
     normalize_skyscanner_flight,
+    normalize_skyscanner_hotel,
 )
 from app.clients.skyscanner_client import SkyscannerClient
 from app.lib.currency import get_exchange_rates
@@ -28,11 +31,12 @@ from app.schemas.search import (
     FlightResult,
     FlightSearchRequest,
     FlightSegment,
+    HotelResult,
     HotelSearchRequest,
-    HotelSearchResponse,
     PriceInfo,
     SearchResponse,
     normalized_dict_to_flight_result,
+    normalized_dict_to_hotel_result,
 )
 
 logger = logging.getLogger(__name__)
@@ -188,8 +192,200 @@ class SearchService:
 
     async def search_hotels(
         self, request: HotelSearchRequest, user: User
-    ) -> HotelSearchResponse:
-        return HotelSearchResponse(results=[], total=0)
+    ) -> SearchResponse:
+        location = request.location
+        checkin = str(request.check_in)
+        checkout = str(request.check_out)
+        currency = "TWD"
+
+        # Step 1: Resolve location to API-specific IDs (with Redis cache)
+        sky_entity_id = await self._resolve_skyscanner_hotel_location(location)
+        kiwi_dest = await self._resolve_kiwi_stays_location(location)
+
+        # Step 2: Parallel hotel search
+        tasks: list = []
+        task_labels: list[str] = []
+
+        if sky_entity_id:
+            tasks.append(
+                self.skyscanner.search_hotels(
+                    entity_id=sky_entity_id,
+                    checkin=checkin,
+                    checkout=checkout,
+                    adults=request.guests,
+                    currency=currency,
+                )
+            )
+            task_labels.append("skyscanner")
+
+        if kiwi_dest:
+            tasks.append(
+                self.kiwi.search_hotels(
+                    dest_id=kiwi_dest["dest_id"],
+                    dest_type=kiwi_dest["dest_type"],
+                    checkin=checkin,
+                    checkout=checkout,
+                    adults=request.guests,
+                    currency=currency,
+                )
+            )
+            task_labels.append("kiwi")
+
+        now_iso = datetime.now(tz=UTC).isoformat()
+        search_id = uuid.uuid4().hex[:16]
+
+        if not tasks:
+            logger.warning("No hotel location IDs resolved for %r", location)
+            return SearchResponse(
+                search_id=search_id, type="hotel", hotels=[],
+                total_results=0,
+                search_params={"location": location, "check_in": checkin, "check_out": checkout},
+                created_at=now_iso,
+            )
+
+        gather_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Step 3: Normalize
+        normalized: list[dict] = []
+        for idx, raw in enumerate(gather_results):
+            label = task_labels[idx]
+            if isinstance(raw, BaseException):
+                logger.warning("%s hotel search failed: %s", label, raw)
+                continue
+            if not isinstance(raw, list):
+                continue
+            for hotel in raw:
+                try:
+                    if label == "skyscanner":
+                        normalized.append(
+                            normalize_skyscanner_hotel(
+                                hotel, currency=currency,
+                                checkin=checkin, checkout=checkout,
+                            )
+                        )
+                    elif label == "kiwi":
+                        normalized.append(
+                            normalize_kiwi_hotel(
+                                hotel, currency=currency,
+                                checkin=checkin, checkout=checkout,
+                            )
+                        )
+                except Exception:
+                    logger.debug("Failed to normalize %s hotel", label, exc_info=True)
+
+        # Step 4: Deduplicate, convert, sort
+        deduped = deduplicate_hotels(normalized)
+        results = [normalized_dict_to_hotel_result(d) for d in deduped]
+        results.sort(key=lambda h: h.price_per_night)
+
+        # Step 5: Cache for compare
+        await self._cache_hotels(results, normalized, now_iso)
+
+        return SearchResponse(
+            search_id=search_id,
+            type="hotel",
+            hotels=results,
+            total_results=len(results),
+            search_params={
+                "location": location,
+                "check_in": checkin,
+                "check_out": checkout,
+                "guests": request.guests,
+            },
+            created_at=now_iso,
+        )
+
+    async def _resolve_skyscanner_hotel_location(self, location: str) -> str:
+        """Resolve location name to Skyscanner hotel entityId, cached in Redis."""
+        cache_key = f"hotel_loc:skyscanner:{location.lower().strip()}"
+        try:
+            from app.db.redis import redis_client
+
+            cached = await redis_client.get(cache_key)
+            if cached:
+                return cached
+        except Exception:
+            pass
+
+        results = await self.skyscanner.hotel_autocomplete(location)
+        if not results:
+            return ""
+
+        # Extract entityId from first result
+        entity_id = ""
+        if isinstance(results, list) and results:
+            first = results[0]
+            entity_id = str(
+                first.get("entityId", first.get("entity_id", ""))
+            )
+
+        if entity_id:
+            try:
+                from app.db.redis import redis_client
+
+                await redis_client.setex(cache_key, 604800, entity_id)  # 7 days
+            except Exception:
+                pass
+
+        return entity_id
+
+    async def _resolve_kiwi_stays_location(self, location: str) -> dict | None:
+        """Resolve location name to Kiwi dest_id/dest_type, cached in Redis."""
+        cache_key = f"hotel_loc:kiwi:{location.lower().strip()}"
+        try:
+            from app.db.redis import redis_client
+
+            cached = await redis_client.get(cache_key)
+            if cached:
+                return json.loads(cached)
+        except Exception:
+            pass
+
+        results = await self.kiwi.stays_autocomplete(location)
+        if not results:
+            return None
+
+        first = results[0] if isinstance(results, list) and results else None
+        if not first:
+            return None
+
+        dest = {
+            "dest_id": str(first.get("dest_id", "")),
+            "dest_type": first.get("dest_type", "city"),
+        }
+
+        if dest["dest_id"]:
+            try:
+                from app.db.redis import redis_client
+
+                await redis_client.setex(cache_key, 604800, json.dumps(dest))
+            except Exception:
+                pass
+
+        return dest if dest["dest_id"] else None
+
+    async def _cache_hotels(
+        self,
+        results: list[HotelResult],
+        normalized: list[dict],
+        fetched_at: str,
+    ) -> None:
+        """Cache hotel data in Redis for compare lookups."""
+        try:
+            from app.db.redis import redis_client
+
+            pipe = redis_client.pipeline()
+            for hotel in results:
+                cache_data = {
+                    "hotel": hotel.model_dump(mode="json"),
+                    "fetched_at": fetched_at,
+                }
+                pipe.setex(
+                    f"hotel:{hotel.id}", _CACHE_TTL, json.dumps(cache_data)
+                )
+            await pipe.execute()
+        except Exception:
+            logger.debug("Redis hotel cache write failed", exc_info=True)
 
     async def search_direct(
         self, request: DirectSearchRequest, user: User

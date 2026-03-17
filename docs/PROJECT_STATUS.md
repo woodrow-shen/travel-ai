@@ -292,7 +292,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 | ID | Severity | Area | Description | Status |
 |----|----------|------|-------------|--------|
-| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | On Hold — pending Skyscanner/Kiwi hotel API verification |
+| KI-01 | Medium | Backend | Hotel search methods are stubs returning empty results | Fixed — Skyscanner + Kiwi hotel search integrated |
 | KI-02 | Medium | Backend | `PriceAgent._get_price_history()` not wired to DB | Fixed |
 | KI-03 | Medium | Backend | `RecommendationAgent._get_user_preferences()` not querying DB | Fixed |
 | KI-05 | Low | Infra | Caddyfile for production TLS not created (Railway 不需要) | Open |
@@ -331,9 +331,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 
 ### On Hold
 
-| Item | Description | Estimated Effort | Blocked By |
-|------|-------------|-----------------|------------|
-| Hotel search integration | Skyscanner/Kiwi hotel APIs not verified on free tier | Large | API verification |
+(none)
 
 ---
 
@@ -343,7 +341,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 |---------|------------|------------|
 | 0.1.0   | 2026-03-03 | Initial release: multi-agent AI, flight search (3 sources), chat, subscriptions, monitoring daemon, CI/CD |
 | 0.2.0   | 2026-03-13 | Subscription UI, preferences page, user dropdown, monitor tasks implemented, notifier email sending, docs reorganization |
+| 0.3.0   | 2026-03-17 | Hotel search integration (Skyscanner + Kiwi), Google Flights 4th flight source, email bounce fix |
 
 ---
 
-*Last updated: 2026-03-15*
+*Last updated: 2026-03-17*

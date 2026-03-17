@@ -193,6 +193,13 @@ PRICE_CALENDAR_RESPONSE = {
     },
 }
 
+HOTEL_AUTOCOMPLETE_RESPONSE = {
+    "status": True,
+    "data": [
+        {"entityId": "27544008", "name": "Tokyo", "type": "PLACE_TYPE_CITY"},
+    ],
+}
+
 HOTELS_RESPONSE = {
     "status": True,
     "data": {
@@ -302,6 +309,28 @@ async def test_price_calendar(skyscanner):
     assert len(result) == 2
     assert result[0]["day"] == "2026-04-01"
     assert result[0]["price"] == 7121
+
+
+@respx.mock
+async def test_hotel_autocomplete(skyscanner):
+    respx.get(f"{BASE_URL}/hotels/autocomplete").mock(
+        return_value=httpx.Response(200, json=HOTEL_AUTOCOMPLETE_RESPONSE)
+    )
+
+    result = await skyscanner.hotel_autocomplete("Tokyo")
+
+    assert len(result) == 1
+    assert result[0]["entityId"] == "27544008"
+
+
+@respx.mock
+async def test_hotel_autocomplete_error(skyscanner):
+    respx.get(f"{BASE_URL}/hotels/autocomplete").mock(
+        return_value=httpx.Response(200, json={"status": False})
+    )
+
+    result = await skyscanner.hotel_autocomplete("xyz")
+    assert result == []
 
 
 @respx.mock

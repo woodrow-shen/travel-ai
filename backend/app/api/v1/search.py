@@ -13,7 +13,6 @@ from app.schemas.search import (
     DirectSearchResponse,
     FlightSearchRequest,
     HotelSearchRequest,
-    HotelSearchResponse,
     PriceGraphPoint,
     PriceGraphRequest,
     PriceGraphResponse,
@@ -33,7 +32,7 @@ async def search_flights(
     return await service.search_flights(body, user)
 
 
-@router.post("/hotels", response_model=HotelSearchResponse)
+@router.post("/hotels", response_model=SearchResponse)
 async def search_hotels(
     body: HotelSearchRequest,
     user: User = Depends(get_current_user),

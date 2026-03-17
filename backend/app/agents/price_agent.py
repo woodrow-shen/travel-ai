@@ -12,10 +12,13 @@ from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
+    deduplicate_hotels,
     normalize_amadeus_flight,
     normalize_google_flights_flight,
     normalize_kiwi_flight,
+    normalize_kiwi_hotel,
     normalize_skyscanner_flight,
+    normalize_skyscanner_hotel,
 )
 from app.clients.skyscanner_client import SkyscannerClient
 from app.db.session import async_session_factory
@@ -61,6 +64,9 @@ class PriceAgent(BaseAgent):
     async def _compare_prices(self, params: dict) -> dict:
         item_type = params["item_type"]
         search_params = params["search_params"]
+
+        if item_type == "hotel":
+            return await self._compare_hotel_prices(search_params)
 
         if item_type != "flight":
             return {"comparisons": [], "sources_checked": []}
@@ -280,6 +286,77 @@ class PriceAgent(BaseAgent):
             "average_price": round(mean(prices), 2),
             "min_price": min(prices),
             "max_price": max(prices),
+        }
+
+    async def _compare_hotel_prices(self, search_params: dict) -> dict:
+        """Compare hotel prices across Skyscanner and Kiwi."""
+        location = search_params.get("location", "")
+        checkin = search_params.get("check_in", "")
+        checkout = search_params.get("check_out", "")
+        guests = search_params.get("guests", 1)
+        currency = "TWD"
+
+        # Resolve locations
+        sky_ac = self.skyscanner.hotel_autocomplete(location)
+        kiwi_ac = self.kiwi.stays_autocomplete(location)
+        ac_results = await asyncio.gather(sky_ac, kiwi_ac, return_exceptions=True)
+
+        sky_entity_id = ""
+        if isinstance(ac_results[0], list) and ac_results[0]:
+            sky_entity_id = str(ac_results[0][0].get("entityId", ""))
+
+        kiwi_dest_id = ""
+        kiwi_dest_type = "city"
+        if isinstance(ac_results[1], list) and ac_results[1]:
+            kiwi_dest_id = str(ac_results[1][0].get("dest_id", ""))
+            kiwi_dest_type = ac_results[1][0].get("dest_type", "city")
+
+        tasks: list = []
+        labels: list[str] = []
+        if sky_entity_id:
+            tasks.append(self.skyscanner.search_hotels(
+                entity_id=sky_entity_id, checkin=checkin,
+                checkout=checkout, adults=guests, currency=currency,
+            ))
+            labels.append("skyscanner")
+        if kiwi_dest_id:
+            tasks.append(self.kiwi.search_hotels(
+                dest_id=kiwi_dest_id, dest_type=kiwi_dest_type,
+                checkin=checkin, checkout=checkout,
+                adults=guests, currency=currency,
+            ))
+            labels.append("kiwi")
+
+        if not tasks:
+            return {"comparisons": [], "sources_checked": []}
+
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        normalized: list[dict] = []
+        for idx, raw in enumerate(results):
+            label = labels[idx]
+            if isinstance(raw, BaseException) or not isinstance(raw, list):
+                continue
+            for hotel in raw:
+                try:
+                    if label == "skyscanner":
+                        normalized.append(normalize_skyscanner_hotel(
+                            hotel, currency=currency,
+                            checkin=checkin, checkout=checkout,
+                        ))
+                    else:
+                        normalized.append(normalize_kiwi_hotel(
+                            hotel, currency=currency,
+                            checkin=checkin, checkout=checkout,
+                        ))
+                except Exception:
+                    continue
+
+        deduped = deduplicate_hotels(normalized)
+        return {
+            "comparisons": deduped,
+            "sources_checked": labels,
+            "total": len(deduped),
         }
 
     def _extract_cheapest_amadeus(self, offers: list[dict]) -> float:

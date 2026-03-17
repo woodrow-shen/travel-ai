@@ -11,10 +11,13 @@ from app.clients.google_flights_client import GoogleFlightsClient
 from app.clients.kiwi_client import KiwiClient
 from app.clients.normalizer import (
     deduplicate_flights,
+    deduplicate_hotels,
     normalize_amadeus_flight,
     normalize_google_flights_flight,
     normalize_kiwi_flight,
+    normalize_kiwi_hotel,
     normalize_skyscanner_flight,
+    normalize_skyscanner_hotel,
 )
 from app.clients.skyscanner_client import SkyscannerClient
 from app.lib.currency import get_exchange_rates
@@ -198,8 +201,75 @@ class SearchAgent(BaseAgent):
         }
 
     async def _search_hotels(self, params: dict) -> dict:
-        # Hotel API integration placeholder
-        return {"hotels": [], "total": 0, "source": "booking"}
+        location = params.get("location", "")
+        checkin = params.get("check_in", "")
+        checkout = params.get("check_out", "")
+        guests = params.get("guests", 1)
+        currency = "TWD"
+
+        # Resolve location IDs
+        sky_ac = self.skyscanner.hotel_autocomplete(location)
+        kiwi_ac = self.kiwi.stays_autocomplete(location)
+        ac_results = await asyncio.gather(sky_ac, kiwi_ac, return_exceptions=True)
+
+        sky_entity_id = ""
+        if isinstance(ac_results[0], list) and ac_results[0]:
+            first = ac_results[0][0]
+            sky_entity_id = str(first.get("entityId", first.get("entity_id", "")))
+
+        kiwi_dest_id = ""
+        kiwi_dest_type = "city"
+        if isinstance(ac_results[1], list) and ac_results[1]:
+            first = ac_results[1][0]
+            kiwi_dest_id = str(first.get("dest_id", ""))
+            kiwi_dest_type = first.get("dest_type", "city")
+
+        # Parallel hotel search
+        tasks: list = []
+        labels: list[str] = []
+        if sky_entity_id:
+            tasks.append(self.skyscanner.search_hotels(
+                entity_id=sky_entity_id, checkin=checkin,
+                checkout=checkout, adults=guests, currency=currency,
+            ))
+            labels.append("skyscanner")
+        if kiwi_dest_id:
+            tasks.append(self.kiwi.search_hotels(
+                dest_id=kiwi_dest_id, dest_type=kiwi_dest_type,
+                checkin=checkin, checkout=checkout,
+                adults=guests, currency=currency,
+            ))
+            labels.append("kiwi")
+
+        if not tasks:
+            return {"hotels": [], "total": 0, "sources": []}
+
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        normalized: list[dict] = []
+        sources_used: list[str] = []
+        for idx, raw in enumerate(results):
+            label = labels[idx]
+            if isinstance(raw, BaseException) or not isinstance(raw, list):
+                continue
+            sources_used.append(label)
+            for hotel in raw:
+                try:
+                    if label == "skyscanner":
+                        normalized.append(normalize_skyscanner_hotel(
+                            hotel, currency=currency,
+                            checkin=checkin, checkout=checkout,
+                        ))
+                    else:
+                        normalized.append(normalize_kiwi_hotel(
+                            hotel, currency=currency,
+                            checkin=checkin, checkout=checkout,
+                        ))
+                except Exception:
+                    logger.debug("Failed to normalize %s hotel", label, exc_info=True)
+
+        deduped = deduplicate_hotels(normalized)
+        return {"hotels": deduped, "total": len(deduped), "sources": sources_used}
 
     async def _search_domestic_flights(self, params: dict) -> dict:
         country = params["country"]

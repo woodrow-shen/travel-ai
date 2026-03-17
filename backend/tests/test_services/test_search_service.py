@@ -36,5 +36,6 @@ async def test_search_hotels_returns_response(test_user):
         check_out="2026-04-05",
     )
     result = await service.search_hotels(request, test_user)
-    assert result.results == []
-    assert result.total == 0
+    assert result.type == "hotel"
+    assert result.hotels == []
+    assert result.total_results == 0

@@ -1,4 +1,4 @@
-"""Normalize flight data from multiple sources into a common format."""
+"""Normalize flight and hotel data from multiple sources into a common format."""
 
 from __future__ import annotations
 
@@ -365,3 +365,176 @@ def deduplicate_flights(flights: list[dict]) -> list[dict]:
         if key not in seen or flight["price"] < seen[key]["price"]:
             seen[key] = flight
     return list(seen.values())
+
+
+# ---------------------------------------------------------------------------
+# Hotel normalizers
+# ---------------------------------------------------------------------------
+
+
+def normalize_skyscanner_hotel(
+    hotel: dict,
+    currency: str = "TWD",
+    checkin: str = "",
+    checkout: str = "",
+) -> dict:
+    """Normalize a Skyscanner hotel card into the common hotel format.
+
+    Skyscanner hotel search returns ``data.hotels`` where each hotel has
+    fields like ``name``, ``stars``, ``reviewsSummary``, ``lowestPrice``,
+    ``coordinates``, ``images`` etc.  The exact shape depends on the
+    ``hotelCards`` variant the API returns.
+    """
+    name = hotel.get("name", "")
+    stars = hotel.get("stars", 0) or 0
+
+    reviews = hotel.get("reviewsSummary", {})
+    user_rating = reviews.get("score")
+    if user_rating is not None:
+        user_rating = float(user_rating)
+    review_count = reviews.get("total")
+    if review_count is not None:
+        review_count = int(review_count)
+
+    price_raw = hotel.get("lowestPrice", hotel.get("price", ""))
+    price_per_night = _parse_price_string(price_raw)
+
+    # Calculate total from nights
+    nights = _count_nights(checkin, checkout)
+    total_price = price_per_night * nights if nights else price_per_night
+
+    coords = hotel.get("coordinates", {})
+    lat = coords.get("lat") or coords.get("latitude")
+    lng = coords.get("lng") or coords.get("longitude")
+
+    images_raw = hotel.get("images", [])
+    images = []
+    for img in images_raw[:5]:
+        if isinstance(img, str):
+            images.append(img)
+        elif isinstance(img, dict):
+            images.append(img.get("url", img.get("thumbnail", "")))
+
+    return {
+        "source": "skyscanner",
+        "name": name,
+        "address": hotel.get("location", hotel.get("address", "")),
+        "latitude": float(lat) if lat else None,
+        "longitude": float(lng) if lng else None,
+        "star_rating": int(stars),
+        "user_rating": user_rating,
+        "review_count": review_count,
+        "price_per_night": price_per_night,
+        "total_price": total_price,
+        "currency": currency,
+        "amenities": [],
+        "images": images,
+        "booking_url": hotel.get("deepLink", hotel.get("url", "")),
+        "cancellation_policy": hotel.get("cancellation"),
+    }
+
+
+def normalize_kiwi_hotel(
+    hotel: dict,
+    currency: str = "TWD",
+    checkin: str = "",
+    checkout: str = "",
+) -> dict:
+    """Normalize a Kiwi stays result into the common hotel format.
+
+    Kiwi ``stays/search/by-dest`` returns ``data.hotels`` where each hotel
+    has ``hotel_name``, ``address``, ``review_score``, ``review_nr``,
+    ``price_breakdown``, ``main_photo_url``, ``class`` (star rating),
+    ``hotel_facilities`` etc.
+    """
+    name = hotel.get("hotel_name", hotel.get("name", ""))
+    stars = hotel.get("class", 0) or 0
+
+    review_score = hotel.get("review_score")
+    if review_score is not None:
+        review_score = float(review_score)
+    review_count = hotel.get("review_nr")
+    if review_count is not None:
+        review_count = int(review_count)
+
+    price_breakdown = hotel.get("price_breakdown", {})
+    gross_price = price_breakdown.get("gross_price", 0) or 0
+    total_price = float(gross_price)
+
+    nights = _count_nights(checkin, checkout)
+    price_per_night = total_price / nights if nights else total_price
+
+    lat = hotel.get("latitude")
+    lng = hotel.get("longitude")
+
+    photo = hotel.get("main_photo_url", "")
+    images = [photo] if photo else []
+
+    facilities = hotel.get("hotel_facilities", "")
+    amenities = []
+    if isinstance(facilities, str) and facilities:
+        amenities = [f.strip() for f in facilities.split(",") if f.strip()]
+    elif isinstance(facilities, list):
+        amenities = facilities
+
+    return {
+        "source": "kiwi",
+        "name": name,
+        "address": hotel.get("address", ""),
+        "latitude": float(lat) if lat else None,
+        "longitude": float(lng) if lng else None,
+        "star_rating": int(stars),
+        "user_rating": review_score,
+        "review_count": review_count,
+        "price_per_night": round(price_per_night, 2),
+        "total_price": total_price,
+        "currency": currency,
+        "amenities": amenities[:10],
+        "images": images,
+        "booking_url": hotel.get("url", ""),
+        "cancellation_policy": hotel.get("is_free_cancellable")
+        and "Free cancellation"
+        or None,
+    }
+
+
+def deduplicate_hotels(hotels: list[dict]) -> list[dict]:
+    """Remove duplicate hotels keeping the lowest price per name+city."""
+    seen: dict[str, dict] = {}
+    for hotel in hotels:
+        key = hotel.get("name", "").lower().strip()
+        if not key:
+            continue
+        if key not in seen or hotel.get("price_per_night", 0) < seen[key].get(
+            "price_per_night", 0
+        ):
+            seen[key] = hotel
+    return list(seen.values())
+
+
+def _parse_price_string(raw: object) -> float:
+    """Extract numeric price from string like '$120' or '120.50' or int."""
+    if isinstance(raw, (int, float)):
+        return float(raw)
+    if not isinstance(raw, str) or not raw:
+        return 0.0
+    cleaned = "".join(c for c in raw if c.isdigit() or c == ".")
+    try:
+        return float(cleaned)
+    except ValueError:
+        return 0.0
+
+
+def _count_nights(checkin: str, checkout: str) -> int:
+    """Count nights between checkin/checkout date strings (YYYY-MM-DD)."""
+    if not checkin or not checkout:
+        return 1
+    try:
+        from datetime import date as date_type
+
+        ci = date_type.fromisoformat(checkin)
+        co = date_type.fromisoformat(checkout)
+        delta = (co - ci).days
+        return max(delta, 1)
+    except ValueError:
+        return 1

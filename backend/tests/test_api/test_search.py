@@ -41,7 +41,8 @@ async def test_search_hotels(client: AsyncClient, auth_headers):
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert "results" in data
+    assert data["type"] == "hotel"
+    assert "hotels" in data
 
 
 async def test_search_direct_requires_premium(client: AsyncClient, auth_headers):

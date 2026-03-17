@@ -107,6 +107,21 @@ class SkyscannerClient(RapidAPIBaseClient):
             return []
         return data.get("data", {}).get("flights", {}).get("days", [])
 
+    async def hotel_autocomplete(
+        self,
+        query: str,
+        locale: str = "en-US",
+        market: str = "TW",
+    ) -> list[dict]:
+        """Resolve a location name to hotel entityId(s)."""
+        data = await self._get(
+            "/hotels/autocomplete",
+            {"query": query, "locale": locale, "market": market},
+        )
+        if not data.get("status", True):
+            return []
+        return data.get("data", [])
+
     async def search_hotels(
         self,
         entity_id: str,

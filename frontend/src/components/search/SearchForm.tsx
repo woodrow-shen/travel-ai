@@ -121,13 +121,82 @@ export function SearchForm() {
         ))}
       </div>
 
-      {/* Hotel search disabled notice */}
       {searchType === "hotel" && (
-        <div className="mb-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-border)]/10 p-4 text-center">
-          <p className="text-sm text-[var(--color-muted)]">
-            Hotel search is temporarily unavailable while we verify API provider support.
-          </p>
-        </div>
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Input
+              label="Destination"
+              placeholder="City or region"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Check-in"
+              type="date"
+              value={departureDate}
+              onChange={(e) => setDepartureDate(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Check-out"
+              type="date"
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
+              required
+            />
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="guests"
+                className="text-sm font-medium text-[var(--color-foreground)]"
+              >
+                Guests
+              </label>
+              <select
+                id="guests"
+                value={adults}
+                onChange={(e) => setAdults(Number(e.target.value))}
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              >
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="rooms"
+                className="text-sm font-medium text-[var(--color-foreground)]"
+              >
+                Rooms
+              </label>
+              <select
+                id="rooms"
+                value={rooms}
+                onChange={(e) => setRooms(Number(e.target.value))}
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+              >
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <Button type="submit" size="lg" isLoading={isSearching} className="w-full sm:w-auto min-w-[180px]">
+              {isSearching ? "Searching Hotels..." : "Search Hotels"}
+            </Button>
+          </div>
+        </>
       )}
 
       {searchType === "flight" && (

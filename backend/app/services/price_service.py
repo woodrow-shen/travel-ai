@@ -25,7 +25,7 @@ from app.schemas.compare import (
     PricePoint,
     UnifiedCompareRequest,
 )
-from app.schemas.search import normalized_dict_to_flight_result
+from app.schemas.search import HotelResult, normalized_dict_to_flight_result
 
 logger = logging.getLogger(__name__)
 
@@ -246,4 +246,38 @@ class PriceService:
     async def compare_hotels(
         self, request: HotelCompareRequest, user: User
     ) -> HotelCompareResponse:
-        return HotelCompareResponse(results=[], sources=[])
+        """Compare hotels across sources using cached search results."""
+        try:
+            from app.db.redis import redis_client
+
+            keys = await redis_client.keys("hotel:*")
+            results: list[HotelResult] = []
+            sources: set[str] = set()
+
+            for key in keys:
+                raw = await redis_client.get(key)
+                if not raw:
+                    continue
+                data = json.loads(raw)
+                hotel_data = data.get("hotel", {})
+                hotel = HotelResult(**hotel_data)
+                results.append(hotel)
+                if hotel.provider:
+                    sources.add(hotel.provider)
+
+            cheapest = min(results, key=lambda h: h.price_per_night) if results else None
+            best_rated = max(
+                (h for h in results if h.user_rating is not None),
+                key=lambda h: h.user_rating or 0,
+                default=None,
+            )
+
+            return HotelCompareResponse(
+                results=results,
+                sources=sorted(sources),
+                cheapest=cheapest,
+                best_rated=best_rated,
+            )
+        except Exception:
+            logger.debug("Hotel compare failed", exc_info=True)
+            return HotelCompareResponse(results=[], sources=[])

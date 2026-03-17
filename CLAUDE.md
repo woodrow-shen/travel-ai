@@ -354,6 +354,14 @@ Rules:
 
 See `.github/COMMIT_CONVENTION.md` for full details.
 
+### Versioning
+
+`MAJOR.MINOR.PATCH`:
+
+- **PATCH** (0.3.0 → 0.3.1): bug fixes, test additions, doc-only changes
+- **MINOR** (0.3.x → 0.4.0): new features, API changes, milestone completion
+- **MAJOR** (0.x.x → 1.0.0): owner-decided only — never bump major autonomously
+
 ### Post-Push CI Check
 
 After every `git push`, **automatically check GitHub Actions CI status**:

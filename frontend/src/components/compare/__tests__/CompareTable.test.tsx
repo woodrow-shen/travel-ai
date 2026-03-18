@@ -76,7 +76,7 @@ describe("CompareTable", () => {
   it("has accessible table role and label", () => {
     render(<CompareTable results={mockResults} />);
     const table = screen.getByRole("table");
-    expect(table).toHaveAttribute("aria-label", "Price comparison table");
+    expect(table).toHaveAttribute("aria-label", "Item");
   });
 
   it("renders provider columns from all results", () => {

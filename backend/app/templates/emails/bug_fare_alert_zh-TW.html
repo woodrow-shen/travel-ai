@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #e94560;">Bug 票價警報！</h2>
+  <p>我們發現了一張異常低價的機票，可能是錯誤票價 — 請盡快行動！</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>航線：</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>航空公司：</strong> {{ airline }}</p>
+    <p><strong>日期：</strong> {{ departure_date }}</p>
+    <p style="font-size: 24px; color: #e94560;"><strong>{{ price_amount }} {{ price_currency }}</strong></p>
+    <p style="color: #666;">平均價格：{{ avg_price }} {{ price_currency }}（折扣 {{ discount_pct }}%）</p>
+    <p><strong>可信度：</strong> {{ confidence }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">取消訂閱</a> Bug 票價警報
+  </p>
+</body>
+</html>

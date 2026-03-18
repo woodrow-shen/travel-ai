@@ -1,7 +1,8 @@
 "use client";
 
 import { type FormEvent, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useSearch } from "@/hooks/useSearch";
@@ -28,6 +29,7 @@ function isFutureDate(date: string): boolean {
 export function SearchForm() {
   const router = useRouter();
   const { searchType, setSearchType, search, currency } = useSearch();
+  const t = useTranslations("search");
 
   const [tripType, setTripType] = useState<TripType>("roundtrip");
   const [origin, setOrigin] = useState("");
@@ -94,12 +96,12 @@ export function SearchForm() {
   };
 
   const tabs: { value: SearchType; label: string }[] = [
-    { value: "flight", label: "Flights" },
-    { value: "hotel", label: "Hotels" },
+    { value: "flight", label: t("tabs.flights") },
+    { value: "hotel", label: t("tabs.hotels") },
   ];
 
   return (
-    <form onSubmit={handleSubmit} className="w-full" role="search" aria-label="Travel search">
+    <form onSubmit={handleSubmit} className="w-full" role="search" aria-label={t("title")}>
       {/* Tab switcher */}
       <div className="mb-6 flex gap-1 rounded-lg bg-[var(--color-border)]/30 p-1" role="tablist">
         {tabs.map((tab) => (
@@ -125,15 +127,15 @@ export function SearchForm() {
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Input
-              label="Destination"
-              placeholder="City or region"
+              label={t("form.destination")}
+              placeholder={t("form.cityOrRegion")}
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               required
             />
 
             <Input
-              label="Check-in"
+              label={t("form.checkIn")}
               type="date"
               value={departureDate}
               onChange={(e) => setDepartureDate(e.target.value)}
@@ -141,7 +143,7 @@ export function SearchForm() {
             />
 
             <Input
-              label="Check-out"
+              label={t("form.checkOut")}
               type="date"
               value={returnDate}
               onChange={(e) => setReturnDate(e.target.value)}
@@ -153,7 +155,7 @@ export function SearchForm() {
                 htmlFor="guests"
                 className="text-sm font-medium text-[var(--color-foreground)]"
               >
-                Guests
+                {t("form.guests")}
               </label>
               <select
                 id="guests"
@@ -174,7 +176,7 @@ export function SearchForm() {
                 htmlFor="rooms"
                 className="text-sm font-medium text-[var(--color-foreground)]"
               >
-                Rooms
+                {t("form.rooms")}
               </label>
               <select
                 id="rooms"
@@ -193,7 +195,7 @@ export function SearchForm() {
 
           <div className="mt-6">
             <Button type="submit" size="lg" isLoading={isSearching} className="w-full sm:w-auto min-w-[180px]">
-              {isSearching ? "Searching Hotels..." : "Search Hotels"}
+              {isSearching ? t("button.searchingHotels") : t("button.searchHotels")}
             </Button>
           </div>
         </>
@@ -204,8 +206,8 @@ export function SearchForm() {
           {/* Trip type sub-tabs */}
           <div className="mb-4 flex gap-1 rounded-md bg-[var(--color-border)]/20 p-0.5 w-fit" role="tablist" aria-label="Trip type">
             {([
-              { value: "roundtrip" as TripType, label: "Roundtrip" },
-              { value: "one_way" as TripType, label: "One-way" },
+              { value: "roundtrip" as TripType, label: t("form.roundtrip") },
+              { value: "one_way" as TripType, label: t("form.oneWay") },
             ]).map((tab) => (
               <button
                 key={tab.value}
@@ -227,23 +229,23 @@ export function SearchForm() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Input
-              label="From"
-              placeholder="City or airport"
+              label={t("form.from")}
+              placeholder={t("form.cityOrAirport")}
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
               required
             />
 
             <Input
-              label="To"
-              placeholder="City or airport"
+              label={t("form.to")}
+              placeholder={t("form.cityOrAirport")}
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               required
             />
 
             <Input
-              label="Departure"
+              label={t("form.departure")}
               type="date"
               value={departureDate}
               onChange={(e) => setDepartureDate(e.target.value)}
@@ -252,7 +254,7 @@ export function SearchForm() {
 
             {tripType === "roundtrip" && (
               <Input
-                label="Return"
+                label={t("form.return")}
                 type="date"
                 value={returnDate}
                 onChange={(e) => setReturnDate(e.target.value)}
@@ -264,7 +266,7 @@ export function SearchForm() {
                 htmlFor="adults"
                 className="text-sm font-medium text-[var(--color-foreground)]"
               >
-                Adults
+                {t("form.adults")}
               </label>
               <select
                 id="adults"
@@ -285,7 +287,7 @@ export function SearchForm() {
                 htmlFor="cabin-class"
                 className="text-sm font-medium text-[var(--color-foreground)]"
               >
-                Cabin Class
+                {t("form.cabinClass")}
               </label>
               <select
                 id="cabin-class"
@@ -297,17 +299,17 @@ export function SearchForm() {
                 }
                 className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
               >
-                <option value="economy">Economy</option>
-                <option value="premium_economy">Premium Economy</option>
-                <option value="business">Business</option>
-                <option value="first">First Class</option>
+                <option value="economy">{t("cabinClasses.economy")}</option>
+                <option value="premium_economy">{t("cabinClasses.premiumEconomy")}</option>
+                <option value="business">{t("cabinClasses.business")}</option>
+                <option value="first">{t("cabinClasses.first")}</option>
               </select>
             </div>
           </div>
 
           <div className="mt-6">
             <Button type="submit" size="lg" isLoading={isSearching} className="w-full sm:w-auto min-w-[180px]">
-              {isSearching ? "Searching Flights..." : "Search Flights"}
+              {isSearching ? t("button.searchingFlights") : t("button.searchFlights")}
             </Button>
           </div>
         </>

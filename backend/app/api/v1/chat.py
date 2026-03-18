@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request
 
 from app.db.session import get_db
 from app.dependencies import get_current_user
@@ -17,6 +18,7 @@ router = APIRouter()
 
 @router.post("")
 async def chat(
+    request: Request,
     body: ChatRequest,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -33,7 +35,8 @@ async def chat(
         db.add(session)
         await db.flush()
 
-    service = ChatService()
+    locale = getattr(request.state, "locale", "zh-TW")
+    service = ChatService(locale=locale)
 
     async def event_stream():
         async for event_type, data in service.stream_response(body.message, session, user):

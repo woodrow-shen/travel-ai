@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "搜尋",
+    "compare": "比價",
+    "trips": "行程",
+    "chat": "對話",
+    "signIn": "使用 Google 登入",
+    "signOut": "登出",
+    "loading": "載入中...",
+    "subscriptions": "訂閱管理",
+    "preferences": "偏好設定",
+    "select": "選取",
+    "delete": "刪除",
+    "cancel": "取消",
+    "save": "儲存",
+    "add": "新增",
+    "remove": "移除",
+    "clear": "清除",
+    "view": "檢視",
+    "back": "返回",
+    "type": "類型"
+  },
+  "landing": {
+    "hero": {
+      "title": "用 {ai} 規劃您的完美旅程",
+      "subtitle": "搜尋機票和飯店、比較多家供應商價格，讓 AI 助理幫您打造完美行程。"
+    },
+    "signInPrompt": "登入即可儲存行程並獲得個人化推薦。",
+    "features": {
+      "title": "為什麼選擇 Travel AI？",
+      "smartSearch": {
+        "title": "智慧搜尋",
+        "description": "一次查詢即可搜尋多家供應商的機票和飯店。"
+      },
+      "priceComparison": {
+        "title": "價格比較",
+        "description": "比較多家供應商價格，為您的旅程找到最優惠方案。"
+      },
+      "aiItinerary": {
+        "title": "AI 行程規劃",
+        "description": "與 AI 對話，生成為您量身打造的每日行程。"
+      }
+    }
+  },
+  "search": {
+    "title": "搜尋",
+    "tabs": {
+      "flights": "機票",
+      "hotels": "飯店"
+    },
+    "form": {
+      "from": "出發地",
+      "to": "目的地",
+      "destination": "目的地",
+      "departure": "出發日期",
+      "return": "回程日期",
+      "checkIn": "入住日期",
+      "checkOut": "退房日期",
+      "adults": "成人",
+      "guests": "旅客",
+      "rooms": "房間",
+      "cabinClass": "艙等",
+      "roundtrip": "來回",
+      "oneWay": "單程",
+      "cityOrAirport": "城市或機場",
+      "cityOrRegion": "城市或地區"
+    },
+    "cabinClasses": {
+      "economy": "經濟艙",
+      "premiumEconomy": "豪華經濟艙",
+      "business": "商務艙",
+      "first": "頭等艙"
+    },
+    "button": {
+      "searchFlights": "搜尋機票",
+      "searchHotels": "搜尋飯店",
+      "searchingFlights": "搜尋機票中...",
+      "searchingHotels": "搜尋飯店中..."
+    },
+    "results": {
+      "found": "找到 {count} 個結果",
+      "noResults": "未找到結果，請嘗試調整搜尋條件。",
+      "sortBy": "排序：",
+      "price": "價格",
+      "duration": "時間",
+      "rating": "評分",
+      "lowToHigh": "由低到高",
+      "highToLow": "由高到低"
+    },
+    "flightCard": {
+      "direct": "直飛",
+      "stop": "{count} 次轉機",
+      "return": "回程",
+      "roundtrip": "來回",
+      "bookNow": "立即預訂",
+      "loadingBooking": "載入中..."
+    },
+    "hotelCard": {
+      "perNight": "每晚",
+      "total": "總計：{price}",
+      "reviews": "（{count} 則評論）",
+      "more": "還有 {count} 項",
+      "bookNow": "立即預訂"
+    },
+    "compareBar": {
+      "selected": "已選取 {count} 個",
+      "compare": "比較",
+      "clear": "清除"
+    }
+  },
+  "compare": {
+    "title": "價格比較",
+    "subtitle": "比較不同供應商的價格，找到最優惠方案。",
+    "manual": {
+      "label": "項目 ID（以逗號分隔）",
+      "placeholder": "id1, id2, id3",
+      "helperText": "輸入至少 2 個搜尋結果的 ID 來進行比較。"
+    },
+    "table": {
+      "item": "項目",
+      "bestPrice": "最低價",
+      "noData": "沒有比較資料，請選取項目來比較。"
+    },
+    "types": {
+      "flights": "機票",
+      "hotels": "飯店"
+    }
+  },
+  "trip": {
+    "title": "我的行程",
+    "newTrip": "新增行程",
+    "noTrips": "尚無行程。",
+    "noTripsHint": "建立您的第一個行程來開始規劃。",
+    "confirmDelete": "確定要刪除此行程嗎？",
+    "backToTrips": "返回行程列表",
+    "form": {
+      "title": "建立新行程",
+      "tripTitle": "行程名稱",
+      "tripTitlePlaceholder": "暑假旅行",
+      "destination": "目的地",
+      "destinationPlaceholder": "巴黎，法國",
+      "startDate": "開始日期",
+      "endDate": "結束日期",
+      "createTrip": "建立行程"
+    },
+    "status": {
+      "planning": "規劃中",
+      "booked": "已預訂",
+      "in_progress": "進行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "itinerary": {
+      "items": "{count} 個行程項目",
+      "noItems": "尚無行程項目。",
+      "noItemsHint": "使用 AI 對話來幫助建立您的行程。",
+      "day": "第 {day} 天",
+      "budget": "預算：{amount}",
+      "location": "地點：{location}",
+      "types": {
+        "flight": "航班",
+        "hotel": "住宿",
+        "activity": "活動",
+        "transfer": "交通",
+        "note": "備註"
+      }
+    }
+  },
+  "chat": {
+    "title": "AI 對話 — 即將推出",
+    "comingSoon": "對話功能暫時無法使用，我們正在設定 AI 供應商。",
+    "backToHome": "返回首頁"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "正在登入...",
+      "pleaseWait": "請稍候，正在完成驗證。",
+      "success": "登入成功",
+      "redirecting": "正在為您導向首頁...",
+      "failed": "驗證失敗",
+      "noToken": "未收到驗證令牌。",
+      "returnHome": "返回首頁"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "訂閱管理",
+      "signInRequired": "請登入以管理訂閱。",
+      "emails": {
+        "title": "電子郵件地址",
+        "loading": "載入郵件中...",
+        "noEmails": "尚未新增電子郵件地址。",
+        "placeholder": "新增電子郵件地址",
+        "verified": "已驗證",
+        "pending": "待驗證"
+      },
+      "list": {
+        "title": "啟用中的訂閱",
+        "noSubscriptions": "尚無訂閱。",
+        "from": "從 {origin}",
+        "to": "到 {destination}"
+      },
+      "new": {
+        "title": "新增訂閱",
+        "verifyFirst": "請先新增並驗證電子郵件地址後再建立訂閱。",
+        "type": "類型",
+        "originIATA": "出發地（IATA）",
+        "destinationIATA": "目的地（IATA）",
+        "sendTo": "發送至",
+        "selectEmail": "選擇郵件...",
+        "create": "建立訂閱"
+      },
+      "types": {
+        "bug_fare": "Bug 票價",
+        "price_drop": "降價通知",
+        "deal_digest": "優惠摘要"
+      }
+    },
+    "preferences": {
+      "title": "偏好設定",
+      "signInRequired": "請登入以管理偏好設定。",
+      "loading": "載入偏好設定中...",
+      "saved": "儲存成功",
+      "saveButton": "儲存偏好設定",
+      "homeAirports": {
+        "label": "常用機場",
+        "hint": "IATA 代碼，以逗號分隔（例如：TPE, TSA）"
+      },
+      "preferredAirlines": {
+        "label": "偏好航空公司",
+        "hint": "IATA 代碼，以逗號分隔（例如：BR, CI, NH）"
+      },
+      "excludedAirlines": {
+        "label": "排除航空公司",
+        "hint": "要避開的航空公司（例如：TR, MM）"
+      },
+      "alliances": {
+        "label": "偏好航空聯盟"
+      },
+      "cabinClasses": {
+        "label": "艙等",
+        "economy": "經濟艙",
+        "premiumEconomy": "豪華經濟艙",
+        "business": "商務艙",
+        "first": "頭等艙"
+      },
+      "maxStops": {
+        "label": "最多轉機次數",
+        "any": "不限",
+        "nonStop": "僅直飛",
+        "max1": "最多 1 次轉機",
+        "max2": "最多 2 次轉機"
+      },
+      "language": {
+        "label": "語言"
+      }
+    }
+  },
+  "footer": {
+    "description": "AI 驅動的旅遊規劃與價格比較。",
+    "features": "功能",
+    "flightHotelSearch": "機票與飯店搜尋",
+    "priceComparison": "價格比較",
+    "legal": "法律資訊",
+    "mitLicense": "MIT 授權",
+    "copyright": "© {year} Woodrow Shen. 保留所有權利。"
+  },
+  "metadata": {
+    "title": "Travel AI - 智慧旅遊規劃",
+    "description": "AI 驅動的旅遊規劃，包含機票與飯店搜尋、價格比較和智慧行程生成。"
+  },
+  "errors": {
+    "generic": "發生錯誤，請稍後再試。",
+    "notFound": "找不到頁面。",
+    "unauthorized": "請先登入。",
+    "serverError": "伺服器錯誤，請稍後再試。"
+  }
+}

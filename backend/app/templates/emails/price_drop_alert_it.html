@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #0f3460;">Avviso Calo di Prezzo</h2>
+  <p>Una rotta che stai monitorando è appena scesa di prezzo!</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>Rotta:</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>Data:</strong> {{ departure_date }}</p>
+    <p><strong>Prezzo precedente:</strong> <s>{{ previous_price }} {{ price_currency }}</s></p>
+    <p style="font-size: 24px; color: #16c79a;"><strong>Ora: {{ current_price }} {{ price_currency }}</strong></p>
+    <p>Il tuo obiettivo: {{ target_price }} {{ price_currency }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">Annulla iscrizione</a> dagli avvisi calo di prezzo
+  </p>
+</body>
+</html>

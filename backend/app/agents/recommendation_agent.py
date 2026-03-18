@@ -34,6 +34,7 @@ class RecommendationAgent(BaseAgent):
             "recommendations based on user preferences, reviews, and quality scores. "
             "For direct flight mode, score flights based on: airline rating, departure time "
             "reasonableness, flight duration, aircraft comfort, and price (as secondary factor)."
+            + self.locale_instruction
         )
 
     @property

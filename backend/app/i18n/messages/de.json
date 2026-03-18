@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Ungültiges Authentifizierungstoken.",
+    "expired_token": "Das Authentifizierungstoken ist abgelaufen.",
+    "unauthorized": "Bitte melden Sie sich zuerst an.",
+    "google_auth_failed": "Google-Authentifizierung fehlgeschlagen.",
+    "refresh_failed": "Token-Aktualisierung fehlgeschlagen."
+  },
+  "search": {
+    "no_results": "Keine Ergebnisse gefunden.",
+    "invalid_params": "Ungültige Suchparameter.",
+    "provider_error": "Anbieter vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+  },
+  "trip": {
+    "not_found": "Reise nicht gefunden.",
+    "create_failed": "Reise konnte nicht erstellt werden.",
+    "delete_failed": "Reise konnte nicht gelöscht werden."
+  },
+  "subscription": {
+    "email_not_verified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
+    "email_not_found": "E-Mail-Adresse nicht gefunden.",
+    "already_exists": "Abonnement existiert bereits.",
+    "invalid_email": "Ungültige E-Mail-Adresse.",
+    "dns_validation_failed": "Validierung der E-Mail-Domain fehlgeschlagen."
+  },
+  "compare": {
+    "min_items": "Mindestens 2 Artikel für den Vergleich erforderlich.",
+    "invalid_type": "Ungültiger Vergleichstyp."
+  },
+  "user": {
+    "not_found": "Benutzer nicht gefunden.",
+    "preference_update_failed": "Einstellungen konnten nicht aktualisiert werden."
+  },
+  "chat": {
+    "error": "Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "general": {
+    "server_error": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "not_found": "Die angeforderte Ressource wurde nicht gefunden.",
+    "rate_limited": "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+    "premium_required": "Diese Funktion erfordert ein Premium-Abonnement.",
+    "validation_error": "Eingabevalidierung fehlgeschlagen."
+  }
+}

@@ -49,8 +49,8 @@ FOREIGNER_DISCOUNTS = {
 
 
 class SearchAgent(BaseAgent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, locale: str = "zh-TW"):
+        super().__init__(locale=locale)
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
@@ -71,6 +71,7 @@ class SearchAgent(BaseAgent):
             "domestic flights, always check for foreigner discount fares "
             "(ANA Experience JAPAN Fare ~\u00a55,500, "
             "JAL Japan Explorer Pass ~\u00a55,500)."
+            + self.locale_instruction
         )
 
     @property

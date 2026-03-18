@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "搜索",
+    "compare": "比价",
+    "trips": "行程",
+    "chat": "对话",
+    "signIn": "使用 Google 登录",
+    "signOut": "退出登录",
+    "loading": "加载中...",
+    "subscriptions": "订阅管理",
+    "preferences": "偏好设置",
+    "select": "选择",
+    "delete": "删除",
+    "cancel": "取消",
+    "save": "保存",
+    "add": "添加",
+    "remove": "移除",
+    "clear": "清除",
+    "view": "查看",
+    "back": "返回",
+    "type": "类型"
+  },
+  "landing": {
+    "hero": {
+      "title": "用 {ai} 规划您的完美旅程",
+      "subtitle": "搜索机票和酒店、比较多家供应商价格，让 AI 助理帮您打造完美行程。"
+    },
+    "signInPrompt": "登录即可保存行程并获得个性化推荐。",
+    "features": {
+      "title": "为什么选择 Travel AI？",
+      "smartSearch": {
+        "title": "智能搜索",
+        "description": "一次查询即可搜索多家供应商的机票和酒店。"
+      },
+      "priceComparison": {
+        "title": "价格比较",
+        "description": "比较多家供应商价格，为您的旅程找到最优惠方案。"
+      },
+      "aiItinerary": {
+        "title": "AI 行程规划",
+        "description": "与 AI 对话，生成为您量身定制的每日行程。"
+      }
+    }
+  },
+  "search": {
+    "title": "搜索",
+    "tabs": {
+      "flights": "机票",
+      "hotels": "酒店"
+    },
+    "form": {
+      "from": "出发地",
+      "to": "目的地",
+      "destination": "目的地",
+      "departure": "出发日期",
+      "return": "返程日期",
+      "checkIn": "入住日期",
+      "checkOut": "退房日期",
+      "adults": "成人",
+      "guests": "旅客",
+      "rooms": "房间",
+      "cabinClass": "舱位",
+      "roundtrip": "往返",
+      "oneWay": "单程",
+      "cityOrAirport": "城市或机场",
+      "cityOrRegion": "城市或地区"
+    },
+    "cabinClasses": {
+      "economy": "经济舱",
+      "premiumEconomy": "豪华经济舱",
+      "business": "商务舱",
+      "first": "头等舱"
+    },
+    "button": {
+      "searchFlights": "搜索机票",
+      "searchHotels": "搜索酒店",
+      "searchingFlights": "搜索机票中...",
+      "searchingHotels": "搜索酒店中..."
+    },
+    "results": {
+      "found": "找到 {count} 个结果",
+      "noResults": "未找到结果，请尝试调整搜索条件。",
+      "sortBy": "排序：",
+      "price": "价格",
+      "duration": "时间",
+      "rating": "评分",
+      "lowToHigh": "从低到高",
+      "highToLow": "从高到低"
+    },
+    "flightCard": {
+      "direct": "直飞",
+      "stop": "{count} 次转机",
+      "return": "返程",
+      "roundtrip": "往返",
+      "bookNow": "立即预订",
+      "loadingBooking": "加载中..."
+    },
+    "hotelCard": {
+      "perNight": "每晚",
+      "total": "总计：{price}",
+      "reviews": "（{count} 条评论）",
+      "more": "还有 {count} 项",
+      "bookNow": "立即预订"
+    },
+    "compareBar": {
+      "selected": "已选择 {count} 个",
+      "compare": "比较",
+      "clear": "清除"
+    }
+  },
+  "compare": {
+    "title": "价格比较",
+    "subtitle": "比较不同供应商的价格，找到最优惠方案。",
+    "manual": {
+      "label": "项目 ID（以逗号分隔）",
+      "placeholder": "id1, id2, id3",
+      "helperText": "输入至少 2 个搜索结果的 ID 来进行比较。"
+    },
+    "table": {
+      "item": "项目",
+      "bestPrice": "最低价",
+      "noData": "没有比较数据，请选择项目来比较。"
+    },
+    "types": {
+      "flights": "机票",
+      "hotels": "酒店"
+    }
+  },
+  "trip": {
+    "title": "我的行程",
+    "newTrip": "新建行程",
+    "noTrips": "暂无行程。",
+    "noTripsHint": "创建您的第一个行程来开始规划。",
+    "confirmDelete": "确定要删除此行程吗？",
+    "backToTrips": "返回行程列表",
+    "form": {
+      "title": "创建新行程",
+      "tripTitle": "行程名称",
+      "tripTitlePlaceholder": "暑假旅行",
+      "destination": "目的地",
+      "destinationPlaceholder": "巴黎，法国",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "createTrip": "创建行程"
+    },
+    "status": {
+      "planning": "规划中",
+      "booked": "已预订",
+      "in_progress": "进行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "itinerary": {
+      "items": "{count} 个行程项目",
+      "noItems": "暂无行程项目。",
+      "noItemsHint": "使用 AI 对话来帮助创建您的行程。",
+      "day": "第 {day} 天",
+      "budget": "预算：{amount}",
+      "location": "地点：{location}",
+      "types": {
+        "flight": "航班",
+        "hotel": "住宿",
+        "activity": "活动",
+        "transfer": "交通",
+        "note": "备注"
+      }
+    }
+  },
+  "chat": {
+    "title": "AI 对话 — 即将推出",
+    "comingSoon": "对话功能暂时不可用，我们正在配置 AI 供应商。",
+    "backToHome": "返回首页"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "正在登录...",
+      "pleaseWait": "请稍候，正在完成验证。",
+      "success": "登录成功",
+      "redirecting": "正在为您跳转到首页...",
+      "failed": "验证失败",
+      "noToken": "未收到验证令牌。",
+      "returnHome": "返回首页"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "订阅管理",
+      "signInRequired": "请登录以管理订阅。",
+      "emails": {
+        "title": "电子邮箱地址",
+        "loading": "加载邮箱中...",
+        "noEmails": "尚未添加电子邮箱地址。",
+        "placeholder": "添加电子邮箱地址",
+        "verified": "已验证",
+        "pending": "待验证"
+      },
+      "list": {
+        "title": "活跃的订阅",
+        "noSubscriptions": "暂无订阅。",
+        "from": "从 {origin}",
+        "to": "到 {destination}"
+      },
+      "new": {
+        "title": "新建订阅",
+        "verifyFirst": "请先添加并验证电子邮箱地址后再创建订阅。",
+        "type": "类型",
+        "originIATA": "出发地（IATA）",
+        "destinationIATA": "目的地（IATA）",
+        "sendTo": "发送至",
+        "selectEmail": "选择邮箱...",
+        "create": "创建订阅"
+      },
+      "types": {
+        "bug_fare": "Bug 票价",
+        "price_drop": "降价通知",
+        "deal_digest": "优惠摘要"
+      }
+    },
+    "preferences": {
+      "title": "偏好设置",
+      "signInRequired": "请登录以管理偏好设置。",
+      "loading": "加载偏好设置中...",
+      "saved": "保存成功",
+      "saveButton": "保存偏好设置",
+      "homeAirports": {
+        "label": "常用机场",
+        "hint": "IATA 代码，以逗号分隔（例如：PVG, SHA）"
+      },
+      "preferredAirlines": {
+        "label": "偏好航空公司",
+        "hint": "IATA 代码，以逗号分隔（例如：CA, MU, CZ）"
+      },
+      "excludedAirlines": {
+        "label": "排除航空公司",
+        "hint": "要避开的航空公司（例如：TR, MM）"
+      },
+      "alliances": {
+        "label": "偏好航空联盟"
+      },
+      "cabinClasses": {
+        "label": "舱位",
+        "economy": "经济舱",
+        "premiumEconomy": "豪华经济舱",
+        "business": "商务舱",
+        "first": "头等舱"
+      },
+      "maxStops": {
+        "label": "最多转机次数",
+        "any": "不限",
+        "nonStop": "仅直飞",
+        "max1": "最多 1 次转机",
+        "max2": "最多 2 次转机"
+      },
+      "language": {
+        "label": "语言"
+      }
+    }
+  },
+  "footer": {
+    "description": "AI 驱动的旅游规划与价格比较。",
+    "features": "功能",
+    "flightHotelSearch": "机票与酒店搜索",
+    "priceComparison": "价格比较",
+    "legal": "法律信息",
+    "mitLicense": "MIT 许可证",
+    "copyright": "(c) {year} Woodrow Shen. 保留所有权利。"
+  },
+  "metadata": {
+    "title": "Travel AI - 智能旅游规划",
+    "description": "AI 驱动的旅游规划，包含机票与酒店搜索、价格比较和智能行程生成。"
+  },
+  "errors": {
+    "generic": "发生错误，请稍后再试。",
+    "notFound": "找不到页面。",
+    "unauthorized": "请先登录。",
+    "serverError": "服务器错误，请稍后再试。"
+  }
+}

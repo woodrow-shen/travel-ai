@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "Search",
+    "compare": "Compare",
+    "trips": "Trips",
+    "chat": "Chat",
+    "signIn": "Sign in with Google",
+    "signOut": "Sign out",
+    "loading": "Loading...",
+    "subscriptions": "Subscriptions",
+    "preferences": "Preferences",
+    "select": "Select",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "remove": "Remove",
+    "clear": "Clear",
+    "view": "View",
+    "back": "Back",
+    "type": "Type"
+  },
+  "landing": {
+    "hero": {
+      "title": "Plan Your Perfect Trip with {ai}",
+      "subtitle": "Search flights and hotels, compare prices across providers, and let our AI assistant help you build the perfect itinerary."
+    },
+    "signInPrompt": "Sign in to save trips and access personalized recommendations.",
+    "features": {
+      "title": "Why Travel AI?",
+      "smartSearch": {
+        "title": "Smart Search",
+        "description": "Search flights and hotels across multiple providers in a single query."
+      },
+      "priceComparison": {
+        "title": "Price Comparison",
+        "description": "Compare prices across providers to find the best deals for your trip."
+      },
+      "aiItinerary": {
+        "title": "AI Itinerary",
+        "description": "Chat with our AI to generate day-by-day itineraries tailored to you."
+      }
+    }
+  },
+  "search": {
+    "title": "Search",
+    "tabs": {
+      "flights": "Flights",
+      "hotels": "Hotels"
+    },
+    "form": {
+      "from": "From",
+      "to": "To",
+      "destination": "Destination",
+      "departure": "Departure",
+      "return": "Return",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "adults": "Adults",
+      "guests": "Guests",
+      "rooms": "Rooms",
+      "cabinClass": "Cabin Class",
+      "roundtrip": "Roundtrip",
+      "oneWay": "One-way",
+      "cityOrAirport": "City or airport",
+      "cityOrRegion": "City or region"
+    },
+    "cabinClasses": {
+      "economy": "Economy",
+      "premiumEconomy": "Premium Economy",
+      "business": "Business",
+      "first": "First Class"
+    },
+    "button": {
+      "searchFlights": "Search Flights",
+      "searchHotels": "Search Hotels",
+      "searchingFlights": "Searching Flights...",
+      "searchingHotels": "Searching Hotels..."
+    },
+    "results": {
+      "found": "{count} result{count, plural, one {} other {s}} found",
+      "noResults": "No results found. Try adjusting your search criteria.",
+      "sortBy": "Sort by:",
+      "price": "Price",
+      "duration": "Duration",
+      "rating": "Rating",
+      "lowToHigh": "Low to High",
+      "highToLow": "High to Low"
+    },
+    "flightCard": {
+      "direct": "Direct",
+      "stop": "{count} stop{count, plural, one {} other {s}}",
+      "return": "Return",
+      "roundtrip": "roundtrip",
+      "bookNow": "Book now",
+      "loadingBooking": "Loading..."
+    },
+    "hotelCard": {
+      "perNight": "per night",
+      "total": "Total: {price}",
+      "reviews": "({count} reviews)",
+      "more": "+{count} more",
+      "bookNow": "Book now"
+    },
+    "compareBar": {
+      "selected": "{count} selected",
+      "compare": "Compare",
+      "clear": "Clear"
+    }
+  },
+  "compare": {
+    "title": "Price Comparison",
+    "subtitle": "Compare prices across different providers to find the best deal.",
+    "manual": {
+      "label": "Item IDs (comma separated)",
+      "placeholder": "id1, id2, id3",
+      "helperText": "Enter at least 2 IDs from search results to compare."
+    },
+    "table": {
+      "item": "Item",
+      "bestPrice": "Best Price",
+      "noData": "No comparison data available. Select items to compare."
+    },
+    "types": {
+      "flights": "Flights",
+      "hotels": "Hotels"
+    }
+  },
+  "trip": {
+    "title": "My Trips",
+    "newTrip": "New Trip",
+    "noTrips": "No trips yet.",
+    "noTripsHint": "Create your first trip to start planning.",
+    "confirmDelete": "Are you sure you want to delete this trip?",
+    "backToTrips": "Back to trips",
+    "form": {
+      "title": "Create New Trip",
+      "tripTitle": "Trip Title",
+      "tripTitlePlaceholder": "Summer Vacation",
+      "destination": "Destination",
+      "destinationPlaceholder": "Paris, France",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "createTrip": "Create Trip"
+    },
+    "status": {
+      "planning": "planning",
+      "booked": "booked",
+      "in_progress": "in progress",
+      "completed": "completed",
+      "cancelled": "cancelled"
+    },
+    "itinerary": {
+      "items": "{count} itinerary item{count, plural, one {} other {s}}",
+      "noItems": "No itinerary items yet.",
+      "noItemsHint": "Use the AI chat to help build your itinerary.",
+      "day": "Day {day}",
+      "budget": "Budget: {amount}",
+      "location": "Location: {location}",
+      "types": {
+        "flight": "Departure",
+        "hotel": "Accommodation",
+        "activity": "Activity",
+        "transfer": "Transfer",
+        "note": "Note"
+      }
+    }
+  },
+  "chat": {
+    "title": "AI Chat — Coming Soon",
+    "comingSoon": "Chat feature is temporarily unavailable while we configure the AI provider.",
+    "backToHome": "Back to Home"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "Signing you in...",
+      "pleaseWait": "Please wait while we complete authentication.",
+      "success": "Successfully signed in",
+      "redirecting": "Redirecting you to the home page...",
+      "failed": "Authentication Failed",
+      "noToken": "No authentication token received.",
+      "returnHome": "Return to home"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "Subscription Management",
+      "signInRequired": "Please sign in to manage subscriptions.",
+      "emails": {
+        "title": "Email Addresses",
+        "loading": "Loading emails...",
+        "noEmails": "No email addresses added yet.",
+        "placeholder": "Add email address",
+        "verified": "Verified",
+        "pending": "Pending"
+      },
+      "list": {
+        "title": "Active Subscriptions",
+        "noSubscriptions": "No subscriptions yet.",
+        "from": "from {origin}",
+        "to": "to {destination}"
+      },
+      "new": {
+        "title": "New Subscription",
+        "verifyFirst": "Add and verify an email address above before creating a subscription.",
+        "type": "Type",
+        "originIATA": "Origin (IATA)",
+        "destinationIATA": "Destination (IATA)",
+        "sendTo": "Send to",
+        "selectEmail": "Select email...",
+        "create": "Create Subscription"
+      },
+      "types": {
+        "bug_fare": "Bug Fare",
+        "price_drop": "Price Drop",
+        "deal_digest": "Deal Digest"
+      }
+    },
+    "preferences": {
+      "title": "Preferences",
+      "signInRequired": "Please sign in to manage preferences.",
+      "loading": "Loading preferences...",
+      "saved": "Saved successfully",
+      "saveButton": "Save Preferences",
+      "homeAirports": {
+        "label": "Home Airports",
+        "hint": "IATA codes, comma-separated (e.g. TPE, TSA)"
+      },
+      "preferredAirlines": {
+        "label": "Preferred Airlines",
+        "hint": "IATA codes, comma-separated (e.g. BR, CI, NH)"
+      },
+      "excludedAirlines": {
+        "label": "Excluded Airlines",
+        "hint": "Airlines to avoid (e.g. TR, MM)"
+      },
+      "alliances": {
+        "label": "Preferred Alliances"
+      },
+      "cabinClasses": {
+        "label": "Cabin Classes",
+        "economy": "Economy",
+        "premiumEconomy": "Premium Economy",
+        "business": "Business",
+        "first": "First"
+      },
+      "maxStops": {
+        "label": "Maximum Stops",
+        "any": "Any",
+        "nonStop": "Non-stop only",
+        "max1": "Max 1 stop",
+        "max2": "Max 2 stops"
+      },
+      "language": {
+        "label": "Language"
+      }
+    }
+  },
+  "footer": {
+    "description": "AI-powered travel planning and price comparison.",
+    "features": "Features",
+    "flightHotelSearch": "Flight & Hotel Search",
+    "priceComparison": "Price Comparison",
+    "legal": "Legal",
+    "mitLicense": "MIT License",
+    "copyright": "© {year} Woodrow Shen. All rights reserved."
+  },
+  "metadata": {
+    "title": "Travel AI - Smart Travel Planning",
+    "description": "AI-powered travel planning with flight and hotel search, price comparison, and intelligent itinerary generation."
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again later.",
+    "notFound": "Page not found.",
+    "unauthorized": "Please sign in first.",
+    "serverError": "Server error. Please try again later."
+  }
+}

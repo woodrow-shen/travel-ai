@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "無効な認証トークンです。",
+    "expired_token": "認証トークンの有効期限が切れています。",
+    "unauthorized": "ログインしてください。",
+    "google_auth_failed": "Google認証に失敗しました。",
+    "refresh_failed": "トークンの更新に失敗しました。"
+  },
+  "search": {
+    "no_results": "結果が見つかりませんでした。",
+    "invalid_params": "検索パラメータが無効です。",
+    "provider_error": "プロバイダーが一時的に利用できません。しばらくしてからもう一度お試しください。"
+  },
+  "trip": {
+    "not_found": "旅行が見つかりません。",
+    "create_failed": "旅行の作成に失敗しました。",
+    "delete_failed": "旅行の削除に失敗しました。"
+  },
+  "subscription": {
+    "email_not_verified": "先にメールアドレスを確認してください。",
+    "email_not_found": "メールアドレスが見つかりません。",
+    "already_exists": "サブスクリプションは既に存在します。",
+    "invalid_email": "無効なメールアドレスです。",
+    "dns_validation_failed": "メールドメインの検証に失敗しました。"
+  },
+  "compare": {
+    "min_items": "比較には2つ以上のアイテムが必要です。",
+    "invalid_type": "無効な比較タイプです。"
+  },
+  "user": {
+    "not_found": "ユーザーが見つかりません。",
+    "preference_update_failed": "設定の更新に失敗しました。"
+  },
+  "chat": {
+    "error": "申し訳ございません。リクエストの処理中にエラーが発生しました。もう一度お試しください。"
+  },
+  "general": {
+    "server_error": "サーバーエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "not_found": "リクエストされたリソースが見つかりません。",
+    "rate_limited": "リクエストが多すぎます。しばらくしてからもう一度お試しください。",
+    "premium_required": "この機能にはプレミアムサブスクリプションが必要です。",
+    "validation_error": "入力の検証に失敗しました。"
+  }
+}

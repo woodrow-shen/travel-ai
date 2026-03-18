@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #e94560;">Canh bao gia loi!</h2>
+  <p>Chung toi phat hien mot gia ve bat thuong co the la gia loi — hay hanh dong nhanh!</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>Tuyen bay:</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>Hang hang khong:</strong> {{ airline }}</p>
+    <p><strong>Ngay:</strong> {{ departure_date }}</p>
+    <p style="font-size: 24px; color: #e94560;"><strong>{{ price_amount }} {{ price_currency }}</strong></p>
+    <p style="color: #666;">Gia trung binh: {{ avg_price }} {{ price_currency }} (giam {{ discount_pct }}%)</p>
+    <p><strong>Do tin cay:</strong> {{ confidence }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">Huy dang ky</a> canh bao gia loi
+  </p>
+</body>
+</html>

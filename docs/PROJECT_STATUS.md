@@ -3,8 +3,8 @@
 | Field         | Value                                  |
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
-| **Version**   | 0.2.0                                  |
-| **Date**      | 2026-03-15                             |
+| **Version**   | 0.4.0                                  |
+| **Date**      | 2026-03-18                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
 
@@ -15,21 +15,21 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████████  100% (82/82 items)
-Infrastructure ██████████████████░░░░  77%  (10/13 items)
-Quality        ██████████████████████  100% (24/24 items)
+Features       ██████████████████████  100% (85/85 items)
+Infrastructure ████████████████░░░░░░  78%  (14/18 items)
+Quality        ██████████████████████  100% (30/30 items)
 Documentation  ████████████████░░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████████░░  95%  (124/131 items)
+OVERALL        ████████████████████░░  95%  (137/144 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 82 | 82 | 0 | 0 |
-| Infrastructure (§4) | 10 | 13 | 3 | 0 |
-| Quality Assurance (§5) | 24 | 24 | 0 | 0 |
+| Features (§3) | 85 | 85 | 0 | 0 |
+| Infrastructure (§4) | 14 | 18 | 4 | 0 |
+| Quality Assurance (§5) | 30 | 30 | 0 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **124** | **131** | **7** | **1** |
+| **Total** | **137** | **144** | **7** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -190,6 +190,20 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Subscription store + useSubscription hook
 - [x] Preferences store + usePreferences hook
 
+### 3.11 Internationalization (i18n)
+
+- [x] Frontend: next-intl integration with `[locale]` App Router routing
+- [x] Frontend: Translation message files (zh-TW + en, ~200 keys each)
+- [x] Frontend: All pages and components use `useTranslations()` (no hardcoded strings)
+- [x] Frontend: LanguageSwitcher component in Header and Preferences page
+- [x] Frontend: next-intl middleware with API route bypass
+- [x] Backend: `preferred_language` column in user_preferences + Alembic migration
+- [x] Backend: Locale detection middleware (Accept-Language header → `request.state.locale`)
+- [x] Backend: `t(key, locale)` translation function with dotted key support + fallback
+- [x] Backend: Localized error messages (zh-TW + en, ~30 keys)
+- [x] Backend: AI agent locale-aware system prompts (6 agents)
+- [x] Backend: Email templates localized (4 templates × 2 languages = 8 files)
+
 ---
 
 ## 4. Infrastructure & DevOps Checklist
@@ -339,7 +353,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | 0.1.0   | 2026-03-03 | Initial release: multi-agent AI, flight search (3 sources), chat, subscriptions, monitoring daemon, CI/CD |
 | 0.2.0   | 2026-03-13 | Subscription UI, preferences page, user dropdown, monitor tasks implemented, notifier email sending, docs reorganization |
 | 0.3.0   | 2026-03-17 | Hotel search integration (Skyscanner + Kiwi), Google Flights 4th flight source, email bounce fix |
+| 0.4.0   | 2026-03-18 | Full-stack i18n: zh-TW + en, next-intl frontend, locale middleware, AI agent localization, email templates |
 
 ---
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-18*

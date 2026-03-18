@@ -2,6 +2,7 @@ import logging
 from collections.abc import AsyncGenerator
 
 from app.agents.coordinator import CoordinatorAgent
+from app.i18n import t
 from app.models.chat_session import ChatSession
 from app.models.user import User
 
@@ -9,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class ChatService:
-    def __init__(self):
-        self.coordinator = CoordinatorAgent()
+    def __init__(self, locale: str = "zh-TW"):
+        self.coordinator = CoordinatorAgent(locale=locale)
 
     async def stream_response(
         self, message: str, session: ChatSession, user: User
@@ -46,9 +47,6 @@ class ChatService:
 
         except Exception:
             logger.exception("Error in chat stream")
-            yield "text", (
-                "I'm sorry, I encountered an error processing your request. "
-                "Please try again."
-            )
+            yield "text", t("chat.error", locale=self.coordinator.locale)
 
         yield "done", ""

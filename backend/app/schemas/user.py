@@ -24,6 +24,7 @@ class UserPreferenceUpdate(BaseModel):
     cabin_classes: list[str] | None = None
     max_stops: int | None = None
     home_airports: list[str] | None = None
+    preferred_language: str | None = None
 
 
 class UserPreferenceResponse(BaseModel):
@@ -33,6 +34,7 @@ class UserPreferenceResponse(BaseModel):
     cabin_classes: list[str] | None = None
     max_stops: int | None = None
     home_airports: list[str] | None = None
+    preferred_language: str | None = None
 
     model_config = {"from_attributes": True}
 

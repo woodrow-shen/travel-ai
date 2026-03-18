@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #e94560;">버그 운임 알림!</h2>
+  <p>비정상적으로 저렴한 운임을 발견했습니다. 오류 운임일 수 있으니 서둘러 주세요!</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>노선:</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>항공사:</strong> {{ airline }}</p>
+    <p><strong>날짜:</strong> {{ departure_date }}</p>
+    <p style="font-size: 24px; color: #e94560;"><strong>{{ price_amount }} {{ price_currency }}</strong></p>
+    <p style="color: #666;">평균 가격: {{ avg_price }} {{ price_currency }} ({{ discount_pct }}% 할인)</p>
+    <p><strong>신뢰도:</strong> {{ confidence }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">버그 운임 알림 수신 거부</a>
+  </p>
+</body>
+</html>

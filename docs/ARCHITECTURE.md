@@ -279,13 +279,13 @@ Converts provider-specific flight data into a unified format:
 
 | Page            | Path                  | Description                          |
 |-----------------|-----------------------|--------------------------------------|
-| Landing         | `/`                   | Marketing and introduction           |
-| Search          | `/search`             | Flight/hotel search form + results   |
-| Compare         | `/compare`            | Side-by-side comparison view         |
-| Trip            | `/trip`               | Trip planner and itinerary display   |
-| Chat            | `/chat`               | AI chat interface                    |
-| Settings        | `/settings`           | User preferences settings            |
-| Auth Callback   | `/auth/callback`      | OAuth redirect handler               |
+| Landing         | `/[locale]`                   | Marketing and introduction           |
+| Search          | `/[locale]/search`             | Flight/hotel search form + results   |
+| Compare         | `/[locale]/compare`            | Side-by-side comparison view         |
+| Trip            | `/[locale]/trip`               | Trip planner and itinerary display   |
+| Chat            | `/[locale]/chat`               | AI chat interface                    |
+| Settings        | `/[locale]/settings/*`         | User preferences and subscriptions   |
+| Auth Callback   | `/[locale]/auth/callback`      | OAuth redirect handler               |
 
 ### Components
 
@@ -299,6 +299,7 @@ Converts provider-specific flight data into a unified format:
 | `ChatMessage`    | Individual message display             |
 | `ItineraryView`  | Day-by-day schedule renderer           |
 | `Header`/`Footer`| Layout components                     |
+| `LanguageSwitcher` | Locale toggle (zh-TW ↔ en)         |
 | `Button`/`Input`/`Card` | Shared UI primitives            |
 
 ### Hooks
@@ -690,6 +691,18 @@ Note: CI does not spin up Redis. Tests that require Redis should degrade gracefu
 - Native browser support via `EventSource` API.
 - Compatible with HTTP/2 and standard reverse proxies without special configuration.
 
+### ADR-9: next-intl for Frontend i18n
+
+**Decision:** Use `next-intl` with URL path prefix (`localePrefix: "as-needed"`) for frontend internationalization.
+
+**Rationale:**
+- Best integration with Next.js 15 App Router (`[locale]` dynamic segment, server/client components).
+- `localePrefix: "as-needed"` — default locale (zh-TW) has no URL prefix; `/en/*` for English. Clean URLs for primary audience.
+- Built-in middleware for locale detection and routing.
+- ICU message format for plurals and interpolation.
+- Locale resolution order: URL path prefix → Accept-Language header → default (zh-TW).
+- Backend locale resolution: Accept-Language header → user `preferred_language` in DB → default (zh-TW).
+
 ---
 
 ## Known Limitations
@@ -698,12 +711,4 @@ The following areas are currently stubs or incomplete:
 
 | Area                          | Status                                           |
 |-------------------------------|--------------------------------------------------|
-| Hotel search                  | `SearchAgent`, `SearchService`, `PriceService` hotel methods return empty |
-| Price history                 | `PriceAgent._get_price_history()` not wired to DB |
-| Recommendation preferences    | `RecommendationAgent._get_user_preferences()` not querying DB |
-| Monitor tasks                 | `price_scan`, `deal_digest`, `cleanup` task bodies are stubs |
-| Monitor notifier              | Does not actually send emails yet                |
-| Subscription email sending    | Stub in `subscription_service.py`                |
-| Frontend tests                | No unit tests or E2E tests written yet           |
 | Caddyfile                     | Referenced in `docker-compose.prod.yml` but not created |
-| Redis in CI                   | GitHub Actions test workflow does not spin up Redis |

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { FlightResult } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +34,8 @@ export function FlightCard({
   isSelected = false,
 }: FlightCardProps) {
   const [bookingLoading, setBookingLoading] = useState(false);
+  const t = useTranslations("search.flightCard");
+  const tc = useTranslations("common");
 
   const outbound = flight.outbound_segments;
   const firstSegment = outbound[0];
@@ -74,6 +77,11 @@ export function FlightCard({
       setBookingLoading(false);
     }
   }
+
+  const stopsLabel = (stops: number) => {
+    if (stops === 0) return t("direct");
+    return t("stop", { count: stops });
+  };
 
   return (
     <Card
@@ -120,9 +128,7 @@ export function FlightCard({
                   <div className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-[var(--color-muted)]" />
                 </div>
                 <span className="text-xs text-[var(--color-muted)]">
-                  {flight.stops === 0
-                    ? "Direct"
-                    : `${flight.stops} stop${flight.stops > 1 ? "s" : ""}`}
+                  {stopsLabel(flight.stops)}
                 </span>
               </div>
 
@@ -141,7 +147,7 @@ export function FlightCard({
               <>
                 <div className="my-3 border-t border-dashed border-[var(--color-border)]" />
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium uppercase text-[var(--color-muted)]">Return</span>
+                  <span className="text-xs font-medium uppercase text-[var(--color-muted)]">{t("return")}</span>
                   <span className="font-medium">{returnFirst.airline}</span>
                   <span className="text-sm text-[var(--color-muted)]">
                     {returnFirst.flight_number}
@@ -168,9 +174,7 @@ export function FlightCard({
                       <div className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-[var(--color-muted)]" />
                     </div>
                     <span className="text-xs text-[var(--color-muted)]">
-                      {returnSegs.length <= 1
-                        ? "Direct"
-                        : `${returnSegs.length - 1} stop${returnSegs.length - 1 > 1 ? "s" : ""}`}
+                      {stopsLabel(returnSegs.length <= 1 ? 0 : returnSegs.length - 1)}
                     </span>
                   </div>
 
@@ -196,7 +200,7 @@ export function FlightCard({
               {flight.provider}
             </p>
             {returnSegs && returnSegs.length > 0 && (
-              <p className="text-xs text-[var(--color-muted)]">roundtrip</p>
+              <p className="text-xs text-[var(--color-muted)]">{t("roundtrip")}</p>
             )}
           </div>
         </div>
@@ -205,7 +209,7 @@ export function FlightCard({
       <CardFooter>
         {onSelect && (
           <Button size="sm" onClick={() => onSelect(flight)}>
-            Select
+            {tc("select")}
           </Button>
         )}
         {onCompare && (
@@ -214,7 +218,7 @@ export function FlightCard({
             size="sm"
             onClick={() => onCompare(flight)}
           >
-            Compare
+            {tc("compare")}
           </Button>
         )}
         {showBookNow && (
@@ -223,7 +227,7 @@ export function FlightCard({
             disabled={bookingLoading}
             className="ml-auto text-sm text-[var(--color-primary)] hover:underline disabled:opacity-50"
           >
-            {bookingLoading ? "Loading..." : "Book now"}
+            {bookingLoading ? t("loadingBooking") : t("bookNow")}
           </button>
         )}
       </CardFooter>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #0f3460;">Alerte baisse de prix</h2>
+  <p>Un itinéraire que vous suivez vient de baisser de prix !</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>Itinéraire :</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>Date :</strong> {{ departure_date }}</p>
+    <p><strong>Prix précédent :</strong> <s>{{ previous_price }} {{ price_currency }}</s></p>
+    <p style="font-size: 24px; color: #16c79a;"><strong>Maintenant : {{ current_price }} {{ price_currency }}</strong></p>
+    <p>Votre objectif : {{ target_price }} {{ price_currency }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">Se désabonner</a> des alertes de baisse de prix
+  </p>
+</body>
+</html>

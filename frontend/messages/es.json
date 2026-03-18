@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "Buscar",
+    "compare": "Comparar",
+    "trips": "Viajes",
+    "chat": "Chat",
+    "signIn": "Iniciar sesión con Google",
+    "signOut": "Cerrar sesión",
+    "loading": "Cargando...",
+    "subscriptions": "Suscripciones",
+    "preferences": "Preferencias",
+    "select": "Seleccionar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "clear": "Limpiar",
+    "view": "Ver",
+    "back": "Atrás",
+    "type": "Tipo"
+  },
+  "landing": {
+    "hero": {
+      "title": "Planifica tu viaje perfecto con {ai}",
+      "subtitle": "Busca vuelos y hoteles, compara precios entre proveedores y deja que nuestro asistente de IA te ayude a crear el itinerario perfecto."
+    },
+    "signInPrompt": "Inicia sesión para guardar viajes y acceder a recomendaciones personalizadas.",
+    "features": {
+      "title": "¿Por qué Travel AI?",
+      "smartSearch": {
+        "title": "Búsqueda inteligente",
+        "description": "Busca vuelos y hoteles en múltiples proveedores con una sola consulta."
+      },
+      "priceComparison": {
+        "title": "Comparación de precios",
+        "description": "Compara precios entre proveedores para encontrar las mejores ofertas para tu viaje."
+      },
+      "aiItinerary": {
+        "title": "Itinerario con IA",
+        "description": "Chatea con nuestra IA para generar itinerarios día a día adaptados a ti."
+      }
+    }
+  },
+  "search": {
+    "title": "Buscar",
+    "tabs": {
+      "flights": "Vuelos",
+      "hotels": "Hoteles"
+    },
+    "form": {
+      "from": "Desde",
+      "to": "Hasta",
+      "destination": "Destino",
+      "departure": "Ida",
+      "return": "Vuelta",
+      "checkIn": "Entrada",
+      "checkOut": "Salida",
+      "adults": "Adultos",
+      "guests": "Huéspedes",
+      "rooms": "Habitaciones",
+      "cabinClass": "Clase de cabina",
+      "roundtrip": "Ida y vuelta",
+      "oneWay": "Solo ida",
+      "cityOrAirport": "Ciudad o aeropuerto",
+      "cityOrRegion": "Ciudad o región"
+    },
+    "cabinClasses": {
+      "economy": "Económica",
+      "premiumEconomy": "Económica Premium",
+      "business": "Business",
+      "first": "Primera clase"
+    },
+    "button": {
+      "searchFlights": "Buscar vuelos",
+      "searchHotels": "Buscar hoteles",
+      "searchingFlights": "Buscando vuelos...",
+      "searchingHotels": "Buscando hoteles..."
+    },
+    "results": {
+      "found": "{count} resultado{count, plural, one {} other {s}} encontrado{count, plural, one {} other {s}}",
+      "noResults": "No se encontraron resultados. Intenta ajustar tus criterios de búsqueda.",
+      "sortBy": "Ordenar por:",
+      "price": "Precio",
+      "duration": "Duración",
+      "rating": "Valoración",
+      "lowToHigh": "Menor a mayor",
+      "highToLow": "Mayor a menor"
+    },
+    "flightCard": {
+      "direct": "Directo",
+      "stop": "{count} escala{count, plural, one {} other {s}}",
+      "return": "Vuelta",
+      "roundtrip": "ida y vuelta",
+      "bookNow": "Reservar ahora",
+      "loadingBooking": "Cargando..."
+    },
+    "hotelCard": {
+      "perNight": "por noche",
+      "total": "Total: {price}",
+      "reviews": "({count} reseñas)",
+      "more": "+{count} más",
+      "bookNow": "Reservar ahora"
+    },
+    "compareBar": {
+      "selected": "{count} seleccionado{count, plural, one {} other {s}}",
+      "compare": "Comparar",
+      "clear": "Limpiar"
+    }
+  },
+  "compare": {
+    "title": "Comparación de precios",
+    "subtitle": "Compara precios entre diferentes proveedores para encontrar la mejor oferta.",
+    "manual": {
+      "label": "IDs de elementos (separados por comas)",
+      "placeholder": "id1, id2, id3",
+      "helperText": "Introduce al menos 2 IDs de los resultados de búsqueda para comparar."
+    },
+    "table": {
+      "item": "Elemento",
+      "bestPrice": "Mejor precio",
+      "noData": "No hay datos de comparación disponibles. Selecciona elementos para comparar."
+    },
+    "types": {
+      "flights": "Vuelos",
+      "hotels": "Hoteles"
+    }
+  },
+  "trip": {
+    "title": "Mis viajes",
+    "newTrip": "Nuevo viaje",
+    "noTrips": "Aún no hay viajes.",
+    "noTripsHint": "Crea tu primer viaje para empezar a planificar.",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este viaje?",
+    "backToTrips": "Volver a viajes",
+    "form": {
+      "title": "Crear nuevo viaje",
+      "tripTitle": "Título del viaje",
+      "tripTitlePlaceholder": "Vacaciones de verano",
+      "destination": "Destino",
+      "destinationPlaceholder": "París, Francia",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "createTrip": "Crear viaje"
+    },
+    "status": {
+      "planning": "planificando",
+      "booked": "reservado",
+      "in_progress": "en curso",
+      "completed": "completado",
+      "cancelled": "cancelado"
+    },
+    "itinerary": {
+      "items": "{count} elemento{count, plural, one {} other {s}} del itinerario",
+      "noItems": "Aún no hay elementos en el itinerario.",
+      "noItemsHint": "Usa el chat de IA para ayudarte a crear tu itinerario.",
+      "day": "Día {day}",
+      "budget": "Presupuesto: {amount}",
+      "location": "Ubicación: {location}",
+      "types": {
+        "flight": "Vuelo",
+        "hotel": "Alojamiento",
+        "activity": "Actividad",
+        "transfer": "Traslado",
+        "note": "Nota"
+      }
+    }
+  },
+  "chat": {
+    "title": "Chat IA — Próximamente",
+    "comingSoon": "La función de chat no está disponible temporalmente mientras configuramos el proveedor de IA.",
+    "backToHome": "Volver al inicio"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "Iniciando sesión...",
+      "pleaseWait": "Por favor espera mientras completamos la autenticación.",
+      "success": "Sesión iniciada correctamente",
+      "redirecting": "Redirigiendo a la página de inicio...",
+      "failed": "Error de autenticación",
+      "noToken": "No se recibió token de autenticación.",
+      "returnHome": "Volver al inicio"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "Gestión de suscripciones",
+      "signInRequired": "Por favor inicia sesión para gestionar las suscripciones.",
+      "emails": {
+        "title": "Direcciones de correo electrónico",
+        "loading": "Cargando correos...",
+        "noEmails": "Aún no se han añadido direcciones de correo.",
+        "placeholder": "Añadir dirección de correo",
+        "verified": "Verificado",
+        "pending": "Pendiente"
+      },
+      "list": {
+        "title": "Suscripciones activas",
+        "noSubscriptions": "Aún no hay suscripciones.",
+        "from": "desde {origin}",
+        "to": "hasta {destination}"
+      },
+      "new": {
+        "title": "Nueva suscripción",
+        "verifyFirst": "Añade y verifica una dirección de correo arriba antes de crear una suscripción.",
+        "type": "Tipo",
+        "originIATA": "Origen (IATA)",
+        "destinationIATA": "Destino (IATA)",
+        "sendTo": "Enviar a",
+        "selectEmail": "Seleccionar correo...",
+        "create": "Crear suscripción"
+      },
+      "types": {
+        "bug_fare": "Tarifa errónea",
+        "price_drop": "Bajada de precio",
+        "deal_digest": "Resumen de ofertas"
+      }
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "signInRequired": "Por favor inicia sesión para gestionar las preferencias.",
+      "loading": "Cargando preferencias...",
+      "saved": "Guardado correctamente",
+      "saveButton": "Guardar preferencias",
+      "homeAirports": {
+        "label": "Aeropuertos de origen",
+        "hint": "Códigos IATA, separados por comas (ej. TPE, TSA)"
+      },
+      "preferredAirlines": {
+        "label": "Aerolíneas preferidas",
+        "hint": "Códigos IATA, separados por comas (ej. BR, CI, NH)"
+      },
+      "excludedAirlines": {
+        "label": "Aerolíneas excluidas",
+        "hint": "Aerolíneas a evitar (ej. TR, MM)"
+      },
+      "alliances": {
+        "label": "Alianzas preferidas"
+      },
+      "cabinClasses": {
+        "label": "Clases de cabina",
+        "economy": "Económica",
+        "premiumEconomy": "Económica Premium",
+        "business": "Business",
+        "first": "Primera"
+      },
+      "maxStops": {
+        "label": "Máximo de escalas",
+        "any": "Cualquiera",
+        "nonStop": "Solo directo",
+        "max1": "Máx. 1 escala",
+        "max2": "Máx. 2 escalas"
+      },
+      "language": {
+        "label": "Idioma"
+      }
+    }
+  },
+  "footer": {
+    "description": "Planificación de viajes y comparación de precios con IA.",
+    "features": "Características",
+    "flightHotelSearch": "Búsqueda de vuelos y hoteles",
+    "priceComparison": "Comparación de precios",
+    "legal": "Legal",
+    "mitLicense": "Licencia MIT",
+    "copyright": "© {year} Woodrow Shen. Todos los derechos reservados."
+  },
+  "metadata": {
+    "title": "Travel AI - Planificación inteligente de viajes",
+    "description": "Planificación de viajes con IA: búsqueda de vuelos y hoteles, comparación de precios y generación inteligente de itinerarios."
+  },
+  "errors": {
+    "generic": "Ha ocurrido un error. Por favor inténtalo de nuevo más tarde.",
+    "notFound": "Página no encontrada.",
+    "unauthorized": "Por favor inicia sesión primero.",
+    "serverError": "Error del servidor. Por favor inténtalo de nuevo más tarde."
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { CompareResult } from "@/types";
 import { formatPrice } from "@/lib/utils";
 
@@ -8,10 +9,12 @@ interface CompareTableProps {
 }
 
 export function CompareTable({ results }: CompareTableProps) {
+  const t = useTranslations("compare.table");
+
   if (results.length === 0) {
     return (
       <p className="py-8 text-center text-[var(--color-muted)]">
-        No comparison data available. Select items to compare.
+        {t("noData")}
       </p>
     );
   }
@@ -25,7 +28,7 @@ export function CompareTable({ results }: CompareTableProps) {
       <table
         className="w-full border-collapse text-left text-sm"
         role="table"
-        aria-label="Price comparison table"
+        aria-label={t("item")}
       >
         <thead>
           <tr className="border-b border-[var(--color-border)]">
@@ -33,7 +36,7 @@ export function CompareTable({ results }: CompareTableProps) {
               scope="col"
               className="px-4 py-3 font-semibold text-[var(--color-foreground)]"
             >
-              Item
+              {t("item")}
             </th>
             {allProviders.map((provider) => (
               <th
@@ -48,7 +51,7 @@ export function CompareTable({ results }: CompareTableProps) {
               scope="col"
               className="px-4 py-3 text-center font-semibold text-[var(--color-foreground)]"
             >
-              Best Price
+              {t("bestPrice")}
             </th>
           </tr>
         </thead>

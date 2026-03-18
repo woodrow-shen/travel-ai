@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Token de autenticación inválido.",
+    "expired_token": "El token de autenticación ha expirado.",
+    "unauthorized": "Por favor inicia sesión primero.",
+    "google_auth_failed": "La autenticación con Google ha fallado.",
+    "refresh_failed": "Error al actualizar el token."
+  },
+  "search": {
+    "no_results": "No se encontraron resultados.",
+    "invalid_params": "Parámetros de búsqueda inválidos.",
+    "provider_error": "Proveedor temporalmente no disponible. Por favor inténtalo de nuevo más tarde."
+  },
+  "trip": {
+    "not_found": "Viaje no encontrado.",
+    "create_failed": "Error al crear el viaje.",
+    "delete_failed": "Error al eliminar el viaje."
+  },
+  "subscription": {
+    "email_not_verified": "Por favor verifica tu correo electrónico primero.",
+    "email_not_found": "Correo electrónico no encontrado.",
+    "already_exists": "La suscripción ya existe.",
+    "invalid_email": "Dirección de correo electrónico inválida.",
+    "dns_validation_failed": "La validación del dominio del correo ha fallado."
+  },
+  "compare": {
+    "min_items": "Se requieren al menos 2 elementos para comparar.",
+    "invalid_type": "Tipo de comparación inválido."
+  },
+  "user": {
+    "not_found": "Usuario no encontrado.",
+    "preference_update_failed": "Error al actualizar las preferencias."
+  },
+  "chat": {
+    "error": "Lo siento, se produjo un error al procesar tu solicitud. Por favor inténtalo de nuevo."
+  },
+  "general": {
+    "server_error": "Error del servidor. Por favor inténtalo de nuevo más tarde.",
+    "not_found": "El recurso solicitado no fue encontrado.",
+    "rate_limited": "Demasiadas solicitudes. Por favor inténtalo de nuevo más tarde.",
+    "premium_required": "Esta función requiere una suscripción Premium.",
+    "validation_error": "Error de validación de datos."
+  }
+}

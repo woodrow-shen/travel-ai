@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "無效的驗證令牌。",
+    "expired_token": "驗證令牌已過期。",
+    "unauthorized": "請先登入。",
+    "google_auth_failed": "Google 驗證失敗。",
+    "refresh_failed": "刷新令牌失敗。"
+  },
+  "search": {
+    "no_results": "未找到結果。",
+    "invalid_params": "搜尋參數無效。",
+    "provider_error": "供應商暫時無法使用，請稍後再試。"
+  },
+  "trip": {
+    "not_found": "找不到行程。",
+    "create_failed": "建立行程失敗。",
+    "delete_failed": "刪除行程失敗。"
+  },
+  "subscription": {
+    "email_not_verified": "請先驗證電子郵件。",
+    "email_not_found": "找不到該電子郵件。",
+    "already_exists": "訂閱已存在。",
+    "invalid_email": "無效的電子郵件地址。",
+    "dns_validation_failed": "電子郵件域名驗證失敗。"
+  },
+  "compare": {
+    "min_items": "至少需要 2 個項目才能比較。",
+    "invalid_type": "無效的比較類型。"
+  },
+  "user": {
+    "not_found": "找不到使用者。",
+    "preference_update_failed": "偏好設定更新失敗。"
+  },
+  "chat": {
+    "error": "處理您的請求時發生錯誤，請再試一次。"
+  },
+  "general": {
+    "server_error": "伺服器錯誤，請稍後再試。",
+    "not_found": "找不到請求的資源。",
+    "rate_limited": "請求過於頻繁，請稍後再試。",
+    "premium_required": "此功能需要 Premium 訂閱。",
+    "validation_error": "輸入資料驗證失敗。"
+  }
+}

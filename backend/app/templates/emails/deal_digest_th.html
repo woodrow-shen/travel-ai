@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #0f3460;">สรุปดีลของคุณ</h2>
+  <p>นี่คือดีลการเดินทางที่ดีที่สุดที่เราพบให้คุณ:</p>
+  {% for deal in deals %}
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 12px 0;">
+    <p><strong>{{ deal.origin }} → {{ deal.destination }}</strong></p>
+    <p>{{ deal.airline }} | {{ deal.departure_date }}</p>
+    <p style="font-size: 20px; color: #16c79a;"><strong>{{ deal.price }} {{ deal.currency }}</strong></p>
+    {% if deal.tags %}<p>{% for tag in deal.tags %}<span style="background: #e8e8e8; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px;">{{ tag }}</span>{% endfor %}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">ยกเลิกการสมัคร</a> สรุปดีล
+  </p>
+</body>
+</html>

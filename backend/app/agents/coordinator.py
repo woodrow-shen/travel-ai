@@ -105,14 +105,14 @@ COORDINATOR_TOOLS = [
 
 
 class CoordinatorAgent(BaseAgent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, locale: str = "zh-TW"):
+        super().__init__(locale=locale)
         self._agents = {
-            "search": SearchAgent(),
-            "price": PriceAgent(),
-            "recommend": RecommendationAgent(),
-            "itinerary": ItineraryAgent(),
-            "budget": BudgetAgent(),
+            "search": SearchAgent(locale=locale),
+            "price": PriceAgent(locale=locale),
+            "recommend": RecommendationAgent(locale=locale),
+            "itinerary": ItineraryAgent(locale=locale),
+            "budget": BudgetAgent(locale=locale),
         }
 
     @property
@@ -135,8 +135,8 @@ class CoordinatorAgent(BaseAgent):
             "1. Parse user intent from their message\n"
             "2. Dispatch to appropriate agent(s) — use dispatch_parallel "
             "when tasks are independent\n"
-            "3. Synthesize results into a helpful, conversational response\n\n"
-            "Always respond in the same language as the user's query."
+            "3. Synthesize results into a helpful, conversational response"
+            + self.locale_instruction
         )
 
     @property

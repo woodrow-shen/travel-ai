@@ -1,20 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/Button";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const { user, isAuthenticated, isLoading, login, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const t = useTranslations("common");
 
   const navLinks = [
-    { href: "/search", label: "Search" },
-    { href: "/compare", label: "Compare" },
-    { href: "/trip", label: "Trips" },
-    { href: "/chat", label: "Chat", disabled: true },
+    { href: "/search" as const, label: t("search") },
+    { href: "/compare" as const, label: t("compare") },
+    { href: "/trip" as const, label: t("trips") },
+    { href: "/chat" as const, label: t("chat"), disabled: true },
   ];
 
   return (
@@ -52,13 +55,14 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
           {isLoading ? (
-            <span className="text-sm text-[var(--color-muted)]">Loading...</span>
+            <span className="text-sm text-[var(--color-muted)]">{t("loading")}</span>
           ) : isAuthenticated && user ? (
             <UserMenu user={user} onLogout={logout} />
           ) : (
             <Button onClick={login} size="sm">
-              Sign in with Google
+              {t("signIn")}
             </Button>
           )}
         </div>
@@ -130,25 +134,28 @@ export function Header() {
                 className="rounded-md px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
                 onClick={() => setMobileOpen(false)}
               >
-                Subscriptions
+                {t("subscriptions")}
               </Link>
               <Link
                 href="/settings/preferences"
                 className="rounded-md px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-border)]/30 hover:text-[var(--color-foreground)]"
                 onClick={() => setMobileOpen(false)}
               >
-                Preferences
+                {t("preferences")}
               </Link>
             </>
           )}
+          <div className="my-2 flex items-center gap-2 px-3">
+            <LanguageSwitcher />
+          </div>
           <div className="mt-2 border-t border-[var(--color-border)] pt-3">
             {isAuthenticated ? (
               <Button variant="outline" size="sm" onClick={logout} className="w-full">
-                Sign out
+                {t("signOut")}
               </Button>
             ) : (
               <Button onClick={login} size="sm" className="w-full">
-                Sign in with Google
+                {t("signIn")}
               </Button>
             )}
           </div>
@@ -171,6 +178,7 @@ function UserMenu({
 }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("common");
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -183,8 +191,8 @@ function UserMenu({
   }, []);
 
   const menuItems = [
-    { href: "/settings/subscriptions", label: "Subscriptions" },
-    { href: "/settings/preferences", label: "Preferences" },
+    { href: "/settings/subscriptions" as const, label: t("subscriptions") },
+    { href: "/settings/preferences" as const, label: t("preferences") },
   ];
 
   return (
@@ -236,7 +244,7 @@ function UserMenu({
             }}
             className="block w-full px-4 py-2 text-left text-sm text-[var(--color-error)] hover:bg-[var(--color-border)]/30"
           >
-            Sign out
+            {t("signOut")}
           </button>
         </div>
       )}

@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "검색",
+    "compare": "비교",
+    "trips": "여행",
+    "chat": "채팅",
+    "signIn": "Google로 로그인",
+    "signOut": "로그아웃",
+    "loading": "로딩 중...",
+    "subscriptions": "구독",
+    "preferences": "설정",
+    "select": "선택",
+    "delete": "삭제",
+    "cancel": "취소",
+    "save": "저장",
+    "add": "추가",
+    "remove": "제거",
+    "clear": "초기화",
+    "view": "보기",
+    "back": "뒤로",
+    "type": "유형"
+  },
+  "landing": {
+    "hero": {
+      "title": "{ai}로 완벽한 여행을 계획하세요",
+      "subtitle": "항공편과 호텔을 검색하고, 여러 제공업체의 가격을 비교하고, AI 어시스턴트가 완벽한 여행 일정을 만들어 드립니다."
+    },
+    "signInPrompt": "로그인하면 여행을 저장하고 맞춤 추천을 받을 수 있습니다.",
+    "features": {
+      "title": "Travel AI를 선택하는 이유",
+      "smartSearch": {
+        "title": "스마트 검색",
+        "description": "여러 제공업체의 항공편과 호텔을 한 번의 검색으로 찾아보세요."
+      },
+      "priceComparison": {
+        "title": "가격 비교",
+        "description": "제공업체 간 가격을 비교하여 가장 좋은 여행 상품을 찾으세요."
+      },
+      "aiItinerary": {
+        "title": "AI 여행 일정",
+        "description": "AI와 대화하여 나만의 맞춤 일정을 일별로 생성하세요."
+      }
+    }
+  },
+  "search": {
+    "title": "검색",
+    "tabs": {
+      "flights": "항공편",
+      "hotels": "호텔"
+    },
+    "form": {
+      "from": "출발지",
+      "to": "도착지",
+      "destination": "목적지",
+      "departure": "출발일",
+      "return": "귀국일",
+      "checkIn": "체크인",
+      "checkOut": "체크아웃",
+      "adults": "성인",
+      "guests": "투숙객",
+      "rooms": "객실 수",
+      "cabinClass": "좌석 등급",
+      "roundtrip": "왕복",
+      "oneWay": "편도",
+      "cityOrAirport": "도시 또는 공항",
+      "cityOrRegion": "도시 또는 지역"
+    },
+    "cabinClasses": {
+      "economy": "이코노미",
+      "premiumEconomy": "프리미엄 이코노미",
+      "business": "비즈니스",
+      "first": "퍼스트"
+    },
+    "button": {
+      "searchFlights": "항공편 검색",
+      "searchHotels": "호텔 검색",
+      "searchingFlights": "항공편 검색 중...",
+      "searchingHotels": "호텔 검색 중..."
+    },
+    "results": {
+      "found": "{count}개의 결과를 찾았습니다",
+      "noResults": "결과를 찾을 수 없습니다. 검색 조건을 변경해 보세요.",
+      "sortBy": "정렬:",
+      "price": "가격",
+      "duration": "소요시간",
+      "rating": "평점",
+      "lowToHigh": "낮은 가격순",
+      "highToLow": "높은 가격순"
+    },
+    "flightCard": {
+      "direct": "직항",
+      "stop": "경유 {count}회",
+      "return": "귀국편",
+      "roundtrip": "왕복",
+      "bookNow": "예약하기",
+      "loadingBooking": "로딩 중..."
+    },
+    "hotelCard": {
+      "perNight": "1박",
+      "total": "합계: {price}",
+      "reviews": "({count}개 리뷰)",
+      "more": "+{count}개",
+      "bookNow": "예약하기"
+    },
+    "compareBar": {
+      "selected": "{count}개 선택됨",
+      "compare": "비교",
+      "clear": "초기화"
+    }
+  },
+  "compare": {
+    "title": "가격 비교",
+    "subtitle": "여러 제공업체의 가격을 비교하여 가장 좋은 상품을 찾으세요.",
+    "manual": {
+      "label": "아이템 ID (쉼표로 구분)",
+      "placeholder": "id1, id2, id3",
+      "helperText": "비교하려면 검색 결과에서 2개 이상의 ID를 입력하세요."
+    },
+    "table": {
+      "item": "아이템",
+      "bestPrice": "최저가",
+      "noData": "비교 데이터가 없습니다. 아이템을 선택하세요."
+    },
+    "types": {
+      "flights": "항공편",
+      "hotels": "호텔"
+    }
+  },
+  "trip": {
+    "title": "내 여행",
+    "newTrip": "새 여행",
+    "noTrips": "여행이 아직 없습니다.",
+    "noTripsHint": "첫 여행을 만들어 계획을 시작하세요.",
+    "confirmDelete": "이 여행을 삭제하시겠습니까?",
+    "backToTrips": "여행 목록으로 돌아가기",
+    "form": {
+      "title": "새 여행 만들기",
+      "tripTitle": "여행 제목",
+      "tripTitlePlaceholder": "여름 휴가",
+      "destination": "목적지",
+      "destinationPlaceholder": "도쿄, 일본",
+      "startDate": "시작일",
+      "endDate": "종료일",
+      "createTrip": "여행 만들기"
+    },
+    "status": {
+      "planning": "계획 중",
+      "booked": "예약 완료",
+      "in_progress": "여행 중",
+      "completed": "완료",
+      "cancelled": "취소됨"
+    },
+    "itinerary": {
+      "items": "일정 항목 {count}개",
+      "noItems": "일정 항목이 아직 없습니다.",
+      "noItemsHint": "AI 채팅을 활용하여 일정을 만들어 보세요.",
+      "day": "{day}일차",
+      "budget": "예산: {amount}",
+      "location": "장소: {location}",
+      "types": {
+        "flight": "출발",
+        "hotel": "숙소",
+        "activity": "활동",
+        "transfer": "이동",
+        "note": "메모"
+      }
+    }
+  },
+  "chat": {
+    "title": "AI 채팅 — 곧 출시",
+    "comingSoon": "AI 제공업체 설정 중이므로 채팅 기능을 일시적으로 사용할 수 없습니다.",
+    "backToHome": "홈으로 돌아가기"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "로그인 중...",
+      "pleaseWait": "인증이 완료될 때까지 잠시 기다려 주세요.",
+      "success": "로그인에 성공했습니다",
+      "redirecting": "홈페이지로 이동 중...",
+      "failed": "인증 실패",
+      "noToken": "인증 토큰을 받지 못했습니다.",
+      "returnHome": "홈으로 돌아가기"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "구독 관리",
+      "signInRequired": "구독을 관리하려면 로그인하세요.",
+      "emails": {
+        "title": "이메일 주소",
+        "loading": "이메일 로딩 중...",
+        "noEmails": "추가된 이메일 주소가 없습니다.",
+        "placeholder": "이메일 주소 추가",
+        "verified": "인증됨",
+        "pending": "대기 중"
+      },
+      "list": {
+        "title": "활성 구독",
+        "noSubscriptions": "구독이 아직 없습니다.",
+        "from": "{origin}에서",
+        "to": "{destination}까지"
+      },
+      "new": {
+        "title": "새 구독",
+        "verifyFirst": "구독을 만들기 전에 위에서 이메일 주소를 추가하고 인증하세요.",
+        "type": "유형",
+        "originIATA": "출발지 (IATA)",
+        "destinationIATA": "도착지 (IATA)",
+        "sendTo": "수신 이메일",
+        "selectEmail": "이메일 선택...",
+        "create": "구독 만들기"
+      },
+      "types": {
+        "bug_fare": "버그 운임",
+        "price_drop": "가격 인하",
+        "deal_digest": "특가 모음"
+      }
+    },
+    "preferences": {
+      "title": "설정",
+      "signInRequired": "설정을 관리하려면 로그인하세요.",
+      "loading": "설정 로딩 중...",
+      "saved": "저장되었습니다",
+      "saveButton": "설정 저장",
+      "homeAirports": {
+        "label": "홈 공항",
+        "hint": "IATA 코드, 쉼표로 구분 (예: ICN, GMP)"
+      },
+      "preferredAirlines": {
+        "label": "선호 항공사",
+        "hint": "IATA 코드, 쉼표로 구분 (예: KE, OZ, NH)"
+      },
+      "excludedAirlines": {
+        "label": "제외 항공사",
+        "hint": "피하고 싶은 항공사 (예: TR, MM)"
+      },
+      "alliances": {
+        "label": "선호 얼라이언스"
+      },
+      "cabinClasses": {
+        "label": "좌석 등급",
+        "economy": "이코노미",
+        "premiumEconomy": "프리미엄 이코노미",
+        "business": "비즈니스",
+        "first": "퍼스트"
+      },
+      "maxStops": {
+        "label": "최대 경유 횟수",
+        "any": "제한 없음",
+        "nonStop": "직항만",
+        "max1": "최대 1회",
+        "max2": "최대 2회"
+      },
+      "language": {
+        "label": "언어"
+      }
+    }
+  },
+  "footer": {
+    "description": "AI 기반 여행 계획 및 가격 비교.",
+    "features": "기능",
+    "flightHotelSearch": "항공편 & 호텔 검색",
+    "priceComparison": "가격 비교",
+    "legal": "법적 고지",
+    "mitLicense": "MIT 라이선스",
+    "copyright": "© {year} Woodrow Shen. All rights reserved."
+  },
+  "metadata": {
+    "title": "Travel AI - 스마트 여행 계획",
+    "description": "AI 기반 항공편 및 호텔 검색, 가격 비교, 지능형 여행 일정 생성으로 여행 계획을 도와드립니다."
+  },
+  "errors": {
+    "generic": "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "notFound": "페이지를 찾을 수 없습니다.",
+    "unauthorized": "먼저 로그인해 주세요.",
+    "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+  }
+}

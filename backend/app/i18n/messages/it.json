@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Token di autenticazione non valido.",
+    "expired_token": "Il token di autenticazione è scaduto.",
+    "unauthorized": "Effettua l'accesso prima.",
+    "google_auth_failed": "Autenticazione Google fallita.",
+    "refresh_failed": "Aggiornamento del token fallito."
+  },
+  "search": {
+    "no_results": "Nessun risultato trovato.",
+    "invalid_params": "Parametri di ricerca non validi.",
+    "provider_error": "Fornitore temporaneamente non disponibile. Riprova più tardi."
+  },
+  "trip": {
+    "not_found": "Viaggio non trovato.",
+    "create_failed": "Creazione del viaggio fallita.",
+    "delete_failed": "Eliminazione del viaggio fallita."
+  },
+  "subscription": {
+    "email_not_verified": "Verifica prima il tuo indirizzo email.",
+    "email_not_found": "Email non trovata.",
+    "already_exists": "L'abbonamento esiste già.",
+    "invalid_email": "Indirizzo email non valido.",
+    "dns_validation_failed": "Validazione del dominio email fallita."
+  },
+  "compare": {
+    "min_items": "Sono necessari almeno 2 elementi per il confronto.",
+    "invalid_type": "Tipo di confronto non valido."
+  },
+  "user": {
+    "not_found": "Utente non trovato.",
+    "preference_update_failed": "Aggiornamento delle preferenze fallito."
+  },
+  "chat": {
+    "error": "Mi dispiace, si è verificato un errore durante l'elaborazione della richiesta. Riprova."
+  },
+  "general": {
+    "server_error": "Errore del server. Riprova più tardi.",
+    "not_found": "La risorsa richiesta non è stata trovata.",
+    "rate_limited": "Troppe richieste. Riprova più tardi.",
+    "premium_required": "Questa funzionalità richiede un abbonamento Premium.",
+    "validation_error": "Validazione dei dati fallita."
+  }
+}

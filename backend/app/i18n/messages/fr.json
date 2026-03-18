@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Jeton d'authentification invalide.",
+    "expired_token": "Le jeton d'authentification a expiré.",
+    "unauthorized": "Veuillez vous connecter d'abord.",
+    "google_auth_failed": "L'authentification Google a échoué.",
+    "refresh_failed": "Échec du rafraîchissement du jeton."
+  },
+  "search": {
+    "no_results": "Aucun résultat trouvé.",
+    "invalid_params": "Paramètres de recherche invalides.",
+    "provider_error": "Fournisseur temporairement indisponible. Veuillez réessayer plus tard."
+  },
+  "trip": {
+    "not_found": "Voyage non trouvé.",
+    "create_failed": "Échec de la création du voyage.",
+    "delete_failed": "Échec de la suppression du voyage."
+  },
+  "subscription": {
+    "email_not_verified": "Veuillez d'abord vérifier votre adresse e-mail.",
+    "email_not_found": "Adresse e-mail non trouvée.",
+    "already_exists": "L'abonnement existe déjà.",
+    "invalid_email": "Adresse e-mail invalide.",
+    "dns_validation_failed": "La validation du domaine de l'e-mail a échoué."
+  },
+  "compare": {
+    "min_items": "Au moins 2 éléments sont nécessaires pour la comparaison.",
+    "invalid_type": "Type de comparaison invalide."
+  },
+  "user": {
+    "not_found": "Utilisateur non trouvé.",
+    "preference_update_failed": "Échec de la mise à jour des préférences."
+  },
+  "chat": {
+    "error": "Désolé, une erreur s'est produite lors du traitement de votre demande. Veuillez réessayer."
+  },
+  "general": {
+    "server_error": "Erreur du serveur. Veuillez réessayer plus tard.",
+    "not_found": "La ressource demandée est introuvable.",
+    "rate_limited": "Trop de requêtes. Veuillez réessayer plus tard.",
+    "premium_required": "Cette fonctionnalité nécessite un abonnement Premium.",
+    "validation_error": "Erreur de validation des données."
+  }
+}

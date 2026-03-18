@@ -1,7 +1,11 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const t = useTranslations("footer");
 
   return (
     <footer className="border-t border-[var(--color-border)] bg-[var(--color-card)]">
@@ -12,13 +16,13 @@ export function Footer() {
               Travel AI
             </h2>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              AI-powered travel planning and price comparison.
+              {t("description")}
             </p>
           </div>
 
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-              Features
+              {t("features")}
             </h2>
             <ul className="mt-2 space-y-1" role="list">
               <li>
@@ -26,7 +30,7 @@ export function Footer() {
                   href="/search"
                   className="text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
                 >
-                  Flight & Hotel Search
+                  {t("flightHotelSearch")}
                 </Link>
               </li>
               <li>
@@ -34,21 +38,20 @@ export function Footer() {
                   href="/compare"
                   className="text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
                 >
-                  Price Comparison
+                  {t("priceComparison")}
                 </Link>
               </li>
-              {/* AI Chat Assistant — disabled pending API provider decision */}
             </ul>
           </div>
 
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-              Legal
+              {t("legal")}
             </h2>
             <ul className="mt-2 space-y-1" role="list">
               <li>
                 <span className="text-sm text-[var(--color-muted)]">
-                  MIT License
+                  {t("mitLicense")}
                 </span>
               </li>
             </ul>
@@ -57,7 +60,7 @@ export function Footer() {
 
         <div className="mt-8 border-t border-[var(--color-border)] pt-6 text-center">
           <p className="text-sm text-[var(--color-muted)]">
-            &copy; {currentYear} Woodrow Shen. All rights reserved.
+            {t("copyright", { year: String(currentYear) })}
           </p>
         </div>
       </div>

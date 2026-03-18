@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "无效的验证令牌。",
+    "expired_token": "验证令牌已过期。",
+    "unauthorized": "请先登录。",
+    "google_auth_failed": "Google 验证失败。",
+    "refresh_failed": "刷新令牌失败。"
+  },
+  "search": {
+    "no_results": "未找到结果。",
+    "invalid_params": "搜索参数无效。",
+    "provider_error": "供应商暂时不可用，请稍后再试。"
+  },
+  "trip": {
+    "not_found": "找不到行程。",
+    "create_failed": "创建行程失败。",
+    "delete_failed": "删除行程失败。"
+  },
+  "subscription": {
+    "email_not_verified": "请先验证电子邮箱。",
+    "email_not_found": "找不到该电子邮箱。",
+    "already_exists": "订阅已存在。",
+    "invalid_email": "无效的电子邮箱地址。",
+    "dns_validation_failed": "电子邮箱域名验证失败。"
+  },
+  "compare": {
+    "min_items": "至少需要 2 个项目才能比较。",
+    "invalid_type": "无效的比较类型。"
+  },
+  "user": {
+    "not_found": "找不到用户。",
+    "preference_update_failed": "偏好设置更新失败。"
+  },
+  "chat": {
+    "error": "处理您的请求时发生错误，请再试一次。"
+  },
+  "general": {
+    "server_error": "服务器错误，请稍后再试。",
+    "not_found": "找不到请求的资源。",
+    "rate_limited": "请求过于频繁，请稍后再试。",
+    "premium_required": "此功能需要 Premium 订阅。",
+    "validation_error": "输入数据验证失败。"
+  }
+}

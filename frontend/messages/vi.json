@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "Tim kiem",
+    "compare": "So sanh",
+    "trips": "Chuyen di",
+    "chat": "Tro chuyen",
+    "signIn": "Dang nhap bang Google",
+    "signOut": "Dang xuat",
+    "loading": "Dang tai...",
+    "subscriptions": "Quan ly dang ky",
+    "preferences": "Tuy chon",
+    "select": "Chon",
+    "delete": "Xoa",
+    "cancel": "Huy",
+    "save": "Luu",
+    "add": "Them",
+    "remove": "Xoa",
+    "clear": "Xoa het",
+    "view": "Xem",
+    "back": "Quay lai",
+    "type": "Loai"
+  },
+  "landing": {
+    "hero": {
+      "title": "Len ke hoach chuyen di hoan hao voi {ai}",
+      "subtitle": "Tim kiem chuyen bay va khach san, so sanh gia tu nhieu nha cung cap, de tro ly AI giup ban xay dung lich trinh hoan hao."
+    },
+    "signInPrompt": "Dang nhap de luu chuyen di va nhan goi y ca nhan hoa.",
+    "features": {
+      "title": "Tai sao chon Travel AI?",
+      "smartSearch": {
+        "title": "Tim kiem thong minh",
+        "description": "Tim kiem chuyen bay va khach san tu nhieu nha cung cap chi trong mot truy van."
+      },
+      "priceComparison": {
+        "title": "So sanh gia",
+        "description": "So sanh gia tu nhieu nha cung cap de tim uu dai tot nhat cho chuyen di cua ban."
+      },
+      "aiItinerary": {
+        "title": "Lich trinh AI",
+        "description": "Tro chuyen voi AI de tao lich trinh hang ngay phu hop voi ban."
+      }
+    }
+  },
+  "search": {
+    "title": "Tim kiem",
+    "tabs": {
+      "flights": "Chuyen bay",
+      "hotels": "Khach san"
+    },
+    "form": {
+      "from": "Diem di",
+      "to": "Diem den",
+      "destination": "Diem den",
+      "departure": "Ngay di",
+      "return": "Ngay ve",
+      "checkIn": "Ngay nhan phong",
+      "checkOut": "Ngay tra phong",
+      "adults": "Nguoi lon",
+      "guests": "Khach",
+      "rooms": "Phong",
+      "cabinClass": "Hang ghe",
+      "roundtrip": "Khu hoi",
+      "oneWay": "Mot chieu",
+      "cityOrAirport": "Thanh pho hoac san bay",
+      "cityOrRegion": "Thanh pho hoac khu vuc"
+    },
+    "cabinClasses": {
+      "economy": "Pho thong",
+      "premiumEconomy": "Pho thong dac biet",
+      "business": "Thuong gia",
+      "first": "Hang nhat"
+    },
+    "button": {
+      "searchFlights": "Tim chuyen bay",
+      "searchHotels": "Tim khach san",
+      "searchingFlights": "Dang tim chuyen bay...",
+      "searchingHotels": "Dang tim khach san..."
+    },
+    "results": {
+      "found": "Tim thay {count} ket qua",
+      "noResults": "Khong tim thay ket qua. Hay thu dieu chinh tieu chi tim kiem.",
+      "sortBy": "Sap xep theo:",
+      "price": "Gia",
+      "duration": "Thoi gian",
+      "rating": "Danh gia",
+      "lowToHigh": "Thap den cao",
+      "highToLow": "Cao den thap"
+    },
+    "flightCard": {
+      "direct": "Bay thang",
+      "stop": "{count} diem dung",
+      "return": "Chuyen ve",
+      "roundtrip": "khu hoi",
+      "bookNow": "Dat ngay",
+      "loadingBooking": "Dang tai..."
+    },
+    "hotelCard": {
+      "perNight": "moi dem",
+      "total": "Tong: {price}",
+      "reviews": "({count} danh gia)",
+      "more": "+{count} khac",
+      "bookNow": "Dat ngay"
+    },
+    "compareBar": {
+      "selected": "Da chon {count}",
+      "compare": "So sanh",
+      "clear": "Xoa het"
+    }
+  },
+  "compare": {
+    "title": "So sanh gia",
+    "subtitle": "So sanh gia tu cac nha cung cap khac nhau de tim uu dai tot nhat.",
+    "manual": {
+      "label": "ID muc (phan cach bang dau phay)",
+      "placeholder": "id1, id2, id3",
+      "helperText": "Nhap it nhat 2 ID tu ket qua tim kiem de so sanh."
+    },
+    "table": {
+      "item": "Muc",
+      "bestPrice": "Gia tot nhat",
+      "noData": "Khong co du lieu so sanh. Hay chon cac muc de so sanh."
+    },
+    "types": {
+      "flights": "Chuyen bay",
+      "hotels": "Khach san"
+    }
+  },
+  "trip": {
+    "title": "Chuyen di cua toi",
+    "newTrip": "Chuyen di moi",
+    "noTrips": "Chua co chuyen di nao.",
+    "noTripsHint": "Tao chuyen di dau tien de bat dau len ke hoach.",
+    "confirmDelete": "Ban co chac chan muon xoa chuyen di nay?",
+    "backToTrips": "Quay lai danh sach chuyen di",
+    "form": {
+      "title": "Tao chuyen di moi",
+      "tripTitle": "Ten chuyen di",
+      "tripTitlePlaceholder": "Ky nghi he",
+      "destination": "Diem den",
+      "destinationPlaceholder": "Paris, Phap",
+      "startDate": "Ngay bat dau",
+      "endDate": "Ngay ket thuc",
+      "createTrip": "Tao chuyen di"
+    },
+    "status": {
+      "planning": "Dang len ke hoach",
+      "booked": "Da dat",
+      "in_progress": "Dang dien ra",
+      "completed": "Hoan thanh",
+      "cancelled": "Da huy"
+    },
+    "itinerary": {
+      "items": "{count} muc lich trinh",
+      "noItems": "Chua co muc lich trinh nao.",
+      "noItemsHint": "Su dung tro chuyen AI de giup xay dung lich trinh cua ban.",
+      "day": "Ngay {day}",
+      "budget": "Ngan sach: {amount}",
+      "location": "Dia diem: {location}",
+      "types": {
+        "flight": "Chuyen bay",
+        "hotel": "Noi o",
+        "activity": "Hoat dong",
+        "transfer": "Di chuyen",
+        "note": "Ghi chu"
+      }
+    }
+  },
+  "chat": {
+    "title": "Tro chuyen AI — Sap ra mat",
+    "comingSoon": "Tinh nang tro chuyen tam thoi khong kha dung trong khi chung toi cau hinh nha cung cap AI.",
+    "backToHome": "Quay lai trang chu"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "Dang dang nhap...",
+      "pleaseWait": "Vui long doi trong khi chung toi hoan tat xac thuc.",
+      "success": "Dang nhap thanh cong",
+      "redirecting": "Dang chuyen huong ban ve trang chu...",
+      "failed": "Xac thuc that bai",
+      "noToken": "Khong nhan duoc ma xac thuc.",
+      "returnHome": "Quay lai trang chu"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "Quan ly dang ky",
+      "signInRequired": "Vui long dang nhap de quan ly dang ky.",
+      "emails": {
+        "title": "Dia chi email",
+        "loading": "Dang tai email...",
+        "noEmails": "Chua them dia chi email nao.",
+        "placeholder": "Them dia chi email",
+        "verified": "Da xac minh",
+        "pending": "Cho xac minh"
+      },
+      "list": {
+        "title": "Dang ky dang hoat dong",
+        "noSubscriptions": "Chua co dang ky nao.",
+        "from": "tu {origin}",
+        "to": "den {destination}"
+      },
+      "new": {
+        "title": "Dang ky moi",
+        "verifyFirst": "Vui long them va xac minh dia chi email truoc khi tao dang ky.",
+        "type": "Loai",
+        "originIATA": "Diem di (IATA)",
+        "destinationIATA": "Diem den (IATA)",
+        "sendTo": "Gui den",
+        "selectEmail": "Chon email...",
+        "create": "Tao dang ky"
+      },
+      "types": {
+        "bug_fare": "Gia loi",
+        "price_drop": "Giam gia",
+        "deal_digest": "Tong hop uu dai"
+      }
+    },
+    "preferences": {
+      "title": "Tuy chon",
+      "signInRequired": "Vui long dang nhap de quan ly tuy chon.",
+      "loading": "Dang tai tuy chon...",
+      "saved": "Luu thanh cong",
+      "saveButton": "Luu tuy chon",
+      "homeAirports": {
+        "label": "San bay thuong dung",
+        "hint": "Ma IATA, phan cach bang dau phay (vd: SGN, HAN)"
+      },
+      "preferredAirlines": {
+        "label": "Hang hang khong uu tien",
+        "hint": "Ma IATA, phan cach bang dau phay (vd: VN, VJ, QH)"
+      },
+      "excludedAirlines": {
+        "label": "Hang hang khong loai tru",
+        "hint": "Cac hang can tranh (vd: TR, MM)"
+      },
+      "alliances": {
+        "label": "Lien minh hang khong uu tien"
+      },
+      "cabinClasses": {
+        "label": "Hang ghe",
+        "economy": "Pho thong",
+        "premiumEconomy": "Pho thong dac biet",
+        "business": "Thuong gia",
+        "first": "Hang nhat"
+      },
+      "maxStops": {
+        "label": "So diem dung toi da",
+        "any": "Khong gioi han",
+        "nonStop": "Chi bay thang",
+        "max1": "Toi da 1 diem dung",
+        "max2": "Toi da 2 diem dung"
+      },
+      "language": {
+        "label": "Ngon ngu"
+      }
+    }
+  },
+  "footer": {
+    "description": "Len ke hoach du lich va so sanh gia bang AI.",
+    "features": "Tinh nang",
+    "flightHotelSearch": "Tim kiem chuyen bay & khach san",
+    "priceComparison": "So sanh gia",
+    "legal": "Phap ly",
+    "mitLicense": "Giay phep MIT",
+    "copyright": "(c) {year} Woodrow Shen. Moi quyen duoc bao luu."
+  },
+  "metadata": {
+    "title": "Travel AI - Len ke hoach du lich thong minh",
+    "description": "Len ke hoach du lich bang AI voi tim kiem chuyen bay va khach san, so sanh gia va tao lich trinh thong minh."
+  },
+  "errors": {
+    "generic": "Da xay ra loi. Vui long thu lai sau.",
+    "notFound": "Khong tim thay trang.",
+    "unauthorized": "Vui long dang nhap truoc.",
+    "serverError": "Loi may chu. Vui long thu lai sau."
+  }
+}

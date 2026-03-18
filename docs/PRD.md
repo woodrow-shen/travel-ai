@@ -4,7 +4,7 @@
 |---|---|
 | **產品名稱** | Travel-AI |
 | **文件版本** | 2.0 |
-| **最後更新** | 2026-03-14 |
+| **最後更新** | 2026-03-18 |
 | **負責人** | Woodrow Shen (woodrow.shen@gmail.com) |
 | **授權** | MIT |
 | **狀態** | 開發中 |
@@ -677,6 +677,19 @@ RapidAPI 免費額度（每月）：Skyscanner 50 次、Kiwi 120 次、Google Fl
 | 部署 Runbook | 低 | 小 | 上線 SOP、環境設定、rollback 流程文件 |
 | Incident Playbook | 低 | 小 | 常見問題排查指引（API 配額耗盡、DB 連線失敗、email 寄送失敗等） |
 | 飯店搜尋實作 | ⏸️ 暫停 | 大 | SearchService/PriceService hotel 方法——Skyscanner/Kiwi 飯店 API 尚未驗證可用性，待確認後再啟用 |
+
+### Phase 8：國際化（i18n） -- 已完成
+
+| 里程碑 | 優先級 | 工作量 | 內容 |
+|---|---|---|---|
+| 前端 i18n 基礎建設 | 已完成 | 中 | next-intl 整合、`[locale]` 路由、middleware、翻譯檔（zh-TW + en，~200 keys） |
+| 前端字串抽取 | 已完成 | 大 | 所有頁面與元件的硬編碼字串替換為 `useTranslations()` 呼叫 |
+| 語言切換器 | 已完成 | 小 | Header 內語言切換按鈕 + 偏好設定頁語言選項 |
+| 後端 locale 中間件 | 已完成 | 小 | Accept-Language header 解析，`request.state.locale` 注入 |
+| 後端錯誤訊息翻譯 | 已完成 | 小 | `t(key, locale)` 翻譯函式 + zh-TW/en 錯誤訊息（~30 keys） |
+| AI Agent 語言感知 | 已完成 | 小 | BaseAgent 接受 locale 參數，系統提示詞附加語言指令 |
+| Email 模板翻譯 | 已完成 | 中 | 4 個模板 × 2 語言 = 8 個語言版模板 |
+| 使用者語言偏好 | 已完成 | 小 | `preferred_language` DB 欄位 + Alembic migration + API CRUD |
 
 ---
 

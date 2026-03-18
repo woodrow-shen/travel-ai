@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #e94560;">Fehlerhafter Tarif entdeckt!</h2>
+  <p>Wir haben einen ungewöhnlich günstigen Tarif gefunden, der ein Fehltarif sein könnte — handeln Sie schnell!</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>Route:</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>Fluggesellschaft:</strong> {{ airline }}</p>
+    <p><strong>Datum:</strong> {{ departure_date }}</p>
+    <p style="font-size: 24px; color: #e94560;"><strong>{{ price_amount }} {{ price_currency }}</strong></p>
+    <p style="color: #666;">Durchschnittspreis: {{ avg_price }} {{ price_currency }} ({{ discount_pct }}% Rabatt)</p>
+    <p><strong>Konfidenz:</strong> {{ confidence }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">Abmelden</a> von Fehltarif-Benachrichtigungen
+  </p>
+</body>
+</html>

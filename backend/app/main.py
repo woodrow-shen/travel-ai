@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import router as api_v1_router
 from app.config import settings
 from app.db.session import engine
+from app.middleware.locale import LocaleMiddleware
 
 
 @asynccontextmanager
@@ -29,6 +30,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.add_middleware(LocaleMiddleware)
 
     app.include_router(api_v1_router, prefix="/api/v1")
 

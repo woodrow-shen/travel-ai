@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Ma xac thuc khong hop le.",
+    "expired_token": "Ma xac thuc da het han.",
+    "unauthorized": "Vui long dang nhap truoc.",
+    "google_auth_failed": "Xac thuc Google that bai.",
+    "refresh_failed": "Lam moi ma xac thuc that bai."
+  },
+  "search": {
+    "no_results": "Khong tim thay ket qua.",
+    "invalid_params": "Tham so tim kiem khong hop le.",
+    "provider_error": "Nha cung cap tam thoi khong kha dung. Vui long thu lai sau."
+  },
+  "trip": {
+    "not_found": "Khong tim thay chuyen di.",
+    "create_failed": "Tao chuyen di that bai.",
+    "delete_failed": "Xoa chuyen di that bai."
+  },
+  "subscription": {
+    "email_not_verified": "Vui long xac minh email truoc.",
+    "email_not_found": "Khong tim thay email.",
+    "already_exists": "Dang ky da ton tai.",
+    "invalid_email": "Dia chi email khong hop le.",
+    "dns_validation_failed": "Xac minh ten mien email that bai."
+  },
+  "compare": {
+    "min_items": "Can it nhat 2 muc de so sanh.",
+    "invalid_type": "Loai so sanh khong hop le."
+  },
+  "user": {
+    "not_found": "Khong tim thay nguoi dung.",
+    "preference_update_failed": "Cap nhat tuy chon that bai."
+  },
+  "chat": {
+    "error": "Xin loi, da xay ra loi khi xu ly yeu cau cua ban. Vui long thu lai."
+  },
+  "general": {
+    "server_error": "Loi may chu. Vui long thu lai sau.",
+    "not_found": "Khong tim thay tai nguyen yeu cau.",
+    "rate_limited": "Qua nhieu yeu cau. Vui long thu lai sau.",
+    "premium_required": "Tinh nang nay yeu cau goi Premium.",
+    "validation_error": "Xac thuc du lieu dau vao that bai."
+  }
+}

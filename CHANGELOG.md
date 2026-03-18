@@ -7,6 +7,20 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 **Versioning**: `MAJOR.MINOR.PATCH` — Minor (new features, API changes) and patch (bug fixes, tests, docs) are bumped by the dev team. Major bumps (1.0.0, 2.0.0, ...) are owner-decided only.
 
+## [0.4.0] - 2026-03-18
+
+### Added
+
+- **Frontend i18n**: next-intl integration with `[locale]` App Router routing, `localePrefix: "as-needed"` (zh-TW default, `/en/*` for English)
+- **Translation files**: zh-TW + en message files (~200 keys each) covering all pages and components
+- **String extraction**: All hardcoded UI strings replaced with `useTranslations()` calls across 8 pages and 7 components
+- **LanguageSwitcher**: Toggle button in Header and Preferences page for locale switching
+- **Backend locale middleware**: Accept-Language header parsing with `request.state.locale` injection
+- **Backend error i18n**: `t(key, locale)` translation function with dotted key support, zh-TW + en error messages (~30 keys)
+- **AI agent localization**: `BaseAgent` accepts `locale` parameter, system prompts append language instruction (6 agents)
+- **Email template localization**: 4 templates × 2 languages = 8 locale-suffixed templates
+- **User language preference**: `preferred_language` column in user_preferences + Alembic migration + API CRUD
+
 ## [0.3.0] - 2026-03-17
 
 ### Added

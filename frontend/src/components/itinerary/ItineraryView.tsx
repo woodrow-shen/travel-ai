@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ItineraryItem, TripResponse } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { formatPrice } from "@/lib/utils";
@@ -5,14 +8,6 @@ import { formatPrice } from "@/lib/utils";
 interface ItineraryViewProps {
   trip: TripResponse;
 }
-
-const typeIcons: Record<ItineraryItem["type"], string> = {
-  flight: "Departure",
-  hotel: "Accommodation",
-  activity: "Activity",
-  transfer: "Transfer",
-  note: "Note",
-};
 
 const typeBadgeColors: Record<ItineraryItem["type"], string> = {
   flight: "bg-blue-100 text-blue-800",
@@ -23,6 +18,8 @@ const typeBadgeColors: Record<ItineraryItem["type"], string> = {
 };
 
 export function ItineraryView({ trip }: ItineraryViewProps) {
+  const t = useTranslations("trip.itinerary");
+
   const days = new Map<number, ItineraryItem[]>();
 
   for (const item of trip.itinerary) {
@@ -38,9 +35,9 @@ export function ItineraryView({ trip }: ItineraryViewProps) {
   if (trip.itinerary.length === 0) {
     return (
       <div className="py-8 text-center text-[var(--color-muted)]">
-        <p>No itinerary items yet.</p>
+        <p>{t("noItems")}</p>
         <p className="mt-1 text-sm">
-          Use the AI chat to help build your itinerary.
+          {t("noItemsHint")}
         </p>
       </div>
     );
@@ -52,7 +49,7 @@ export function ItineraryView({ trip }: ItineraryViewProps) {
         <h2 className="text-xl font-semibold">{trip.title}</h2>
         {trip.total_budget !== undefined && (
           <span className="text-sm text-[var(--color-muted)]">
-            Budget: {formatPrice(trip.total_budget, trip.currency)}
+            {t("budget", { amount: formatPrice(trip.total_budget, trip.currency) })}
           </span>
         )}
       </div>
@@ -66,8 +63,8 @@ export function ItineraryView({ trip }: ItineraryViewProps) {
             <Card key={day}>
               <CardHeader>
                 <CardTitle>
-                  Day {day} -{" "}
-                  {dayDate.toLocaleDateString("en-US", {
+                  {t("day", { day })} -{" "}
+                  {dayDate.toLocaleDateString(undefined, {
                     weekday: "long",
                     month: "short",
                     day: "numeric",
@@ -89,7 +86,7 @@ export function ItineraryView({ trip }: ItineraryViewProps) {
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeColors[item.type]}`}
                         >
-                          {typeIcons[item.type]}
+                          {t(`types.${item.type}`)}
                         </span>
 
                         <div className="flex-1">
@@ -110,7 +107,7 @@ export function ItineraryView({ trip }: ItineraryViewProps) {
 
                           {item.location && (
                             <p className="mt-1 text-xs text-[var(--color-muted)]">
-                              Location: {item.location}
+                              {t("location", { location: item.location })}
                             </p>
                           )}
                         </div>

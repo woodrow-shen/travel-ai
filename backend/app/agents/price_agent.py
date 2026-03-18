@@ -29,8 +29,8 @@ logger = logging.getLogger(__name__)
 
 
 class PriceAgent(BaseAgent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, locale: str = "zh-TW"):
+        super().__init__(locale=locale)
         self.amadeus = AmadeusClient()
         self.skyscanner = SkyscannerClient()
         self.kiwi = KiwiClient()
@@ -46,6 +46,7 @@ class PriceAgent(BaseAgent):
             "You are a price comparison specialist. Your job is to compare prices across "
             "multiple sources for flights and hotels, and analyze price trends using "
             "historical data. Identify the best deals and present clear comparisons."
+            + self.locale_instruction
         )
 
     @property

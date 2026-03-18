@@ -29,6 +29,7 @@ class BudgetAgent(BaseAgent):
             "You are a travel budget specialist. Your job is to estimate trip costs "
             "and find budget-friendly alternatives. Consider flights, hotels, activities, "
             "food, transportation, and other daily expenses."
+            + self.locale_instruction
         )
 
     @property

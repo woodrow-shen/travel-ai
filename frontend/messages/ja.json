@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Travel AI",
+    "search": "検索",
+    "compare": "比較",
+    "trips": "旅行",
+    "chat": "チャット",
+    "signIn": "Googleでログイン",
+    "signOut": "ログアウト",
+    "loading": "読み込み中...",
+    "subscriptions": "サブスクリプション",
+    "preferences": "設定",
+    "select": "選択",
+    "delete": "削除",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "add": "追加",
+    "remove": "削除",
+    "clear": "クリア",
+    "view": "表示",
+    "back": "戻る",
+    "type": "種類"
+  },
+  "landing": {
+    "hero": {
+      "title": "{ai}で理想の旅を計画しよう",
+      "subtitle": "フライトやホテルを検索し、複数のプロバイダーの価格を比較。AIアシスタントが最適な旅程の作成をお手伝いします。"
+    },
+    "signInPrompt": "ログインすると旅行の保存やパーソナライズされたおすすめを利用できます。",
+    "features": {
+      "title": "Travel AIが選ばれる理由",
+      "smartSearch": {
+        "title": "スマート検索",
+        "description": "複数のプロバイダーからフライトとホテルを一度に検索できます。"
+      },
+      "priceComparison": {
+        "title": "価格比較",
+        "description": "プロバイダー間の価格を比較して、最もお得な旅行プランを見つけましょう。"
+      },
+      "aiItinerary": {
+        "title": "AI旅程プラン",
+        "description": "AIとチャットして、あなたに合わせた日程別の旅程を作成できます。"
+      }
+    }
+  },
+  "search": {
+    "title": "検索",
+    "tabs": {
+      "flights": "フライト",
+      "hotels": "ホテル"
+    },
+    "form": {
+      "from": "出発地",
+      "to": "目的地",
+      "destination": "目的地",
+      "departure": "出発日",
+      "return": "帰着日",
+      "checkIn": "チェックイン",
+      "checkOut": "チェックアウト",
+      "adults": "大人",
+      "guests": "宿泊者数",
+      "rooms": "部屋数",
+      "cabinClass": "座席クラス",
+      "roundtrip": "往復",
+      "oneWay": "片道",
+      "cityOrAirport": "都市または空港",
+      "cityOrRegion": "都市または地域"
+    },
+    "cabinClasses": {
+      "economy": "エコノミー",
+      "premiumEconomy": "プレミアムエコノミー",
+      "business": "ビジネス",
+      "first": "ファースト"
+    },
+    "button": {
+      "searchFlights": "フライトを検索",
+      "searchHotels": "ホテルを検索",
+      "searchingFlights": "フライトを検索中...",
+      "searchingHotels": "ホテルを検索中..."
+    },
+    "results": {
+      "found": "{count}件の結果が見つかりました",
+      "noResults": "結果が見つかりませんでした。検索条件を変更してお試しください。",
+      "sortBy": "並び替え：",
+      "price": "価格",
+      "duration": "所要時間",
+      "rating": "評価",
+      "lowToHigh": "安い順",
+      "highToLow": "高い順"
+    },
+    "flightCard": {
+      "direct": "直行便",
+      "stop": "乗り継ぎ{count}回",
+      "return": "復路",
+      "roundtrip": "往復",
+      "bookNow": "予約する",
+      "loadingBooking": "読み込み中..."
+    },
+    "hotelCard": {
+      "perNight": "1泊あたり",
+      "total": "合計: {price}",
+      "reviews": "({count}件のレビュー)",
+      "more": "+{count}件",
+      "bookNow": "予約する"
+    },
+    "compareBar": {
+      "selected": "{count}件選択中",
+      "compare": "比較",
+      "clear": "クリア"
+    }
+  },
+  "compare": {
+    "title": "価格比較",
+    "subtitle": "複数のプロバイダーの価格を比較して、最もお得なプランを見つけましょう。",
+    "manual": {
+      "label": "アイテムID（カンマ区切り）",
+      "placeholder": "id1, id2, id3",
+      "helperText": "比較するには検索結果から2つ以上のIDを入力してください。"
+    },
+    "table": {
+      "item": "アイテム",
+      "bestPrice": "最安値",
+      "noData": "比較データがありません。アイテムを選択してください。"
+    },
+    "types": {
+      "flights": "フライト",
+      "hotels": "ホテル"
+    }
+  },
+  "trip": {
+    "title": "マイトリップ",
+    "newTrip": "新しい旅行",
+    "noTrips": "旅行はまだありません。",
+    "noTripsHint": "最初の旅行を作成して計画を始めましょう。",
+    "confirmDelete": "この旅行を削除してもよろしいですか？",
+    "backToTrips": "旅行一覧に戻る",
+    "form": {
+      "title": "新しい旅行を作成",
+      "tripTitle": "旅行タイトル",
+      "tripTitlePlaceholder": "夏休み旅行",
+      "destination": "目的地",
+      "destinationPlaceholder": "東京、日本",
+      "startDate": "開始日",
+      "endDate": "終了日",
+      "createTrip": "旅行を作成"
+    },
+    "status": {
+      "planning": "計画中",
+      "booked": "予約済み",
+      "in_progress": "旅行中",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "itinerary": {
+      "items": "旅程アイテム{count}件",
+      "noItems": "旅程アイテムはまだありません。",
+      "noItemsHint": "AIチャットを使って旅程を作成しましょう。",
+      "day": "{day}日目",
+      "budget": "予算: {amount}",
+      "location": "場所: {location}",
+      "types": {
+        "flight": "出発",
+        "hotel": "宿泊",
+        "activity": "アクティビティ",
+        "transfer": "移動",
+        "note": "メモ"
+      }
+    }
+  },
+  "chat": {
+    "title": "AIチャット — 近日公開",
+    "comingSoon": "AIプロバイダーの設定中のため、チャット機能は一時的にご利用いただけません。",
+    "backToHome": "ホームに戻る"
+  },
+  "auth": {
+    "callback": {
+      "signingIn": "ログイン中...",
+      "pleaseWait": "認証が完了するまでお待ちください。",
+      "success": "ログインに成功しました",
+      "redirecting": "ホームページにリダイレクトしています...",
+      "failed": "認証に失敗しました",
+      "noToken": "認証トークンが受信できませんでした。",
+      "returnHome": "ホームに戻る"
+    }
+  },
+  "settings": {
+    "subscriptions": {
+      "title": "サブスクリプション管理",
+      "signInRequired": "サブスクリプションを管理するにはログインしてください。",
+      "emails": {
+        "title": "メールアドレス",
+        "loading": "メール読み込み中...",
+        "noEmails": "メールアドレスがまだ追加されていません。",
+        "placeholder": "メールアドレスを追加",
+        "verified": "確認済み",
+        "pending": "確認待ち"
+      },
+      "list": {
+        "title": "有効なサブスクリプション",
+        "noSubscriptions": "サブスクリプションはまだありません。",
+        "from": "{origin}発",
+        "to": "{destination}着"
+      },
+      "new": {
+        "title": "新しいサブスクリプション",
+        "verifyFirst": "サブスクリプションを作成する前に、上記でメールアドレスを追加して確認してください。",
+        "type": "種類",
+        "originIATA": "出発地（IATA）",
+        "destinationIATA": "目的地（IATA）",
+        "sendTo": "送信先",
+        "selectEmail": "メールを選択...",
+        "create": "サブスクリプションを作成"
+      },
+      "types": {
+        "bug_fare": "バグ運賃",
+        "price_drop": "値下げ",
+        "deal_digest": "お得情報まとめ"
+      }
+    },
+    "preferences": {
+      "title": "設定",
+      "signInRequired": "設定を管理するにはログインしてください。",
+      "loading": "設定を読み込み中...",
+      "saved": "保存しました",
+      "saveButton": "設定を保存",
+      "homeAirports": {
+        "label": "自宅空港",
+        "hint": "IATAコード、カンマ区切り（例：NRT, HND）"
+      },
+      "preferredAirlines": {
+        "label": "お気に入りの航空会社",
+        "hint": "IATAコード、カンマ区切り（例：NH, JL, BR）"
+      },
+      "excludedAirlines": {
+        "label": "除外する航空会社",
+        "hint": "避けたい航空会社（例：TR, MM）"
+      },
+      "alliances": {
+        "label": "希望のアライアンス"
+      },
+      "cabinClasses": {
+        "label": "座席クラス",
+        "economy": "エコノミー",
+        "premiumEconomy": "プレミアムエコノミー",
+        "business": "ビジネス",
+        "first": "ファースト"
+      },
+      "maxStops": {
+        "label": "最大乗り継ぎ回数",
+        "any": "指定なし",
+        "nonStop": "直行便のみ",
+        "max1": "最大1回",
+        "max2": "最大2回"
+      },
+      "language": {
+        "label": "言語"
+      }
+    }
+  },
+  "footer": {
+    "description": "AIを活用した旅行計画と価格比較。",
+    "features": "機能",
+    "flightHotelSearch": "フライト・ホテル検索",
+    "priceComparison": "価格比較",
+    "legal": "法的情報",
+    "mitLicense": "MITライセンス",
+    "copyright": "© {year} Woodrow Shen. All rights reserved."
+  },
+  "metadata": {
+    "title": "Travel AI - スマートな旅行計画",
+    "description": "AIを活用したフライト・ホテル検索、価格比較、インテリジェントな旅程作成で旅行計画をサポートします。"
+  },
+  "errors": {
+    "generic": "エラーが発生しました。しばらくしてからもう一度お試しください。",
+    "notFound": "ページが見つかりません。",
+    "unauthorized": "ログインしてください。",
+    "serverError": "サーバーエラーが発生しました。しばらくしてからもう一度お試しください。"
+  }
+}

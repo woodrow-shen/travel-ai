@@ -56,6 +56,7 @@ class UserPreference(UUIDMixin, TimestampMixin, Base):
     cabin_classes: Mapped[list[str] | None] = mapped_column(ARRAY(String(20)))
     max_stops: Mapped[int | None] = mapped_column()
     home_airports: Mapped[list[str] | None] = mapped_column(ARRAY(String(10)))
+    preferred_language: Mapped[str | None] = mapped_column(String(10))
 
     user: Mapped["User"] = relationship(back_populates="preferences")
 

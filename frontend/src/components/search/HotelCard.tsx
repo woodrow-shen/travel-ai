@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { HotelResult } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,12 +20,14 @@ export function HotelCard({
   isSelected = false,
 }: HotelCardProps) {
   const stars = Array.from({ length: 5 }, (_, i) => i < hotel.star_rating);
+  const t = useTranslations("search.hotelCard");
+  const tc = useTranslations("common");
 
   return (
     <Card
       className={isSelected ? "ring-2 ring-[var(--color-primary)]" : ""}
       role="article"
-      aria-label={`${hotel.name}, ${hotel.star_rating} stars, ${formatPrice(hotel.price_per_night, hotel.currency)} per night`}
+      aria-label={`${hotel.name}, ${hotel.star_rating} stars, ${formatPrice(hotel.price_per_night, hotel.currency)} ${t("perNight")}`}
     >
       <CardContent>
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -68,7 +73,7 @@ export function HotelCard({
                   </span>
                   {hotel.review_count !== undefined && (
                     <span className="text-sm text-[var(--color-muted)]">
-                      ({hotel.review_count.toLocaleString()} reviews)
+                      {t("reviews", { count: hotel.review_count.toLocaleString() })}
                     </span>
                   )}
                 </div>
@@ -86,7 +91,7 @@ export function HotelCard({
                   ))}
                   {hotel.amenities.length > 5 && (
                     <span className="rounded-full bg-[var(--color-border)]/50 px-2 py-0.5 text-xs text-[var(--color-muted)]">
-                      +{hotel.amenities.length - 5} more
+                      {t("more", { count: hotel.amenities.length - 5 })}
                     </span>
                   )}
                 </div>
@@ -99,9 +104,9 @@ export function HotelCard({
             <p className="text-2xl font-bold text-[var(--color-primary)]">
               {formatPrice(hotel.price_per_night, hotel.currency)}
             </p>
-            <p className="text-sm text-[var(--color-muted)]">per night</p>
+            <p className="text-sm text-[var(--color-muted)]">{t("perNight")}</p>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
-              Total: {formatPrice(hotel.total_price, hotel.currency)}
+              {t("total", { price: formatPrice(hotel.total_price, hotel.currency) })}
             </p>
             <p className="text-xs text-[var(--color-muted)]">{hotel.provider}</p>
             {hotel.cancellation_policy && (
@@ -116,7 +121,7 @@ export function HotelCard({
       <CardFooter>
         {onSelect && (
           <Button size="sm" onClick={() => onSelect(hotel)}>
-            Select
+            {tc("select")}
           </Button>
         )}
         {onCompare && (
@@ -125,7 +130,7 @@ export function HotelCard({
             size="sm"
             onClick={() => onCompare(hotel)}
           >
-            Compare
+            {tc("compare")}
           </Button>
         )}
         {hotel.booking_url && (
@@ -135,7 +140,7 @@ export function HotelCard({
             rel="noopener noreferrer"
             className="ml-auto text-sm text-[var(--color-primary)] hover:underline"
           >
-            Book now
+            {t("bookNow")}
           </a>
         )}
       </CardFooter>

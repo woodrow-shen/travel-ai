@@ -1,0 +1,44 @@
+{
+  "auth": {
+    "invalid_token": "Invalid authentication token.",
+    "expired_token": "Authentication token has expired.",
+    "unauthorized": "Please sign in first.",
+    "google_auth_failed": "Google authentication failed.",
+    "refresh_failed": "Failed to refresh token."
+  },
+  "search": {
+    "no_results": "No results found.",
+    "invalid_params": "Invalid search parameters.",
+    "provider_error": "Provider temporarily unavailable. Please try again later."
+  },
+  "trip": {
+    "not_found": "Trip not found.",
+    "create_failed": "Failed to create trip.",
+    "delete_failed": "Failed to delete trip."
+  },
+  "subscription": {
+    "email_not_verified": "Please verify your email first.",
+    "email_not_found": "Email not found.",
+    "already_exists": "Subscription already exists.",
+    "invalid_email": "Invalid email address.",
+    "dns_validation_failed": "Email domain validation failed."
+  },
+  "compare": {
+    "min_items": "At least 2 items required for comparison.",
+    "invalid_type": "Invalid comparison type."
+  },
+  "user": {
+    "not_found": "User not found.",
+    "preference_update_failed": "Failed to update preferences."
+  },
+  "chat": {
+    "error": "I'm sorry, I encountered an error processing your request. Please try again."
+  },
+  "general": {
+    "server_error": "Server error. Please try again later.",
+    "not_found": "The requested resource was not found.",
+    "rate_limited": "Too many requests. Please try again later.",
+    "premium_required": "This feature requires a Premium subscription.",
+    "validation_error": "Input validation failed."
+  }
+}

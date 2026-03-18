@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #0f3460;">降價通知</h2>
+  <p>您關注的航線剛剛降價了！</p>
+  <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+    <p><strong>航線：</strong> {{ origin }} → {{ destination }}</p>
+    <p><strong>日期：</strong> {{ departure_date }}</p>
+    <p><strong>原價：</strong> <s>{{ previous_price }} {{ price_currency }}</s></p>
+    <p style="font-size: 24px; color: #16c79a;"><strong>現在：{{ current_price }} {{ price_currency }}</strong></p>
+    <p>您的目標價格：{{ target_price }} {{ price_currency }}</p>
+  </div>
+  <p style="color: #666; font-size: 12px;">
+    <a href="{{ unsubscribe_url }}">取消訂閱</a>降價通知
+  </p>
+</body>
+</html>

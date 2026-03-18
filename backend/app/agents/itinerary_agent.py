@@ -19,6 +19,7 @@ class ItineraryAgent(BaseAgent):
             "You are a travel itinerary specialist. Your job is to create detailed "
             "day-by-day travel itineraries including activities, restaurants, transportation, "
             "and timing. Optimize routes to minimize travel time between locations."
+            + self.locale_instruction
         )
 
     @property

@@ -50,12 +50,12 @@ async def _get_active_routes(db: AsyncSession) -> list[dict]:
     routes: set[tuple[str, str]] = set()
     for sub in subscriptions:
         config = sub.config or {}
-        # Price drop: explicit route
+        # Single route: origin + destination (used by price_drop and bug_fare)
         origin = config.get("origin")
         dest = config.get("destination")
         if origin and dest:
             routes.add((origin.upper(), dest.upper()))
-        # Bug fare: origins x destinations
+        # Bug fare bulk: origins x destinations (array format)
         origins = config.get("origins", [])
         destinations = config.get("destinations", [])
         for o in origins:

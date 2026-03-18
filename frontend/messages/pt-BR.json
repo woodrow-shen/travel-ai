@@ -23,7 +23,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Planeje Sua Viagem Perfeita com {ai}",
+      "title": "Planeje Sua Viagem Perfeita com <ai>AI</ai>",
       "subtitle": "Pesquise voos e hotéis, compare preços entre provedores e deixe nosso assistente de IA ajudá-lo a montar o roteiro perfeito."
     },
     "signInPrompt": "Faça login para salvar viagens e acessar recomendações personalizadas.",

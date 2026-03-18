@@ -23,7 +23,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Plan Your Perfect Trip with {ai}",
+      "title": "Plan Your Perfect Trip with <ai>AI</ai>",
       "subtitle": "Search flights and hotels, compare prices across providers, and let our AI assistant help you build the perfect itinerary."
     },
     "signInPrompt": "Sign in to save trips and access personalized recommendations.",

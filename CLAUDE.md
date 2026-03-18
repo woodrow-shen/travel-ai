@@ -334,6 +334,16 @@ See `.env.example` for the complete list. Key groups:
 
 ## Development Guidelines
 
+### Pre-Flight Check for Git Workflows
+
+Before creating any branch, PR, or running `/bug`:
+
+1. Run `git status` — check for uncommitted changes
+2. If the fix/branch depends on uncommitted work, **commit and push that work to main first**
+3. Only then create the feature/fix branch from the updated main
+
+**Why**: Creating a fix branch while its parent feature is uncommitted causes CI failures, forces cherry-picks, and breaks the PR workflow. Commit the dependency first, branch second.
+
 ### Commit Convention
 
 All commits MUST follow **Conventional Commits** with **sign-off** (`git commit -s`):

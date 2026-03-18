@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
+from typing import Any
 
 SUPPORTED_LOCALES = ("zh-TW", "en")
 DEFAULT_LOCALE = "zh-TW"
 
-_messages: dict[str, dict[str, str]] = {}
+_messages: dict[str, Any] = {}
 
 
 def _load_messages() -> None:
@@ -16,38 +17,31 @@ def _load_messages() -> None:
                 _messages[locale] = json.load(f)
 
 
+def _resolve(msgs: Any, parts: list[str]) -> str | None:
+    """Walk nested dict by dotted key parts, return string or None."""
+    current = msgs
+    for part in parts:
+        if isinstance(current, dict):
+            current = current.get(part)
+        else:
+            return None
+    return current if isinstance(current, str) else None
+
+
 def t(key: str, locale: str | None = None, **kwargs: str) -> str:
     """Translate a dotted key like 'auth.invalid_token' for the given locale."""
     if not _messages:
         _load_messages()
 
     loc = locale if locale in SUPPORTED_LOCALES else DEFAULT_LOCALE
-    msgs = _messages.get(loc, {})
-
-    # Support dotted keys
     parts = key.split(".")
-    value = msgs
-    for part in parts:
-        if isinstance(value, dict):
-            value = value.get(part)
-        else:
-            value = None
-            break
 
-    if value is None or not isinstance(value, str):
-        # Fallback to default locale
-        value = _messages.get(DEFAULT_LOCALE, {})
-        for part in parts:
-            if isinstance(value, dict):
-                value = value.get(part)
-            else:
-                value = None
-                break
+    value = _resolve(_messages.get(loc, {}), parts)
+    if value is None:
+        value = _resolve(_messages.get(DEFAULT_LOCALE, {}), parts)
+    if value is None:
+        return key
 
-    if value is None or not isinstance(value, str):
-        return key  # Return the key itself if no translation found
-
-    # Simple string interpolation
     for k, v in kwargs.items():
         value = value.replace(f"{{{k}}}", v)
 

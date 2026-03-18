@@ -8,6 +8,8 @@ import {
   MOCK_EMAILS,
   MOCK_SUBSCRIPTIONS,
   MOCK_PREFERENCES,
+  MOCK_PRICE_HISTORY,
+  MOCK_NOTIFICATIONS,
 } from "./fixtures";
 
 /** Inject a fake JWT token into localStorage to simulate an authenticated user. */
@@ -182,7 +184,7 @@ export async function mockSubscriptionsApi(
   });
 
   // Individual subscription PATCH/DELETE
-  await page.route(/\/api\/subscriptions\/(?!emails)[^/]+$/, (route) => {
+  await page.route(/\/api\/subscriptions\/(?!emails|notifications)[^/]+$/, (route) => {
     const method = route.request().method();
     if (method === "PATCH") {
       const body = route.request().postDataJSON();
@@ -249,6 +251,28 @@ export async function mockPreferencesApi(page: Page, preferences?: unknown) {
     }
     return route.fulfill({ status: 405 });
   });
+}
+
+/** Mock price history API (GET /api/price-history). */
+export async function mockPriceHistoryApi(page: Page, response?: unknown) {
+  await page.route("**/api/price-history*", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(response ?? MOCK_PRICE_HISTORY),
+    })
+  );
+}
+
+/** Mock notifications API (GET /api/subscriptions/notifications). */
+export async function mockNotificationsApi(page: Page, response?: unknown) {
+  await page.route("**/api/subscriptions/notifications*", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(response ?? MOCK_NOTIFICATIONS),
+    })
+  );
 }
 
 /** Mock any API endpoint to return an error. */

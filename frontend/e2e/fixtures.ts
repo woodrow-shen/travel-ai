@@ -385,6 +385,72 @@ export const MOCK_SUBSCRIPTIONS = [
   },
 ];
 
+export const MOCK_PRICE_HISTORY = {
+  origin: "TPE",
+  destination: "NRT",
+  days: 30,
+  points: [
+    {
+      id: "ph-1",
+      origin: "TPE",
+      destination: "NRT",
+      departure_date: "2026-04-01",
+      price_amount: 8500,
+      price_currency: "TWD",
+      source: "amadeus",
+      airline: "CI",
+      cabin_class: null,
+      stops: 0,
+      created_at: "2026-03-10T08:00:00Z",
+    },
+    {
+      id: "ph-2",
+      origin: "TPE",
+      destination: "NRT",
+      departure_date: "2026-04-01",
+      price_amount: 9200,
+      price_currency: "TWD",
+      source: "skyscanner",
+      airline: "BR",
+      cabin_class: null,
+      stops: 0,
+      created_at: "2026-03-11T08:00:00Z",
+    },
+    {
+      id: "ph-3",
+      origin: "TPE",
+      destination: "NRT",
+      departure_date: "2026-04-01",
+      price_amount: 7800,
+      price_currency: "TWD",
+      source: "google_flights",
+      airline: "CI",
+      cabin_class: null,
+      stops: 1,
+      created_at: "2026-03-12T08:00:00Z",
+    },
+  ],
+};
+
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: "notif-1",
+    subscription_id: "sub-1",
+    email: "test@example.com",
+    subject: "Bug Fare Alert: TPE → NRT",
+    sent_at: "2026-03-15T10:00:00Z",
+    status: "sent",
+  },
+  {
+    id: "notif-2",
+    subscription_id: "sub-1",
+    email: "test@example.com",
+    subject: "Price Drop: TPE → NRT",
+    sent_at: "2026-03-14T08:00:00Z",
+    status: "failed",
+  },
+];
+
 export const MOCK_PREFERENCES = {
   home_airports: ["TPE"],
   preferred_airlines: ["BR", "CI"],

@@ -98,8 +98,8 @@ class BaseAgent(ABC):
                 model=self.model,
                 max_tokens=4096,
                 system=self.system_prompt,
-                tools=self.tools,
-                messages=messages,
+                tools=self.tools,  # type: ignore[arg-type]
+                messages=messages,  # type: ignore[arg-type]
             )
 
             assistant_message = {"role": "assistant", "content": response.content}
@@ -128,7 +128,7 @@ class BaseAgent(ABC):
 
                 user_message = {"role": "user", "content": tool_results}
                 messages.append(user_message)
-                response_messages.append(user_message)
+                response_messages.append(user_message)  # type: ignore[arg-type]
 
         return response_messages
 
@@ -137,8 +137,8 @@ class BaseAgent(ABC):
             model=self.model,
             max_tokens=4096,
             system=self.system_prompt,
-            tools=self.tools,
-            messages=messages,
+            tools=self.tools,  # type: ignore[arg-type]
+            messages=messages,  # type: ignore[arg-type]
         ) as stream:
             async for event in stream:
                 yield event

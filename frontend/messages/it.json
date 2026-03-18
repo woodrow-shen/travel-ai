@@ -19,7 +19,8 @@
     "clear": "Cancella",
     "view": "Visualizza",
     "back": "Indietro",
-    "type": "Tipo"
+    "type": "Tipo",
+    "monitor": "Monitor"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "Lingua"
+      }
+    }
+  },
+  "monitor": {
+    "title": "Monitoraggio Prezzi",
+    "signInRequired": "Accedi per visualizzare il monitoraggio prezzi.",
+    "routeSelector": {
+      "label": "Rotta",
+      "placeholder": "Seleziona una rotta..."
+    },
+    "chart": {
+      "title": "Tendenza Prezzi",
+      "noData": "Nessun dato sui prezzi. Seleziona una rotta per visualizzare le tendenze.",
+      "days": "{count}g"
+    },
+    "subscriptions": {
+      "title": "Abbonamenti",
+      "empty": "Nessun abbonamento. Creane uno nelle Impostazioni.",
+      "toggle": "Attiva/Disattiva"
+    },
+    "notifications": {
+      "title": "Cronologia Notifiche",
+      "empty": "Nessuna notifica ancora.",
+      "status": {
+        "sent": "Inviato",
+        "failed": "Fallito"
       }
     }
   },

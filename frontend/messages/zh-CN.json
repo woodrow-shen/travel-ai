@@ -19,7 +19,8 @@
     "clear": "清除",
     "view": "查看",
     "back": "返回",
-    "type": "类型"
+    "type": "类型",
+    "monitor": "价格监控"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "语言"
+      }
+    }
+  },
+  "monitor": {
+    "title": "价格监控",
+    "signInRequired": "请登录以查看价格监控。",
+    "routeSelector": {
+      "label": "航线",
+      "placeholder": "选择航线..."
+    },
+    "chart": {
+      "title": "价格趋势",
+      "noData": "没有价格数据，请选择航线查看趋势。",
+      "days": "{count}天"
+    },
+    "subscriptions": {
+      "title": "订阅",
+      "empty": "暂无订阅，请在设置中创建。",
+      "toggle": "切换订阅"
+    },
+    "notifications": {
+      "title": "通知记录",
+      "empty": "暂无通知记录。",
+      "status": {
+        "sent": "已发送",
+        "failed": "失败"
       }
     }
   },

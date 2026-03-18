@@ -9,8 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.dependencies import get_current_user
+from app.models.notification_log import NotificationLog
 from app.models.subscription import Subscription, SubscriptionEmail
 from app.models.user import User
+from app.schemas.notification_log import NotificationLogResponse
 from app.schemas.subscription import (
     SubscriptionCreate,
     SubscriptionEmailCreate,
@@ -67,6 +69,30 @@ async def create_subscription(
     await db.flush()
     await db.refresh(subscription)
     return subscription
+
+
+@router.get("/notifications", response_model=list[NotificationLogResponse])
+async def list_notifications(
+    limit: int = Query(50, ge=1, le=200),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    # Get user's subscription IDs
+    sub_result = await db.execute(
+        select(Subscription.id).where(Subscription.user_id == user.id)
+    )
+    sub_ids = [row[0] for row in sub_result.all()]
+
+    if not sub_ids:
+        return []
+
+    result = await db.execute(
+        select(NotificationLog)
+        .where(NotificationLog.subscription_id.in_(sub_ids))
+        .order_by(NotificationLog.sent_at.desc())
+        .limit(limit)
+    )
+    return result.scalars().all()
 
 
 @router.patch("/{subscription_id}", response_model=SubscriptionResponse)

@@ -7,6 +7,19 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 **Versioning**: `MAJOR.MINOR.PATCH` — Minor (new features, API changes) and patch (bug fixes, tests, docs) are bumped by the dev team. Major bumps (1.0.0, 2.0.0, ...) are owner-decided only.
 
+## [0.5.0] - 2026-03-18
+
+### Added
+
+- **Price monitoring dashboard**: New `/monitor` page with price trend visualization, subscription overview, and notification history
+- **Price history API**: `GET /api/v1/price-history` endpoint returning price history for subscribed routes (JWT auth, origin/destination/days params)
+- **Notification logs API**: `GET /api/v1/subscriptions/notifications` endpoint returning user's notification history
+- **Recharts integration**: Line chart with per-source colored lines for price trend visualization
+- **Monitor components**: RouteSelector, PriceTrendChart, SubscriptionOverview, NotificationHistory
+- **Monitor store**: Zustand store (`monitor.ts`) + `useMonitor` hook for price history and notification state
+- **Navigation**: "Monitor" added as top-level nav link in Header
+- **i18n**: All 12 locale files updated with `monitor` namespace (~18 keys each)
+
 ## [0.4.0] - 2026-03-18
 
 ### Added

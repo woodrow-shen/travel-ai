@@ -19,7 +19,8 @@
     "clear": "クリア",
     "view": "表示",
     "back": "戻る",
-    "type": "種類"
+    "type": "種類",
+    "monitor": "モニター"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "言語"
+      }
+    }
+  },
+  "monitor": {
+    "title": "価格モニタリング",
+    "signInRequired": "価格モニタリングを表示するにはログインしてください。",
+    "routeSelector": {
+      "label": "路線",
+      "placeholder": "路線を選択..."
+    },
+    "chart": {
+      "title": "価格推移",
+      "noData": "価格データがありません。路線を選択してトレンドを表示します。",
+      "days": "{count}日"
+    },
+    "subscriptions": {
+      "title": "サブスクリプション",
+      "empty": "サブスクリプションがありません。設定から作成してください。",
+      "toggle": "サブスクリプション切替"
+    },
+    "notifications": {
+      "title": "通知履歴",
+      "empty": "通知はまだありません。",
+      "status": {
+        "sent": "送信済み",
+        "failed": "失敗"
       }
     }
   },

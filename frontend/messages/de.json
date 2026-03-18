@@ -19,7 +19,8 @@
     "clear": "Leeren",
     "view": "Ansehen",
     "back": "Zurück",
-    "type": "Typ"
+    "type": "Typ",
+    "monitor": "Monitor"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "Sprache"
+      }
+    }
+  },
+  "monitor": {
+    "title": "Preisüberwachung",
+    "signInRequired": "Bitte melden Sie sich an, um die Preisüberwachung zu sehen.",
+    "routeSelector": {
+      "label": "Route",
+      "placeholder": "Route auswählen..."
+    },
+    "chart": {
+      "title": "Preistrend",
+      "noData": "Keine Preisdaten verfügbar. Wählen Sie eine Route, um Trends anzuzeigen.",
+      "days": "{count}T"
+    },
+    "subscriptions": {
+      "title": "Abonnements",
+      "empty": "Keine Abonnements. Erstellen Sie eines in den Einstellungen.",
+      "toggle": "Abonnement umschalten"
+    },
+    "notifications": {
+      "title": "Benachrichtigungsverlauf",
+      "empty": "Noch keine Benachrichtigungen.",
+      "status": {
+        "sent": "Gesendet",
+        "failed": "Fehlgeschlagen"
       }
     }
   },

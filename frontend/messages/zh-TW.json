@@ -19,7 +19,8 @@
     "clear": "清除",
     "view": "檢視",
     "back": "返回",
-    "type": "類型"
+    "type": "類型",
+    "monitor": "價格監控"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "語言"
+      }
+    }
+  },
+  "monitor": {
+    "title": "價格監控",
+    "signInRequired": "請登入以查看價格監控。",
+    "routeSelector": {
+      "label": "航線",
+      "placeholder": "選擇航線..."
+    },
+    "chart": {
+      "title": "價格趨勢",
+      "noData": "沒有價格資料，請選擇航線以查看趨勢。",
+      "days": "{count}天"
+    },
+    "subscriptions": {
+      "title": "訂閱",
+      "empty": "尚無訂閱，請至設定中建立。",
+      "toggle": "切換訂閱"
+    },
+    "notifications": {
+      "title": "通知紀錄",
+      "empty": "尚無通知紀錄。",
+      "status": {
+        "sent": "已發送",
+        "failed": "失敗"
       }
     }
   },

@@ -19,7 +19,8 @@
     "clear": "Xoa het",
     "view": "Xem",
     "back": "Quay lai",
-    "type": "Loai"
+    "type": "Loai",
+    "monitor": "Giám sát"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "Ngon ngu"
+      }
+    }
+  },
+  "monitor": {
+    "title": "Giám sát Giá",
+    "signInRequired": "Vui lòng đăng nhập để xem giám sát giá.",
+    "routeSelector": {
+      "label": "Tuyến",
+      "placeholder": "Chọn tuyến..."
+    },
+    "chart": {
+      "title": "Xu hướng Giá",
+      "noData": "Không có dữ liệu giá. Chọn tuyến để xem xu hướng.",
+      "days": "{count} ngày"
+    },
+    "subscriptions": {
+      "title": "Đăng ký",
+      "empty": "Chưa có đăng ký. Tạo trong Cài đặt.",
+      "toggle": "Bật/Tắt đăng ký"
+    },
+    "notifications": {
+      "title": "Lịch sử Thông báo",
+      "empty": "Chưa có thông báo.",
+      "status": {
+        "sent": "Đã gửi",
+        "failed": "Thất bại"
       }
     }
   },

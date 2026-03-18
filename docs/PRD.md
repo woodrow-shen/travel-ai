@@ -61,7 +61,7 @@ Travel-AI 是一個智能旅遊聚合平台，透過多代理 AI 系統（基於
 | 行程規劃 | AI 生成日程行程表，包含路線優化 | 行程生成 |
 | 價格追蹤 | 訂閱特定航線，價格下降或出現 Bug Fare 時收到通知 | 郵件訂閱系統 |
 | 多段銜接 | 搜尋無直飛的二線城市，自動拆解國際線 + 國內線 | 多段銜接搜尋 |
-| 飯店搜尋 | 搜尋飯店，跨來源比較價格 | ⏸️ 暫時停用（見 §3.12） |
+| 飯店搜尋 | 搜尋飯店，跨來源比較價格 | 飯店搜尋（§3.13） |
 
 ---
 
@@ -183,21 +183,27 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 - Price Drop Alert：在自訂路線基礎上再用航空公司篩選
 - Deal Digest：精選摘要依偏好排序，偏好航空置頂
 
-### 3.12 飯店功能（⏸️ 暫時停用）
+### 3.12 價格監控儀表板
 
-> **狀態**：暫時停用（2026-03-14）
-> **原因**：Skyscanner / Kiwi RapidAPI 的飯店搜尋端點尚未驗證是否可在免費方案下正常使用。在確認 API 可用性之前，所有飯店相關功能暫停開發。
+前端視覺化介面，讓用戶查看訂閱航線的價格趨勢與通知歷史。
 
-**影響範圍**：
-- `POST /search/hotels`：端點存在但回傳空結果（stub）
-- `POST /compare/hotels`：端點存在但回傳空結果（stub）
-- `SearchAgent.search_hotels` 工具：未接入實際 API
-- 前端搜尋頁面：飯店搜尋 tab 保留但功能未實作
+- **價格趨勢圖表**：使用 Recharts 繪製價格歷史折線圖，支援航線選擇器切換
+- **訂閱總覽**：顯示所有訂閱狀態，支援啟用/停用切換
+- **通知歷史**：列出過往的價格通知紀錄（Bug Fare、Price Drop、Deal Digest）
+- **新增端點**：
+  - `GET /price-history`：取得訂閱航線的價格歷史資料（JWT 認證）
+  - `GET /subscriptions/notifications`：取得通知紀錄（JWT 認證）
+- **前端頁面**：`/monitor`，包含 4 個元件（PriceTrendChart、RouteSelector、SubscriptionOverview、NotificationHistory）
+- **狀態管理**：新增 Zustand store（`monitor.ts`）+ hook（`useMonitor.ts`）
 
-**恢復條件**：
-1. 驗證 Skyscanner `/hotels/search` 端點在免費方案下可正常回傳結果
-2. 驗證 Kiwi `/stays/search/by-dest` 端點在免費方案下可正常回傳結果
-3. 確認任一來源可用後，重新啟用飯店搜尋整合
+### 3.13 飯店搜尋
+
+整合 Skyscanner + Kiwi 飯店 API，提供多來源飯店搜尋、比較與前端介面。
+
+- **多來源搜尋**：Skyscanner + Kiwi 飯店 API 並行搜尋，統一正規化與去重
+- **飯店自動完成**：地名 → API 專屬 ID，7 天 Redis 快取
+- **飯店比價**：`POST /compare/hotels` 端點，跨來源比較
+- **前端頁面**：飯店搜尋表單 + 結果列表（HotelCard 元件）
 
 ---
 

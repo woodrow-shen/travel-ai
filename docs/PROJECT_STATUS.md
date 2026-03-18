@@ -3,7 +3,7 @@
 | Field         | Value                                  |
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
-| **Version**   | 0.4.0                                  |
+| **Version**   | 0.5.0                                  |
 | **Date**      | 2026-03-18                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
@@ -15,21 +15,21 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████████  100% (85/85 items)
+Features       ██████████████████████  100% (87/87 items)
 Infrastructure ████████████████░░░░░░  78%  (14/18 items)
 Quality        ██████████████████████  100% (30/30 items)
 Documentation  ████████████████░░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████████░░  95%  (137/144 items)
+OVERALL        ████████████████████░░  95%  (139/146 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 85 | 85 | 0 | 0 |
+| Features (§3) | 87 | 87 | 0 | 0 |
 | Infrastructure (§4) | 14 | 18 | 4 | 0 |
 | Quality Assurance (§5) | 30 | 30 | 0 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **137** | **144** | **7** | **1** |
+| **Total** | **139** | **146** | **7** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -179,6 +179,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Auth callback page
 - [x] Settings — Subscriptions (`/settings/subscriptions`)
 - [x] Settings — Preferences (`/settings/preferences`)
+- [x] Monitor — Price monitoring dashboard (`/monitor`)
 
 ### 3.10 Frontend State Management
 
@@ -189,6 +190,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Compare store + useCompare hook
 - [x] Subscription store + useSubscription hook
 - [x] Preferences store + usePreferences hook
+- [x] Monitor store + useMonitor hook
 
 ### 3.11 Internationalization (i18n)
 
@@ -354,6 +356,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | 0.2.0   | 2026-03-13 | Subscription UI, preferences page, user dropdown, monitor tasks implemented, notifier email sending, docs reorganization |
 | 0.3.0   | 2026-03-17 | Hotel search integration (Skyscanner + Kiwi), Google Flights 4th flight source, email bounce fix |
 | 0.4.0   | 2026-03-18 | Full-stack i18n: zh-TW + en, next-intl frontend, locale middleware, AI agent localization, email templates |
+| 0.5.0   | 2026-03-18 | Price monitoring dashboard: /monitor page with Recharts price trend chart, route selector, subscription overview, notification history; new API endpoints (price-history, notifications) |
 
 ---
 

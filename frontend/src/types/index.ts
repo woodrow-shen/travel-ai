@@ -233,6 +233,42 @@ export interface Subscription {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Price Monitoring                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface PriceHistoryPoint {
+  id: string;
+  origin: string;
+  destination: string;
+  departure_date: string;
+  price_amount: number;
+  price_currency: string;
+  source: string;
+  airline: string | null;
+  cabin_class: string | null;
+  stops: number | null;
+  created_at: string;
+}
+
+export interface PriceHistoryResponse {
+  origin: string;
+  destination: string;
+  days: number;
+  points: PriceHistoryPoint[];
+}
+
+export type NotificationStatus = "sent" | "failed";
+
+export interface NotificationLogEntry {
+  id: string;
+  subscription_id: string;
+  email: string;
+  subject: string;
+  sent_at: string;
+  status: NotificationStatus;
+}
+
+/* ------------------------------------------------------------------ */
 /*  User Preferences                                                   */
 /* ------------------------------------------------------------------ */
 

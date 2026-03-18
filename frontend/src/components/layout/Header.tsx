@@ -17,6 +17,7 @@ export function Header() {
     { href: "/search" as const, label: t("search") },
     { href: "/compare" as const, label: t("compare") },
     { href: "/trip" as const, label: t("trips") },
+    { href: "/monitor" as const, label: t("monitor") },
     { href: "/chat" as const, label: t("chat"), disabled: true },
   ];
 

@@ -36,7 +36,7 @@ Travel-AI is an intelligent travel aggregation platform that uses a multi-agent 
 | Layer          | Technology                                | Version    |
 |----------------|-------------------------------------------|------------|
 | Backend        | Python, FastAPI, SQLAlchemy (async)       | 3.12, 0.115+ |
-| Frontend       | Next.js, React, Zustand, Tailwind CSS     | 15, 19, 5, 4 |
+| Frontend       | Next.js, React, Zustand, Tailwind CSS, Recharts | 15, 19, 5, 4, 2 |
 | Database       | PostgreSQL (asyncpg driver)               | 16         |
 | Cache          | Redis                                     | 7          |
 | AI             | Anthropic Claude SDK                      | 0.42+      |
@@ -197,7 +197,14 @@ All endpoints are under the `/api/v1/` prefix.
 | DELETE | `/subscriptions/{id}`         | Delete subscription          |
 | POST   | `/subscriptions/emails`       | Add subscriber email         |
 | GET    | `/subscriptions/emails/verify`| Verify email (token-based)   |
+| GET    | `/subscriptions/notifications`| List user's notification logs |
 | GET    | `/subscriptions/unsubscribe`  | Unsubscribe (token-based)    |
+
+**Price History (JWT required)**
+
+| Method | Path              | Description                                        |
+|--------|-------------------|----------------------------------------------------|
+| GET    | `/price-history`  | Price history for subscribed routes (origin, destination, days params) |
 
 **Users (JWT required)**
 
@@ -284,6 +291,7 @@ Converts provider-specific flight data into a unified format:
 | Compare         | `/[locale]/compare`            | Side-by-side comparison view         |
 | Trip            | `/[locale]/trip`               | Trip planner and itinerary display   |
 | Chat            | `/[locale]/chat`               | AI chat interface                    |
+| Monitor         | `/[locale]/monitor`            | Price trend chart, subscription overview, notification history |
 | Settings        | `/[locale]/settings/*`         | User preferences and subscriptions   |
 | Auth Callback   | `/[locale]/auth/callback`      | OAuth redirect handler               |
 
@@ -300,6 +308,10 @@ Converts provider-specific flight data into a unified format:
 | `ItineraryView`  | Day-by-day schedule renderer           |
 | `Header`/`Footer`| Layout components                     |
 | `LanguageSwitcher` | Locale toggle (zh-TW ↔ en)         |
+| `RouteSelector`  | Subscribed route dropdown for monitor    |
+| `PriceTrendChart`| Recharts line chart (per-source lines)   |
+| `SubscriptionOverview` | Card grid with active toggles    |
+| `NotificationHistory` | Alert history with status badges  |
 | `Button`/`Input`/`Card` | Shared UI primitives            |
 
 ### Hooks
@@ -311,6 +323,7 @@ Converts provider-specific flight data into a unified format:
 | `useChat()`    | SSE message streaming                    |
 | `useTrip()`    | Trip CRUD management                     |
 | `useCompare()` | Comparison logic and state               |
+| `useMonitor()`  | Price history + notification fetching    |
 
 ### State Management (Zustand v5)
 

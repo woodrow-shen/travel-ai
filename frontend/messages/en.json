@@ -19,7 +19,8 @@
     "clear": "Clear",
     "view": "View",
     "back": "Back",
-    "type": "Type"
+    "type": "Type",
+    "monitor": "Monitor"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "Language"
+      }
+    }
+  },
+  "monitor": {
+    "title": "Price Monitoring",
+    "signInRequired": "Please sign in to view price monitoring.",
+    "routeSelector": {
+      "label": "Route",
+      "placeholder": "Select a route..."
+    },
+    "chart": {
+      "title": "Price Trend",
+      "noData": "No price data available. Select a route to view trends.",
+      "days": "{count}d"
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "empty": "No subscriptions yet. Create one in Settings.",
+      "toggle": "Toggle subscription"
+    },
+    "notifications": {
+      "title": "Notification History",
+      "empty": "No notifications sent yet.",
+      "status": {
+        "sent": "Sent",
+        "failed": "Failed"
       }
     }
   },

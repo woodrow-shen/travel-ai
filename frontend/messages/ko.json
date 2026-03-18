@@ -19,7 +19,8 @@
     "clear": "초기화",
     "view": "보기",
     "back": "뒤로",
-    "type": "유형"
+    "type": "유형",
+    "monitor": "모니터"
   },
   "landing": {
     "hero": {
@@ -254,6 +255,32 @@
       },
       "language": {
         "label": "언어"
+      }
+    }
+  },
+  "monitor": {
+    "title": "가격 모니터링",
+    "signInRequired": "가격 모니터링을 보려면 로그인하세요.",
+    "routeSelector": {
+      "label": "노선",
+      "placeholder": "노선 선택..."
+    },
+    "chart": {
+      "title": "가격 추이",
+      "noData": "가격 데이터가 없습니다. 노선을 선택하여 추이를 확인하세요.",
+      "days": "{count}일"
+    },
+    "subscriptions": {
+      "title": "구독",
+      "empty": "구독이 없습니다. 설정에서 생성하세요.",
+      "toggle": "구독 전환"
+    },
+    "notifications": {
+      "title": "알림 내역",
+      "empty": "아직 알림이 없습니다.",
+      "status": {
+        "sent": "발송됨",
+        "failed": "실패"
       }
     }
   },

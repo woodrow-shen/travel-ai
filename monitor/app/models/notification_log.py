@@ -29,7 +29,8 @@ class NotificationLog(UUIDMixin, Base):
         DateTime(timezone=True), nullable=False
     )
     status: Mapped[NotificationStatus] = mapped_column(
-        Enum(NotificationStatus), nullable=False
+        Enum(NotificationStatus, values_callable=lambda e: [m.value for m in e]),
+        nullable=False,
     )
 
     subscription: Mapped["Subscription"] = relationship(

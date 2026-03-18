@@ -27,7 +27,8 @@ class NotificationLog(UUIDMixin, Base):
     subject: Mapped[str] = mapped_column(String(500), nullable=False)
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[NotificationStatus] = mapped_column(
-        Enum(NotificationStatus), nullable=False
+        Enum(NotificationStatus, values_callable=lambda e: [m.value for m in e]),
+        nullable=False,
     )
 
     subscription: Mapped["Subscription"] = relationship(back_populates="notification_logs")

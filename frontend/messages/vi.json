@@ -23,7 +23,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Len ke hoach chuyen di hoan hao voi {ai}",
+      "title": "Len ke hoach chuyen di hoan hao voi <ai>AI</ai>",
       "subtitle": "Tim kiem chuyen bay va khach san, so sanh gia tu nhieu nha cung cap, de tro ly AI giup ban xay dung lich trinh hoan hao."
     },
     "signInPrompt": "Dang nhap de luu chuyen di va nhan goi y ca nhan hoa.",

@@ -23,7 +23,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Planen Sie Ihre perfekte Reise mit {ai}",
+      "title": "Planen Sie Ihre perfekte Reise mit <ai>AI</ai>",
       "subtitle": "Suchen Sie Flüge und Hotels, vergleichen Sie Preise verschiedener Anbieter und lassen Sie unseren KI-Assistenten Ihnen bei der perfekten Reiseplanung helfen."
     },
     "signInPrompt": "Melden Sie sich an, um Reisen zu speichern und personalisierte Empfehlungen zu erhalten.",

@@ -26,6 +26,7 @@ class GoogleFlightsClient(RapidAPIBaseClient):
         params = {
             "departureId": origin,
             "arrivalId": destination,
+            "departureDate": departure_date,
             "currency": currency,
         }
         data = await self._get("/flights/search-oneway", params)

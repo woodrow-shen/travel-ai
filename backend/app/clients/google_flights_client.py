@@ -37,10 +37,12 @@ class GoogleFlightsClient(RapidAPIBaseClient):
         params: dict = {
             "departureId": origin,
             "arrivalId": destination,
+            "departureDate": departure_date,
             "currency": currency,
         }
 
         if return_date:
+            params["returnDate"] = return_date
             endpoint = "/flights/search-roundtrip"
         else:
             endpoint = "/flights/search-oneway"

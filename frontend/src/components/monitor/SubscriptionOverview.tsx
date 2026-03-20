@@ -74,7 +74,7 @@ export function SubscriptionOverview({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold">
-                    {origin} → {destination}
+                    {origin} {retDate ? "↔" : "→"} {destination}
                   </p>
                   {dateLabel && (
                     <p className="text-xs text-[var(--color-muted)]">{dateLabel}</p>

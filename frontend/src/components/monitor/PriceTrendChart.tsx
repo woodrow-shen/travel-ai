@@ -82,7 +82,8 @@ export function PriceTrendChart({ points, isLoading, selectedRoute }: PriceTrend
   // Build chart title with departure info
   let chartTitle = t("chart.title");
   if (selectedRoute) {
-    const routeStr = `${selectedRoute.origin} → ${selectedRoute.destination}`;
+    const arrow = selectedRoute.return_date ? "↔" : "→";
+    const routeStr = `${selectedRoute.origin} ${arrow} ${selectedRoute.destination}`;
     if (selectedRoute.departure_date) {
       const depStr = formatDate(selectedRoute.departure_date);
       chartTitle = `${routeStr} ${depStr} ${t("chart.departureLabel")}`;

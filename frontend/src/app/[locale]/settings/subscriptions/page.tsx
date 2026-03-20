@@ -167,7 +167,8 @@ function SubscriptionList({
     const retDate = config.return_date as string | undefined;
 
     let route = "";
-    if (origin && destination) route = `${origin} → ${destination}`;
+    const arrow = retDate ? "↔" : "→";
+    if (origin && destination) route = `${origin} ${arrow} ${destination}`;
     else if (origin) route = t("list.from", { origin });
     else if (destination) route = t("list.to", { destination });
 

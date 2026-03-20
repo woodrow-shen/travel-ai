@@ -50,7 +50,8 @@ export function RouteSelector({
             }
           }
 
-          const label = `${origin} → ${destination}${dateInfo}`;
+          const arrow = return_date ? "↔" : "→";
+          const label = `${origin} ${arrow} ${destination}${dateInfo}`;
 
           return [
             value,

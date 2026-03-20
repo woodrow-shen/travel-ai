@@ -4,7 +4,6 @@ import asyncio
 from datetime import date, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 
 from app.tasks.price_scan import _get_active_routes, _scan_route, scan_prices
 

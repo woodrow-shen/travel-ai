@@ -12,7 +12,6 @@ from pydantic import ValidationError
 from app.models.subscription import SubscriptionType
 from app.schemas.subscription import SubscriptionConfig, SubscriptionCreate
 
-
 # ── Unit tests for SubscriptionConfig ──
 
 

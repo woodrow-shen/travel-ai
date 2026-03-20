@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     # Tier switch (dev/test only)
     ALLOW_TIER_SWITCH: bool = False
 
+    # Admin panel (dev/ops only)
+    ADMIN_ENABLED: bool = True
+
     @property
     def is_development(self) -> bool:
         return self.ENV in ("development", "test")

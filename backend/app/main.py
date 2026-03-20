@@ -35,6 +35,11 @@ def create_app() -> FastAPI:
 
     app.include_router(api_v1_router, prefix="/api/v1")
 
+    if settings.ADMIN_ENABLED:
+        from app.admin import setup_admin
+
+        setup_admin(app, engine)
+
     @app.get("/health")
     async def health():
         return {"status": "ok"}

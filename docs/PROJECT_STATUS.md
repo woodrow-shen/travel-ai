@@ -3,8 +3,8 @@
 | Field         | Value                                  |
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
-| **Version**   | 0.5.0                                  |
-| **Date**      | 2026-03-18                             |
+| **Version**   | 0.6.0                                  |
+| **Date**      | 2026-03-20                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
 
@@ -15,21 +15,21 @@
 ## Overall Progress
 
 ```
-Features       ██████████████████████  100% (87/87 items)
+Features       ██████████████████████  100% (96/96 items)
 Infrastructure ████████████████░░░░░░  78%  (14/18 items)
 Quality        ██████████████████████  100% (30/30 items)
 Documentation  ████████████████░░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████████░░  95%  (139/146 items)
+OVERALL        ████████████████████░░  95%  (148/155 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
-| Features (§3) | 87 | 87 | 0 | 0 |
+| Features (§3) | 96 | 96 | 0 | 0 |
 | Infrastructure (§4) | 14 | 18 | 4 | 0 |
 | Quality Assurance (§5) | 30 | 30 | 0 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **139** | **146** | **7** | **1** |
+| **Total** | **148** | **155** | **7** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -168,6 +168,15 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Notifier — email dispatch with trigger conditions + cooldown
 - [x] Route filtering + user preference filtering
 - [x] Multi-source monitoring (Skyscanner + Kiwi + Google Flights in addition to Amadeus)
+- [x] Fixed departure date scan (uses subscription config departure_date, not now+14d)
+- [x] Roundtrip support for all monitor clients (Amadeus, Skyscanner, Kiwi, Google Flights)
+- [x] Bug Fare/Deal Digest default to roundtrip; Price Drop supports oneway/roundtrip
+- [x] Subscription config validation (departure_date, return_date, trip_type, date_flexibility)
+- [x] Expired subscription auto-deactivation (departure_date < today in cleanup task)
+- [x] Price history API supports departure_date and return_date query filters
+- [x] Frontend subscription form: date pickers, trip type selector, date flexibility selector
+- [x] RouteSelector and PriceTrendChart display departure/return date info
+- [x] i18n keys for new subscription fields (all 12 locales)
 
 ### 3.9 Frontend Pages
 
@@ -357,7 +366,8 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | 0.3.0   | 2026-03-17 | Hotel search integration (Skyscanner + Kiwi), Google Flights 4th flight source, email bounce fix |
 | 0.4.0   | 2026-03-18 | Full-stack i18n: zh-TW + en, next-intl frontend, locale middleware, AI agent localization, email templates |
 | 0.5.0   | 2026-03-18 | Price monitoring dashboard: /monitor page with Recharts price trend chart, route selector, subscription overview, notification history; new API endpoints (price-history, notifications) |
+| 0.6.0   | 2026-03-20 | Monitor refactoring: fixed departure date + roundtrip support for all clients, subscription config (departure_date, return_date, trip_type, date_flexibility), expired subscription auto-cleanup, price-history date filters, frontend date pickers and trip type UI, i18n updates (12 locales) |
 
 ---
 
-*Last updated: 2026-03-18*
+*Last updated: 2026-03-20*

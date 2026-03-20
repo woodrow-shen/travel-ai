@@ -9,6 +9,7 @@ class PriceHistoryPoint(BaseModel):
     origin: str
     destination: str
     departure_date: date
+    return_date: date | None = None
     price_amount: float
     price_currency: str
     source: str
@@ -23,5 +24,7 @@ class PriceHistoryPoint(BaseModel):
 class PriceHistoryResponse(BaseModel):
     origin: str
     destination: str
+    departure_date: date | None = None
+    return_date: date | None = None
     days: int
     points: list[PriceHistoryPoint]

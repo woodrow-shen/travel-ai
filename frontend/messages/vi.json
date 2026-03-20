@@ -208,6 +208,16 @@
         "type": "Loai",
         "originIATA": "Diem di (IATA)",
         "destinationIATA": "Diem den (IATA)",
+        "departureDate": "Ngày khởi hành",
+        "returnDate": "Ngày về",
+        "tripType": "Loại hành trình",
+        "tripTypeOption": {
+          "oneway": "Một chiều",
+          "roundtrip": "Khứ hồi"
+        },
+        "flexibility": "Linh hoạt ngày",
+        "flexibilityExact": "Chỉ ngày chính xác",
+        "flexibilityDays": "± {count} ngày",
         "sendTo": "Gui den",
         "selectEmail": "Chon email...",
         "create": "Tao dang ky"
@@ -263,12 +273,15 @@
     "signInRequired": "Vui lòng đăng nhập để xem giám sát giá.",
     "routeSelector": {
       "label": "Tuyến",
-      "placeholder": "Chọn tuyến..."
+      "placeholder": "Chọn tuyến...",
+      "roundtrip": "khứ hồi",
+      "oneway": "một chiều"
     },
     "chart": {
       "title": "Xu hướng Giá",
       "noData": "Không có dữ liệu giá. Chọn tuyến để xem xu hướng.",
-      "days": "{count} ngày"
+      "days": "{count} ngày",
+      "departureLabel": "xu hướng giá khởi hành"
     },
     "subscriptions": {
       "title": "Đăng ký",

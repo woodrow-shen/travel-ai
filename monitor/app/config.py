@@ -32,8 +32,8 @@ class MonitorSettings(BaseSettings):
     # Monitoring
     SCAN_INTERVAL_HOURS: int = 4
     BUG_FARE_THRESHOLD: float = 0.5  # 50% below average
-    MAX_ROUTES_STANDARD: int = 55
-    MAX_ROUTES_REDUCED: int = 100
+    MAX_ROUTES_PER_SCAN: int = 500
+    SCAN_CONCURRENCY: int = 10  # max parallel route scans
 
     SECRET_KEY: str = "change-me-in-production"
     BACKEND_URL: str = "http://localhost:8000"

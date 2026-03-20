@@ -3,12 +3,17 @@
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/Card";
 import type { Subscription } from "@/types";
+import type { MonitorRoute } from "@/stores/monitor";
 
 interface SubscriptionOverviewProps {
   subscriptions: Subscription[];
-  selectedRoute: { origin: string; destination: string } | null;
-  onSelectRoute: (route: { origin: string; destination: string }) => void;
+  selectedRoute: MonitorRoute | null;
+  onSelectRoute: (route: MonitorRoute) => void;
   onToggle: (id: string, isActive: boolean) => void;
+}
+
+function formatDate(dateStr: string): string {
+  return dateStr.slice(5).replace("-", "/");
 }
 
 export function SubscriptionOverview({
@@ -33,9 +38,22 @@ export function SubscriptionOverview({
       {subscriptions.map((sub) => {
         const origin = String(sub.config.origin ?? "").toUpperCase();
         const destination = String(sub.config.destination ?? "").toUpperCase();
+        const depDate = sub.config.departure_date as string | undefined;
+        const retDate = sub.config.return_date as string | undefined;
+
         const isSelected =
           selectedRoute?.origin === origin &&
-          selectedRoute?.destination === destination;
+          selectedRoute?.destination === destination &&
+          selectedRoute?.departure_date === depDate &&
+          selectedRoute?.return_date === retDate;
+
+        let dateLabel = "";
+        if (depDate) {
+          dateLabel = formatDate(depDate);
+          if (retDate) {
+            dateLabel += ` - ${formatDate(retDate)}`;
+          }
+        }
 
         return (
           <Card
@@ -43,7 +61,14 @@ export function SubscriptionOverview({
             className={`cursor-pointer transition-shadow hover:shadow-md ${
               isSelected ? "ring-2 ring-[var(--color-primary)]" : ""
             }`}
-            onClick={() => onSelectRoute({ origin, destination })}
+            onClick={() =>
+              onSelectRoute({
+                origin,
+                destination,
+                departure_date: depDate,
+                return_date: retDate,
+              })
+            }
           >
             <CardContent>
               <div className="flex items-center justify-between">
@@ -51,6 +76,9 @@ export function SubscriptionOverview({
                   <p className="font-semibold">
                     {origin} → {destination}
                   </p>
+                  {dateLabel && (
+                    <p className="text-xs text-[var(--color-muted)]">{dateLabel}</p>
+                  )}
                   <span className="mt-1 inline-block rounded-full bg-[var(--color-primary)]/10 px-2 py-0.5 text-xs font-medium text-[var(--color-primary)]">
                     {ts(`types.${sub.type}`)}
                   </span>

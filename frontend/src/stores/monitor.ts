@@ -6,9 +6,16 @@ import type {
   PriceHistoryResponse,
 } from "@/types";
 
+export interface MonitorRoute {
+  origin: string;
+  destination: string;
+  departure_date?: string;
+  return_date?: string;
+}
+
 interface MonitorState {
   priceHistory: PriceHistoryPoint[];
-  selectedRoute: { origin: string; destination: string } | null;
+  selectedRoute: MonitorRoute | null;
   days: number;
   isLoadingHistory: boolean;
   notifications: NotificationLogEntry[];
@@ -18,10 +25,12 @@ interface MonitorState {
   fetchPriceHistory: (
     origin: string,
     destination: string,
-    days?: number
+    days?: number,
+    departure_date?: string,
+    return_date?: string
   ) => Promise<void>;
   fetchNotifications: () => Promise<void>;
-  setSelectedRoute: (route: { origin: string; destination: string } | null) => void;
+  setSelectedRoute: (route: MonitorRoute | null) => void;
   setDays: (days: number) => void;
 }
 
@@ -34,15 +43,19 @@ export const useMonitorStore = create<MonitorState>((set, get) => ({
   isLoadingNotifications: false,
   error: null,
 
-  fetchPriceHistory: async (origin, destination, days) => {
+  fetchPriceHistory: async (origin, destination, days, departure_date, return_date) => {
     const d = days ?? get().days;
     set({ isLoadingHistory: true, error: null });
     try {
-      const data = await api.get<PriceHistoryResponse>("/price-history", {
+      const params: Record<string, string> = {
         origin,
         destination,
         days: String(d),
-      });
+      };
+      if (departure_date) params.departure_date = departure_date;
+      if (return_date) params.return_date = return_date;
+
+      const data = await api.get<PriceHistoryResponse>("/price-history", params);
       set({ priceHistory: data.points, isLoadingHistory: false });
     } catch (err: unknown) {
       const message =

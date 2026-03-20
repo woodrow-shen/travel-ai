@@ -208,6 +208,16 @@
         "type": "类型",
         "originIATA": "出发地（IATA）",
         "destinationIATA": "目的地（IATA）",
+        "departureDate": "出发日期",
+        "returnDate": "返程日期",
+        "tripType": "行程类型",
+        "tripTypeOption": {
+          "oneway": "单程",
+          "roundtrip": "往返"
+        },
+        "flexibility": "日期弹性",
+        "flexibilityExact": "仅限指定日期",
+        "flexibilityDays": "± {count} 天",
         "sendTo": "发送至",
         "selectEmail": "选择邮箱...",
         "create": "创建订阅"
@@ -263,12 +273,15 @@
     "signInRequired": "请登录以查看价格监控。",
     "routeSelector": {
       "label": "航线",
-      "placeholder": "选择航线..."
+      "placeholder": "选择航线...",
+      "roundtrip": "往返",
+      "oneway": "单程"
     },
     "chart": {
       "title": "价格趋势",
       "noData": "没有价格数据，请选择航线查看趋势。",
-      "days": "{count}天"
+      "days": "{count}天",
+      "departureLabel": "出发价格趋势"
     },
     "subscriptions": {
       "title": "订阅",

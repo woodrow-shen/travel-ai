@@ -99,7 +99,7 @@ export default function MonitorPage() {
             <CardTitle>{t("chart.title")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <PriceTrendChart points={priceHistory} isLoading={isLoadingHistory} />
+            <PriceTrendChart points={priceHistory} isLoading={isLoadingHistory} selectedRoute={selectedRoute} />
           </CardContent>
         </Card>
       )}

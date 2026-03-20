@@ -208,6 +208,16 @@
         "type": "Tipo",
         "originIATA": "Origen (IATA)",
         "destinationIATA": "Destino (IATA)",
+        "departureDate": "Fecha de salida",
+        "returnDate": "Fecha de regreso",
+        "tripType": "Tipo de viaje",
+        "tripTypeOption": {
+          "oneway": "Solo ida",
+          "roundtrip": "Ida y vuelta"
+        },
+        "flexibility": "Flexibilidad de fechas",
+        "flexibilityExact": "Solo fecha exacta",
+        "flexibilityDays": "± {count} días",
         "sendTo": "Enviar a",
         "selectEmail": "Seleccionar correo...",
         "create": "Crear suscripción"
@@ -263,12 +273,15 @@
     "signInRequired": "Inicia sesión para ver el monitoreo de precios.",
     "routeSelector": {
       "label": "Ruta",
-      "placeholder": "Selecciona una ruta..."
+      "placeholder": "Selecciona una ruta...",
+      "roundtrip": "ida y vuelta",
+      "oneway": "solo ida"
     },
     "chart": {
       "title": "Tendencia de Precios",
       "noData": "No hay datos de precios. Selecciona una ruta para ver tendencias.",
-      "days": "{count}d"
+      "days": "{count}d",
+      "departureLabel": "tendencia de precios de salida"
     },
     "subscriptions": {
       "title": "Suscripciones",

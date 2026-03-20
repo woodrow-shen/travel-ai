@@ -208,6 +208,16 @@
         "type": "ประเภท",
         "originIATA": "ต้นทาง (IATA)",
         "destinationIATA": "ปลายทาง (IATA)",
+        "departureDate": "วันเดินทางไป",
+        "returnDate": "วันเดินทางกลับ",
+        "tripType": "ประเภทการเดินทาง",
+        "tripTypeOption": {
+          "oneway": "เที่ยวเดียว",
+          "roundtrip": "ไป-กลับ"
+        },
+        "flexibility": "ความยืดหยุ่นของวันที่",
+        "flexibilityExact": "เฉพาะวันที่กำหนด",
+        "flexibilityDays": "± {count} วัน",
         "sendTo": "ส่งไปยัง",
         "selectEmail": "เลือกอีเมล...",
         "create": "สร้างการสมัครรับข้อมูล"
@@ -263,12 +273,15 @@
     "signInRequired": "กรุณาเข้าสู่ระบบเพื่อดูการติดตามราคา",
     "routeSelector": {
       "label": "เส้นทาง",
-      "placeholder": "เลือกเส้นทาง..."
+      "placeholder": "เลือกเส้นทาง...",
+      "roundtrip": "ไป-กลับ",
+      "oneway": "เที่ยวเดียว"
     },
     "chart": {
       "title": "แนวโน้มราคา",
       "noData": "ไม่มีข้อมูลราคา เลือกเส้นทางเพื่อดูแนวโน้ม",
-      "days": "{count}วัน"
+      "days": "{count}วัน",
+      "departureLabel": "แนวโน้มราคาขาไป"
     },
     "subscriptions": {
       "title": "การสมัครสมาชิก",

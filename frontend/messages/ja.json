@@ -208,6 +208,16 @@
         "type": "種類",
         "originIATA": "出発地（IATA）",
         "destinationIATA": "目的地（IATA）",
+        "departureDate": "出発日",
+        "returnDate": "帰国日",
+        "tripType": "旅行タイプ",
+        "tripTypeOption": {
+          "oneway": "片道",
+          "roundtrip": "往復"
+        },
+        "flexibility": "日付の柔軟性",
+        "flexibilityExact": "指定日のみ",
+        "flexibilityDays": "± {count} 日",
         "sendTo": "送信先",
         "selectEmail": "メールを選択...",
         "create": "サブスクリプションを作成"
@@ -263,12 +273,15 @@
     "signInRequired": "価格モニタリングを表示するにはログインしてください。",
     "routeSelector": {
       "label": "路線",
-      "placeholder": "路線を選択..."
+      "placeholder": "路線を選択...",
+      "roundtrip": "往復",
+      "oneway": "片道"
     },
     "chart": {
       "title": "価格推移",
       "noData": "価格データがありません。路線を選択してトレンドを表示します。",
-      "days": "{count}日"
+      "days": "{count}日",
+      "departureLabel": "出発価格推移"
     },
     "subscriptions": {
       "title": "サブスクリプション",

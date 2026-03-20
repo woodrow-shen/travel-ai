@@ -208,6 +208,16 @@
         "type": "유형",
         "originIATA": "출발지 (IATA)",
         "destinationIATA": "도착지 (IATA)",
+        "departureDate": "출발일",
+        "returnDate": "귀국일",
+        "tripType": "여행 유형",
+        "tripTypeOption": {
+          "oneway": "편도",
+          "roundtrip": "왕복"
+        },
+        "flexibility": "날짜 유연성",
+        "flexibilityExact": "지정일만",
+        "flexibilityDays": "± {count}일",
         "sendTo": "수신 이메일",
         "selectEmail": "이메일 선택...",
         "create": "구독 만들기"
@@ -263,12 +273,15 @@
     "signInRequired": "가격 모니터링을 보려면 로그인하세요.",
     "routeSelector": {
       "label": "노선",
-      "placeholder": "노선 선택..."
+      "placeholder": "노선 선택...",
+      "roundtrip": "왕복",
+      "oneway": "편도"
     },
     "chart": {
       "title": "가격 추이",
       "noData": "가격 데이터가 없습니다. 노선을 선택하여 추이를 확인하세요.",
-      "days": "{count}일"
+      "days": "{count}일",
+      "departureLabel": "출발 가격 추이"
     },
     "subscriptions": {
       "title": "구독",

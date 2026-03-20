@@ -22,7 +22,13 @@ export function useMonitor() {
 
   useEffect(() => {
     if (selectedRoute) {
-      fetchPriceHistory(selectedRoute.origin, selectedRoute.destination, days);
+      fetchPriceHistory(
+        selectedRoute.origin,
+        selectedRoute.destination,
+        days,
+        selectedRoute.departure_date,
+        selectedRoute.return_date,
+      );
     }
   }, [selectedRoute, days, fetchPriceHistory]);
 

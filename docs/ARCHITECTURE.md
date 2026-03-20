@@ -4,7 +4,7 @@
 |-------------|----------------------------------------|
 | **Product** | Travel-AI                              |
 | **Version** | 1.0                                    |
-| **Date**    | 2026-03-13                             |
+| **Date**    | 2026-03-20                             |
 | **Owner**   | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **License** | MIT                                    |
 
@@ -123,7 +123,7 @@ PriceHistory  (standalone, no FK)
 | `price_history`      | origin, destination, departure_date, return_date, airline, price_*, source, cabin_class, stops, raw_data (JSONB) |
 | `itineraries`        | trip_id, title, description, schedule (JSONB day-by-day breakdown)          |
 | `chat_sessions`      | user_id, title, messages[] (JSONB message history)                         |
-| `subscriptions`      | user_id, type (bug_fare/price_drop/deal_digest), origin, destination, date_from, date_to, price_threshold, active, raw_filter (JSONB) |
+| `subscriptions`      | user_id, type (bug_fare/price_drop/deal_digest), origin, destination, config (JSONB: origins, destinations, departure_date, return_date, trip_type, date_flexibility, target_price, frequency, airline_override), is_active, last_sent_at |
 | `subscription_emails`| user_id, email, verified, subscribed_types[], created_at                   |
 | `notification_log`   | Audit trail for sent notifications (linked to Subscription)                |
 
@@ -204,7 +204,7 @@ All endpoints are under the `/api/v1/` prefix.
 
 | Method | Path              | Description                                        |
 |--------|-------------------|----------------------------------------------------|
-| GET    | `/price-history`  | Price history for subscribed routes (origin, destination, days params) |
+| GET    | `/price-history`  | Price history for subscribed routes (origin, destination, days, departure_date, return_date params) |
 
 **Users (JWT required)**
 
@@ -362,9 +362,26 @@ The monitor is a headless Python daemon that runs alongside the main application
 
 | Task           | Frequency   | Description                                |
 |----------------|-------------|--------------------------------------------|
-| `price_scan`   | Every 6h    | Scan active subscriptions for price changes |
+| `price_scan`   | Every 4h    | Scan active subscriptions for price changes (concurrent, semaphore-bounded) |
 | `deal_digest`  | Every 24h   | Compile and send daily deal digest emails   |
-| `cleanup`      | Daily       | Purge stale price history and expired data  |
+| `cleanup`      | Daily       | Purge stale price history (180d), notification logs (90d), and auto-deactivate expired subscriptions |
+
+### Scan Flow: Fixed Departure Dates + Roundtrip
+
+The monitor uses the subscription's `departure_date` from config (not `now + 14 days`) to search for prices. This ensures tracked prices match the user's actual travel dates.
+
+**Route extraction logic:**
+1. Read active subscriptions from DB, extract `origin`, `destination`, `departure_date`, `return_date`, `trip_type`, `date_flexibility` from each subscription's `config` JSONB.
+2. Skip subscriptions with no valid `departure_date`. Deduplicate routes by `(origin, destination, departure_date, return_date)`.
+3. For Bug Fare and Deal Digest subscriptions, `trip_type` defaults to `roundtrip`. For Price Drop, `trip_type` is user-configured (`oneway` or `roundtrip`).
+4. For `oneway` trips, `return_date` is omitted from search queries.
+5. Legacy subscriptions without `departure_date` fall back to `today + 14 days`.
+
+**Roundtrip support:**
+All four monitor clients (Amadeus, Skyscanner, Kiwi, Google Flights) accept an optional `return_date` parameter. When provided, the client searches for roundtrip fares. Price history records include both `departure_date` and `return_date` columns.
+
+**Expired subscription cleanup:**
+The `cleanup` task auto-deactivates subscriptions whose `departure_date` has passed (i.e., `config->>'departure_date' < today`), preventing unnecessary API calls for past travel dates.
 
 ### Detection Algorithms
 
@@ -372,6 +389,103 @@ The `detector.py` module implements two detection strategies:
 
 1. **Bug fare detection** -- identifies anomalously low prices that deviate significantly from historical averages, suggesting potential pricing errors.
 2. **Price drop trend analysis** -- tracks gradual price decreases over time and triggers alerts when a watched route drops below a user-defined threshold.
+
+### Workload Balance & Scalability
+
+The monitor daemon is designed to scale from a handful of routes to thousands of active subscriptions. The current implementation uses **Level 1** (semaphore-bounded concurrency); higher levels are documented as future upgrade paths.
+
+#### Current: Level 1 — Semaphore-Bounded Concurrency
+
+```
+scan_prices()
+  ├── _get_active_routes(db)          # 1 DB query
+  ├── asyncio.Semaphore(SCAN_CONCURRENCY)  # default 10
+  └── asyncio.gather(
+        _bounded_scan(route_1),       # each route: 4 parallel API calls + own DB session
+        _bounded_scan(route_2),
+        ...
+        _bounded_scan(route_N),
+      )
+```
+
+- Each route gets its own DB session (concurrent-safe)
+- Up to `SCAN_CONCURRENCY` (default 10) routes are scanned in parallel
+- Within each route, all 4 API sources are queried in parallel via `asyncio.gather`
+- Effective throughput: ~10 routes/cycle → ~N/10 cycles for N routes
+- Config: `MAX_ROUTES_PER_SCAN=500`, `SCAN_CONCURRENCY=10`
+
+| Subscriptions | Unique Routes (est.) | Scan Time (est.) | Status |
+|---------------|---------------------|-------------------|--------|
+| < 100         | ~50                 | < 2 min           | Current capacity |
+| 100–500       | ~200                | ~5 min            | Raise SCAN_CONCURRENCY to 20 |
+| 500–1000      | ~400                | ~10 min           | Level 2 recommended |
+
+#### Level 2 — Time-Sliced Batch Scanning
+
+Split routes into time slots to spread API load across the scan interval:
+
+```
+# Instead of scanning all routes every 4h:
+# Assign each route a slot: slot = hash(route_key) % num_slots
+# Each scan cycle only processes routes in the current slot
+# Every route still gets scanned once per interval
+```
+
+- `num_slots = 4` → each hourly run processes ~25% of routes
+- Reduces per-cycle API burst; same total coverage
+- Trigger: >200 unique routes or API rate limit errors become frequent
+
+#### Level 3 — Priority-Based Scheduling
+
+Assign scan priority based on subscription type and urgency:
+
+| Priority | Criteria                            | Scan Interval |
+|----------|-------------------------------------|---------------|
+| High     | Bug Fare subscriptions              | Every 2h      |
+| Medium   | Price Drop, departure < 14 days     | Every 4h      |
+| Low      | Price Drop, departure > 30 days     | Every 8h      |
+| Lowest   | Deal Digest (bulk)                  | Every 12h     |
+
+- Priority queue replaces fixed interval
+- Routes approaching departure date get scanned more frequently
+- Trigger: >500 unique routes or need to optimize API quota allocation
+
+#### Level 4 — Worker Queue Architecture
+
+Decouple scheduling from execution using a message queue:
+
+```
+Scheduler (1 instance)
+  └── enqueue routes → Redis Queue (Bull/Celery)
+                          └── Worker 1 (processes routes, has own API rate limiter)
+                          └── Worker 2
+                          └── Worker N
+```
+
+- Horizontal scaling: add workers to increase throughput
+- Each worker can use a different RapidAPI key to multiply rate limits
+- Failed routes auto-retry with exponential backoff
+- Trigger: >1000 unique routes or need multi-instance deployment
+
+#### Level 5 — API-Layer Optimizations
+
+Reduce total API calls regardless of architecture:
+
+- **Google Flights `get_price_graph`**: one call returns ±N days of prices (replaces N individual searches)
+- **Skyscanner `search-everywhere`**: batch multiple destinations from same origin into one call
+- **Amadeus calendar API**: get month-view lowest prices in a single request
+- **Paid API tiers**: higher rate limits, bulk endpoints
+
+These optimizations are independent of the concurrency model and can be applied at any level.
+
+#### ADR: Why Semaphore Over Worker Queue
+
+For the current scale (< 500 routes), a semaphore-based approach was chosen over a full worker queue because:
+
+1. **Simplicity**: no additional infrastructure (Redis queue, Celery) beyond what's already deployed
+2. **Single process**: monitor daemon is a single container; adding workers requires orchestration changes
+3. **Sufficient throughput**: 500 routes × 4 sources × ~2s/call ÷ 10 concurrency ≈ 7 min/scan, well within the 4h interval
+4. **Upgrade path**: the `_scan_route` function is already isolated and stateless — migrating to a worker queue only requires wrapping it as a Celery/Bull task
 
 ---
 

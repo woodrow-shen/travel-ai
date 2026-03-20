@@ -163,10 +163,24 @@ function SubscriptionList({
   const configSummary = (config: Record<string, unknown>) => {
     const origin = config.origin as string | undefined;
     const destination = config.destination as string | undefined;
-    if (origin && destination) return `${origin} → ${destination}`;
-    if (origin) return t("list.from", { origin });
-    if (destination) return t("list.to", { destination });
-    return "";
+    const depDate = config.departure_date as string | undefined;
+    const retDate = config.return_date as string | undefined;
+
+    let route = "";
+    if (origin && destination) route = `${origin} → ${destination}`;
+    else if (origin) route = t("list.from", { origin });
+    else if (destination) route = t("list.to", { destination });
+
+    if (depDate) {
+      const dep = depDate.slice(5).replace("-", "/");
+      if (retDate) {
+        const ret = retDate.slice(5).replace("-", "/");
+        route += ` | ${dep} - ${ret}`;
+      } else {
+        route += ` | ${dep}`;
+      }
+    }
+    return route;
   };
 
   return (
@@ -224,8 +238,17 @@ function NewSubscriptionForm({
   const [emailId, setEmailId] = useState("");
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [tripType, setTripType] = useState<"oneway" | "roundtrip">("roundtrip");
+  const [flexibility, setFlexibility] = useState(3);
   const [creating, setCreating] = useState(false);
   const t = useTranslations("settings.subscriptions");
+
+  // Bug Fare and Deal Digest are always roundtrip
+  const isRoundtripForced = type === "bug_fare" || type === "deal_digest";
+  const effectiveTripType = isRoundtripForced ? "roundtrip" : tripType;
+  const showReturnDate = effectiveTripType === "roundtrip";
 
   const handleCreate = async () => {
     if (!emailId) return;
@@ -234,15 +257,25 @@ function NewSubscriptionForm({
       const config: Record<string, unknown> = {};
       if (origin.trim()) config.origin = origin.trim().toUpperCase();
       if (destination.trim()) config.destination = destination.trim().toUpperCase();
+      if (departureDate) config.departure_date = departureDate;
+      if (showReturnDate && returnDate) config.return_date = returnDate;
+      config.trip_type = effectiveTripType;
+      config.date_flexibility = flexibility;
       await onCreate(emailId, type, config);
       setOrigin("");
       setDestination("");
+      setDepartureDate("");
+      setReturnDate("");
+      setFlexibility(3);
     } catch {
       // error is set in store
     } finally {
       setCreating(false);
     }
   };
+
+  const selectClass = "w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary)]";
+  const inputClass = selectClass;
 
   return (
     <section>
@@ -257,7 +290,7 @@ function NewSubscriptionForm({
             <select
               value={type}
               onChange={(e) => setType(e.target.value as SubscriptionType)}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className={selectClass}
             >
               {(["bug_fare", "price_drop", "deal_digest"] as SubscriptionType[]).map((v) => (
                 <option key={v} value={v}>{t(`types.${v}`)}</option>
@@ -274,7 +307,7 @@ function NewSubscriptionForm({
                 onChange={(e) => setOrigin(e.target.value)}
                 placeholder="e.g. TPE"
                 maxLength={3}
-                className="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm uppercase outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                className={`${inputClass} uppercase`}
               />
             </div>
             <div>
@@ -285,9 +318,72 @@ function NewSubscriptionForm({
                 onChange={(e) => setDestination(e.target.value)}
                 placeholder="e.g. NRT"
                 maxLength={3}
-                className="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm uppercase outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                className={`${inputClass} uppercase`}
               />
             </div>
+          </div>
+
+          {/* Trip type selector — only for Price Drop */}
+          {!isRoundtripForced && (
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("new.tripType")}</label>
+              <div className="flex gap-4">
+                {(["roundtrip", "oneway"] as const).map((tt) => (
+                  <label key={tt} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="tripType"
+                      value={tt}
+                      checked={tripType === tt}
+                      onChange={() => setTripType(tt)}
+                      className="accent-[var(--color-primary)]"
+                    />
+                    {t(`new.tripTypeOption.${tt}`)}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Date fields */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("new.departureDate")}</label>
+              <input
+                type="date"
+                value={departureDate}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            {showReturnDate && (
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("new.returnDate")}</label>
+                <input
+                  type="date"
+                  value={returnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  min={departureDate || undefined}
+                  className={inputClass}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Flexibility */}
+          <div>
+            <label className="mb-1 block text-sm font-medium">{t("new.flexibility")}</label>
+            <select
+              value={flexibility}
+              onChange={(e) => setFlexibility(Number(e.target.value))}
+              className={selectClass}
+            >
+              {[0, 1, 2, 3, 5, 7].map((n) => (
+                <option key={n} value={n}>
+                  {n === 0 ? t("new.flexibilityExact") : t("new.flexibilityDays", { count: n })}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -295,7 +391,7 @@ function NewSubscriptionForm({
             <select
               value={emailId}
               onChange={(e) => setEmailId(e.target.value)}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className={selectClass}
             >
               <option value="">{t("new.selectEmail")}</option>
               {verifiedEmails.map((e) => (

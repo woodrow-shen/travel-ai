@@ -20,13 +20,13 @@ class SkyscannerClient(RapidAPIBaseClient):
         origin: str,
         destination: str,
         departure_date: str,
+        return_date: str | None = None,
         adults: int = 1,
         currency: str = "TWD",
     ) -> list[dict]:
         params = {
             "originSkyId": origin,
             "destinationSkyId": destination,
-            "departureDate": departure_date,
             "adults": adults,
             "cabinClass": "economy",
             "currency": currency,
@@ -34,7 +34,15 @@ class SkyscannerClient(RapidAPIBaseClient):
             "locale": "zh-TW",
             "sort": "best",
         }
-        data = await self._get("/v2/flights/search-one-way", params)
+        if return_date:
+            params["departureDate"] = departure_date
+            params["returnDate"] = return_date
+            endpoint = "/v2/flights/search-roundtrip"
+        else:
+            params["departureDate"] = departure_date
+            endpoint = "/v2/flights/search-one-way"
+
+        data = await self._get(endpoint, params)
         if not data.get("status"):
             return []
         return data.get("data", {}).get("itineraries", [])

@@ -7,6 +7,23 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 **Versioning**: `MAJOR.MINOR.PATCH` — Minor (new features, API changes) and patch (bug fixes, tests, docs) are bumped by the dev team. Major bumps (1.0.0, 2.0.0, ...) are owner-decided only.
 
+## [0.6.0] - 2026-03-20
+
+### Changed
+
+- **Monitor scan logic**: Refactored from `now + 14 days` to using fixed `departure_date` from subscription config, ensuring price tracking matches actual travel dates
+- **Monitor roundtrip support**: All 4 monitor clients (Amadeus, Skyscanner, Kiwi, Google Flights) now support roundtrip search via optional `return_date` parameter
+- **Subscription defaults**: Bug Fare Alert and Deal Digest default to roundtrip; Price Drop Alert supports user-configured oneway/roundtrip
+
+### Added
+
+- **Subscription config fields**: `departure_date`, `return_date`, `trip_type`, `date_flexibility` in subscription JSONB config with backend validation
+- **Expired subscription cleanup**: Subscriptions with `departure_date < today` are auto-deactivated by the cleanup task
+- **Price history date filters**: `GET /price-history` now supports `departure_date` and `return_date` query parameters
+- **Frontend subscription form**: Date pickers for departure/return dates, trip type selector (oneway/roundtrip), date flexibility selector
+- **Frontend monitor enhancements**: RouteSelector and PriceTrendChart display departure/return date info
+- **i18n**: New subscription field keys added across all 12 locale files
+
 ## [0.5.0] - 2026-03-18
 
 ### Added

@@ -208,6 +208,16 @@
         "type": "類型",
         "originIATA": "出發地（IATA）",
         "destinationIATA": "目的地（IATA）",
+        "departureDate": "出發日期",
+        "returnDate": "回程日期",
+        "tripType": "行程類型",
+        "tripTypeOption": {
+          "oneway": "單程",
+          "roundtrip": "來回"
+        },
+        "flexibility": "日期彈性",
+        "flexibilityExact": "僅限指定日期",
+        "flexibilityDays": "± {count} 天",
         "sendTo": "發送至",
         "selectEmail": "選擇郵件...",
         "create": "建立訂閱"
@@ -263,12 +273,15 @@
     "signInRequired": "請登入以查看價格監控。",
     "routeSelector": {
       "label": "航線",
-      "placeholder": "選擇航線..."
+      "placeholder": "選擇航線...",
+      "roundtrip": "來回",
+      "oneway": "單程"
     },
     "chart": {
       "title": "價格趨勢",
       "noData": "沒有價格資料，請選擇航線以查看趨勢。",
-      "days": "{count}天"
+      "days": "{count}天",
+      "departureLabel": "出發價格趨勢"
     },
     "subscriptions": {
       "title": "訂閱",

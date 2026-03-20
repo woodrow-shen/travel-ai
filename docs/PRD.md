@@ -4,7 +4,7 @@
 |---|---|
 | **產品名稱** | Travel-AI |
 | **文件版本** | 2.0 |
-| **最後更新** | 2026-03-18 |
+| **最後更新** | 2026-03-20 |
 | **負責人** | Woodrow Shen (woodrow.shen@gmail.com) |
 | **授權** | MIT |
 | **狀態** | 開發中 |
@@ -152,11 +152,30 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 | **Price Drop Alert** | 自訂路線的價格下降通知 | 價格低於用戶設定閾值 |
 | **Deal Digest** | 每日/每週最划算的機票精選 | 定時排程（用戶選擇頻率） |
 
+#### 訂閱設定欄位
+
+訂閱 `config` (JSONB) 包含以下欄位：
+
+| 欄位 | 類型 | 說明 | 預設值 |
+|---|---|---|---|
+| `origins` | string[] | 出發地 IATA 代碼 | — |
+| `destinations` | string[] | 目的地 IATA 代碼 | — |
+| `departure_date` | string (YYYY-MM-DD) | 固定出發日期 | — |
+| `return_date` | string (YYYY-MM-DD) | 回程日期（roundtrip 時必填） | — |
+| `trip_type` | string | `oneway` 或 `roundtrip` | Bug Fare/Deal Digest: `roundtrip`；Price Drop: `oneway` |
+| `date_flexibility` | int | 日期彈性天數（±N 天） | 3 |
+| `target_price` | number | 目標價格（Price Drop 用） | — |
+| `frequency` | string | 通知頻率（Deal Digest 用） | — |
+| `airline_override` | string[] | 覆蓋全域偏好的航空公司列表 | — |
+
+**Trip Type 預設值**：Bug Fare Alert 與 Deal Digest 預設為 roundtrip（來回票更符合一般旅客需求）；Price Drop Alert 允許用戶自選 oneway 或 roundtrip。
+
 #### 訂閱流程
 
 1. 用戶設定訂閱，選擇使用登入 Gmail（預設）或自訂 Email（需驗證）
-2. 選擇訂閱類型 + 偏好設定（出發地、目的地、目標價格、頻率等）
+2. 選擇訂閱類型 + 偏好設定（出發地、目的地、出發/回程日期、行程類型、日期彈性、目標價格、頻率等）
 3. 儲存至 DB，背景任務持續監控，條件觸發時寄送 Email
+4. 過期訂閱（`departure_date` < 今天）由 cleanup 任務自動停用
 
 #### Email 地址管理
 
@@ -191,7 +210,7 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 - **訂閱總覽**：顯示所有訂閱狀態，支援啟用/停用切換
 - **通知歷史**：列出過往的價格通知紀錄（Bug Fare、Price Drop、Deal Digest）
 - **新增端點**：
-  - `GET /price-history`：取得訂閱航線的價格歷史資料（JWT 認證）
+  - `GET /price-history`：取得訂閱航線的價格歷史資料（JWT 認證），支援 `departure_date` 與 `return_date` 查詢參數篩選
   - `GET /subscriptions/notifications`：取得通知紀錄（JWT 認證）
 - **前端頁面**：`/monitor`，包含 4 個元件（PriceTrendChart、RouteSelector、SubscriptionOverview、NotificationHistory）
 - **狀態管理**：新增 Zustand store（`monitor.ts`）+ hook（`useMonitor.ts`）
@@ -283,15 +302,22 @@ Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 
 獨立 Python 背景服務，24/7 執行機票價格監控，以用戶訂閱驅動——只監控有人訂閱的航線。
 
+**核心設計：固定出發日期**
+
+Monitor 使用訂閱 config 中的 `departure_date`（而非 `now + 14 天`）作為搜尋日期，確保追蹤的價格與用戶實際旅行日期一致。支援 `date_flexibility` 彈性天數參數。過期訂閱（`departure_date` < 今天）由 cleanup 任務自動停用。
+
+**來回票支援**：所有監控客戶端（Amadeus、Skyscanner、Kiwi、Google Flights）均支援 roundtrip 搜尋。Bug Fare Alert 與 Deal Digest 預設 roundtrip；Price Drop Alert 依用戶設定支援 oneway 或 roundtrip。
+
 **架構組成**：
 
 | 組件 | 說明 |
 |---|---|
 | **Scheduler** | APScheduler，3 個排程任務：price_scan（每 4 小時）、deal_digest（每日凌晨）、cleanup（每日） |
-| **Price Fetcher** | Amadeus + RapidAPI 客戶端，token bucket 速率控制 |
+| **Price Fetcher** | Amadeus + RapidAPI 客戶端（均支援 oneway/roundtrip），token bucket 速率控制 |
 | **Anomaly Detector** | Bug Fare 偵測：歷史均價 + 標準差 + 多來源交叉驗證 |
 | **Preference Filter** | 載入全域偏好 + 訂閱級 airline_override，過濾結果 |
 | **Notifier** | 比對訂閱條件，觸發寄信，記錄至 notification_log，含 cooldown 機制 |
+| **Cleanup** | 清除過期資料（price_history 180 天、notification_log 90 天）+ 自動停用過期訂閱 |
 
 **Bug Fare 偵測演算法**：
 
@@ -371,7 +397,7 @@ RapidAPI 免費額度（每月）：Skyscanner 50 次、Kiwi 120 次、Google Fl
 - `id`, `user_id` (FK), `preferred_airlines` (TEXT[]), `excluded_airlines` (TEXT[]), `preferred_alliances` (TEXT[]), `cabin_classes` (TEXT[]), `max_stops` (INT), `home_airports` (TEXT[])
 
 **subscriptions**：
-- `id`, `user_id` (FK), `email_id` (FK → subscription_emails), `type` (enum: bug_fare / price_drop / deal_digest), `config` (JSONB: origins, destinations, target_price, frequency, airline_override), `is_active`, `last_sent_at`, `created_at`
+- `id`, `user_id` (FK), `email_id` (FK → subscription_emails), `type` (enum: bug_fare / price_drop / deal_digest), `config` (JSONB: origins, destinations, departure_date, return_date, trip_type, date_flexibility, target_price, frequency, airline_override), `is_active`, `last_sent_at`, `created_at`
 
 **subscription_emails**：
 - `id`, `user_id` (FK), `email`, `is_verified`, `verified_at`, `created_at`

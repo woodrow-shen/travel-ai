@@ -241,6 +241,7 @@ export interface PriceHistoryPoint {
   origin: string;
   destination: string;
   departure_date: string;
+  return_date: string | null;
   price_amount: number;
   price_currency: string;
   source: string;
@@ -253,8 +254,23 @@ export interface PriceHistoryPoint {
 export interface PriceHistoryResponse {
   origin: string;
   destination: string;
+  departure_date: string | null;
+  return_date: string | null;
   days: number;
   points: PriceHistoryPoint[];
+}
+
+export type MonitorTripType = "oneway" | "roundtrip";
+
+export interface SubscriptionConfig {
+  origin?: string;
+  destination?: string;
+  departure_date?: string;
+  return_date?: string;
+  trip_type?: MonitorTripType;
+  date_flexibility?: number;
+  target_price?: number;
+  airline_override?: string[];
 }
 
 export type NotificationStatus = "sent" | "failed";

@@ -15,6 +15,8 @@ vi.mock("@/lib/api", () => ({
 const mockPriceHistoryResponse: PriceHistoryResponse = {
   origin: "TPE",
   destination: "NRT",
+  departure_date: null,
+  return_date: null,
   days: 30,
   points: [
     {
@@ -22,6 +24,7 @@ const mockPriceHistoryResponse: PriceHistoryResponse = {
       origin: "TPE",
       destination: "NRT",
       departure_date: "2026-04-01",
+      return_date: null,
       price_amount: 8500,
       price_currency: "TWD",
       source: "amadeus",
@@ -35,6 +38,7 @@ const mockPriceHistoryResponse: PriceHistoryResponse = {
       origin: "TPE",
       destination: "NRT",
       departure_date: "2026-04-01",
+      return_date: null,
       price_amount: 9200,
       price_currency: "TWD",
       source: "skyscanner",

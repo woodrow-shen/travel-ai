@@ -20,6 +20,7 @@ class GoogleFlightsClient(RapidAPIBaseClient):
         origin: str,
         destination: str,
         departure_date: str,
+        return_date: str | None = None,
         adults: int = 1,
         currency: str = "TWD",
     ) -> list[dict]:
@@ -29,7 +30,13 @@ class GoogleFlightsClient(RapidAPIBaseClient):
             "departureDate": departure_date,
             "currency": currency,
         }
-        data = await self._get("/flights/search-oneway", params)
+        if return_date:
+            params["returnDate"] = return_date
+            endpoint = "/flights/search-roundtrip"
+        else:
+            endpoint = "/flights/search-oneway"
+
+        data = await self._get(endpoint, params)
         if not data.get("status"):
             return []
 
@@ -48,9 +55,10 @@ class GoogleFlightsClient(RapidAPIBaseClient):
         origin: str,
         destination: str,
         departure_range: str,
+        return_date: str | None = None,
         currency: str = "TWD",
     ) -> list[dict]:
-        """Get daily lowest prices for a date range (oneway only for monitor).
+        """Get daily lowest prices for a date range.
 
         Returns list of {departureDate, arrivalDate, price} dicts.
         """
@@ -60,7 +68,13 @@ class GoogleFlightsClient(RapidAPIBaseClient):
             "departureRange": departure_range,
             "currency": currency,
         }
-        data = await self._get("/price-graph/for-oneway", params)
+        if return_date:
+            params["returnDate"] = return_date
+            endpoint = "/price-graph/for-roundtrip"
+        else:
+            endpoint = "/price-graph/for-oneway"
+
+        data = await self._get(endpoint, params)
         if not data.get("status"):
             return []
 

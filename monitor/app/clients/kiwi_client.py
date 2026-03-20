@@ -20,13 +20,13 @@ class KiwiClient(RapidAPIBaseClient):
         origin: str,
         destination: str,
         departure_date: str,
+        return_date: str | None = None,
         adults: int = 1,
         currency: str = "TWD",
     ) -> list[dict]:
         params = {
             "originSkyId": origin,
             "destinationSkyId": destination,
-            "departureDate": departure_date,
             "adults": adults,
             "cabinClass": "ECONOMY",
             "currency": currency,
@@ -35,7 +35,15 @@ class KiwiClient(RapidAPIBaseClient):
             "limit": 10,
             "stops": 0,
         }
-        data = await self._get("/flights/search-oneway", params)
+        if return_date:
+            params["departureDate"] = departure_date
+            params["returnDate"] = return_date
+            endpoint = "/flights/search-return"
+        else:
+            params["departureDate"] = departure_date
+            endpoint = "/flights/search-oneway"
+
+        data = await self._get(endpoint, params)
         if not data.get("status"):
             return []
         return data.get("data", {}).get("itineraries", [])

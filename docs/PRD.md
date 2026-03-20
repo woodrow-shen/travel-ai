@@ -202,7 +202,7 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 - Price Drop Alert：在自訂路線基礎上再用航空公司篩選
 - Deal Digest：精選摘要依偏好排序，偏好航空置頂
 
-### 3.12 價格監控儀表板
+### 3.10 價格監控儀表板
 
 前端視覺化介面，讓用戶查看訂閱航線的價格趨勢與通知歷史。
 
@@ -215,7 +215,7 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 - **前端頁面**：`/monitor`，包含 4 個元件（PriceTrendChart、RouteSelector、SubscriptionOverview、NotificationHistory）
 - **狀態管理**：新增 Zustand store（`monitor.ts`）+ hook（`useMonitor.ts`）
 
-### 3.13 飯店搜尋
+### 3.11 飯店搜尋
 
 整合 Skyscanner + Kiwi 飯店 API，提供多來源飯店搜尋、比較與前端介面。
 
@@ -226,7 +226,7 @@ Trip CRUD 功能，支援儲存搜尋結果到行程、AI 生成日程行程表�
 
 ---
 
-### 3.10 認證系統
+### 3.12 認證系統
 
 Google OAuth 2.0 登入，JWT session 管理。
 
@@ -235,7 +235,7 @@ Google OAuth 2.0 登入，JWT session 管理。
 - 用戶等級：Basic（預設）/ Premium
 - 開發環境提供等級切換 API（`ALLOW_TIER_SWITCH=true` 時啟用）
 
-### 3.11 匯率自動轉換
+### 3.13 匯率自動轉換
 
 Amadeus API 回傳 EUR/USD 價格，系統自動轉為用戶幣別。
 
@@ -628,100 +628,96 @@ RapidAPI 免費額度（每月）：Skyscanner 50 次、Kiwi 120 次、Google Fl
 
 ## 7. 實作路線圖
 
-### Phase 1：基礎架構 -- 已完成
+### Phase 1：基礎架構
 
-| 里程碑 | 狀態 | 內容 |
+| 里程碑 | 內容 |
+|---|---|
+| 專案骨架 | 目錄結構、pyproject.toml、package.json、Dockerfile（multi-stage）、docker-compose.yml、.env.example |
+| 資料庫層 | SQLAlchemy models（11 tables）、Alembic migration、async session factory、Redis client |
+| 認證系統 | Google OAuth 2.0（authlib）、JWT 簽發（access 30min + refresh 7d）、用戶等級（Basic/Premium）、tier switch API |
+| Docker Compose | 5 services + dev override + prod compose |
+| CI/CD | GitHub Actions test.yml + deploy.yml（Railway） |
+
+### Phase 2：AI 代理系統
+
+| 里程碑 | 內容 |
+|---|---|
+| BaseAgent ABC | Anthropic tool-use agentic loop（max 10 turns） |
+| CoordinatorAgent | 意圖解析、代理分派（支援並行）、結果合成 |
+| 5 個專職代理 | Search、Price、Recommendation、Itinerary、Budget Agent |
+| Chat SSE | SSE 串流聊天端點，透過 CoordinatorAgent |
+
+### Phase 3：外部 API 整合
+
+| 里程碑 | 內容 |
+|---|---|
+| Amadeus Client | Flight Offers Search + OAuth token 管理 |
+| RapidAPI 基礎 Client | 共用 HTTP client + header 管理 + 429 自動 backoff |
+| Skyscanner Client | 航班搜尋（one-way / roundtrip / incomplete） |
+| Kiwi Client | 航班搜尋（oneway / return） |
+| Google Flights Client | 第 4 航班搜尋來源（RapidAPI） |
+| Normalizer | 四來源回應正規化為統一 FlightResult 格式 |
+| 匯率轉換 | open.er-api.com + Redis 快取 6h + Amadeus EUR→用戶幣別 |
+| IP 偵測幣別 | ip-api.com + Redis 快取 24h |
+
+### Phase 4：多來源 Service 層 + 前後端對齊
+
+| 里程碑 | 內容 |
+|---|---|
+| SearchService 多來源 | Amadeus + Skyscanner + Kiwi + Google Flights 並行搜尋 + 合併去重 + Redis 快取 |
+| PriceService 多來源 | 多來源並行比價 + 統一 Compare 端點 |
+| Schema 對齊 | FlightResult、FlightSegment、SearchResponse、CompareResult 對齊前端 types |
+| 訂閱系統 | CRUD + Email 驗證 + 退訂 + 通知寄信 |
+| 前端頁面 | Landing、Search、Compare、Trip、Chat、Auth Callback、Settings |
+| 前端狀態管理 | Zustand stores（search、trip、chat、auth、compare）+ hooks |
+| UI/UX 優化 | Dark mode badges、Compare flow（浮動比較列）、Auth state sharing |
+
+### Phase 5：價格監控 Daemon
+
+| 里程碑 | 內容 |
+|---|---|
+| 專案結構 | 獨立 Python service、pyproject.toml、Dockerfile |
+| Scheduler | APScheduler 3 個 job（price_scan、deal_digest、cleanup） |
+| Anomaly Detector | Bug Fare 偵測演算法 |
+| price_scan 任務 | Amadeus + Skyscanner + Kiwi + Google Flights 多來源並行搜尋 → price_history 寫入 → 異常偵測 → 通知 |
+| deal_digest 任務 | price_history + Amadeus inspiration → 用戶偏好過濾 → digest 寄信 |
+| cleanup 任務 | price_history 180天 + notification_log 90天 清除 + 過期訂閱自動停用 |
+| Notifier 寄信 | bug_fare + price_drop + deal_digest，含路線過濾、偏好過濾、cooldown |
+| Monitor 多來源 | Skyscanner + Kiwi + Google Flights 客戶端 + 多來源交叉驗證 bug fare 偵測 |
+
+### Phase 6：測試覆蓋與 CI
+
+| 里程碑 | 內容 |
+|---|---|
+| Backend 測試 | models、agents、API、services、clients、normalizer、currency |
+| Monitor 測試 | detector、clients、rate_limiter、RapidAPI clients、normalizer |
+| Frontend 單元測試 | Vitest — stores、components、hooks |
+| Frontend E2E 測試 | Playwright — auth、search、compare、trip、settings、chat |
+| CI 自動化 | GitHub Actions：backend + monitor + frontend（lint + type-check + unit tests） |
+| CI Redis | GitHub Actions Redis 7 service container（backend + monitor jobs） |
+
+### Phase 7：國際化（i18n）
+
+| 里程碑 | 內容 |
+|---|---|
+| 前端 i18n 基礎建設 | next-intl 整合、`[locale]` 路由、middleware、翻譯檔（zh-TW + en，~200 keys） |
+| 前端字串抽取 | 所有頁面與元件的硬編碼字串替換為 `useTranslations()` 呼叫 |
+| 語言切換器 | Header 內語言切換按鈕 + 偏好設定頁語言選項 |
+| 後端 locale 中間件 | Accept-Language header 解析，`request.state.locale` 注入 |
+| 後端錯誤訊息翻譯 | `t(key, locale)` 翻譯函式 + zh-TW/en 錯誤訊息（~30 keys） |
+| AI Agent 語言感知 | BaseAgent 接受 locale 參數，系統提示詞附加語言指令 |
+| Email 模板翻譯 | 4 個模板 × 2 語言 = 8 個語言版模板 |
+| 使用者語言偏好 | `preferred_language` DB 欄位 + Alembic migration + API CRUD |
+
+### Phase 8：待開發功能
+
+| 里程碑 | 優先級 | 內容 |
 |---|---|---|
-| 專案骨架 | 已完成 | 目錄結構、pyproject.toml、package.json、Dockerfile（multi-stage）、docker-compose.yml、.env.example |
-| 資料庫層 | 已完成 | SQLAlchemy models（11 tables）、Alembic migration（001_initial_schema）、async session factory、Redis client |
-| 認證系統 | 已完成 | Google OAuth 2.0（authlib）、JWT 簽發（access 30min + refresh 7d）、用戶等級（Basic/Premium）、tier switch API |
-| Docker Compose | 已完成 | 5 services + dev override + prod compose |
-| CI/CD | 已完成 | GitHub Actions test.yml + deploy.yml（Railway） |
-
-### Phase 2：AI 代理系統 -- 已完成
-
-| 里程碑 | 狀態 | 內容 |
-|---|---|---|
-| BaseAgent ABC | 已完成 | Anthropic tool-use agentic loop（max 10 turns） |
-| CoordinatorAgent | 已完成 | 意圖解析、代理分派（支援並行）、結果合成 |
-| 5 個專職代理 | 已完成 | Search、Price、Recommendation、Itinerary、Budget Agent |
-| Chat SSE | 已完成 | SSE 串流聊天端點，透過 CoordinatorAgent |
-
-### Phase 3：外部 API 整合 -- 已完成
-
-| 里程碑 | 狀態 | 內容 |
-|---|---|---|
-| Amadeus Client | 已完成 | Flight Offers Search + OAuth token 管理 |
-| RapidAPI 基礎 Client | 已完成 | 共用 HTTP client + header 管理 + 429 自動 backoff |
-| Skyscanner Client | 已完成 | 航班搜尋（one-way / roundtrip / incomplete） |
-| Kiwi Client | 已完成 | 航班搜尋（oneway / return） |
-| Google Flights Client | 已完成 | 第 4 航班搜尋來源（RapidAPI） |
-| Normalizer | 已完成 | 四來源回應正規化為統一 FlightResult 格式 |
-| 匯率轉換 | 已完成 | open.er-api.com + Redis 快取 6h + Amadeus EUR→用戶幣別 |
-| IP 偵測幣別 | 已完成 | ip-api.com + Redis 快取 24h |
-
-### Phase 4：多來源 Service 層 + 前後端對齊 -- 已完成
-
-| 里程碑 | 狀態 | 內容 |
-|---|---|---|
-| SearchService 多來源 | 已完成 | Amadeus + Skyscanner + Kiwi + Google Flights 並行搜尋 + 合併去重 + Redis 快取 |
-| PriceService 多來源 | 已完成 | 多來源並行比價 + 統一 Compare 端點 |
-| Schema 對齊 | 已完成 | FlightResult、FlightSegment、SearchResponse、CompareResult 對齊前端 types |
-| 訂閱系統 | 已完成 | CRUD + Email 驗證 + 退訂 + 通知寄信 |
-| 前端頁面 | 已完成 | Landing、Search、Compare、Trip、Chat、Auth Callback、Settings |
-| 前端狀態管理 | 已完成 | Zustand stores（search、trip、chat、auth、compare）+ hooks |
-| UI/UX 優化 | 已完成 | Dark mode badges、Compare flow（浮動比較列）、Auth state sharing |
-
-### Phase 5：價格監控 Daemon -- 已完成
-
-| 里程碑 | 狀態 | 內容 |
-|---|---|---|
-| 專案結構 | 已完成 | 獨立 Python service、pyproject.toml、Dockerfile |
-| Scheduler | 已完成 | APScheduler 3 個 job（price_scan、deal_digest、cleanup） |
-| Anomaly Detector | 已完成 | Bug Fare 偵測演算法 |
-| price_scan 任務 | 已完成 | Amadeus + Skyscanner + Kiwi + Google Flights 多來源並行搜尋 → price_history 寫入 → 異常偵測 → 通知 |
-| deal_digest 任務 | 已完成 | price_history + Amadeus inspiration → 用戶偏好過濾 → digest 寄信 |
-| cleanup 任務 | 已完成 | price_history 180天 + notification_log 90天 清除 |
-| Notifier 寄信 | 已完成 | bug_fare + price_drop + deal_digest，含路線過濾、偏好過濾、cooldown |
-| Monitor 多來源 | 已完成 | Skyscanner + Kiwi + Google Flights 客戶端 + 多來源交叉驗證 bug fare 偵測 |
-
-### Phase 6：測試覆蓋與 CI -- 已完成
-
-| 里程碑 | 狀態 | 內容 |
-|---|---|---|
-| Backend 測試 | 已完成 | 105 tests（models、agents、API、services、clients、normalizer、currency） |
-| Monitor 測試 | 已完成 | 10+ tests（detector、clients、rate_limiter、RapidAPI clients、normalizer） |
-| Frontend 單元測試 | 已完成 | Vitest — auth、compare、search、subscription、preferences stores（57 tests） |
-| CI 自動化 | 已完成 | GitHub Actions：backend + monitor + frontend（lint + type-check + unit tests） |
-| CI Redis | 已完成 | GitHub Actions Redis 7 service container（backend + monitor jobs） |
-
-### Phase 7：待開發功能
-
-| 里程碑 | 優先級 | 工作量 | 內容 |
-|---|---|---|---|
-| Production 部署驗證 | 中 | 中 | Railway 端到端驗證（env vars、health check、DB migration、域名設定） |
-| Price History DB 連接 | 已完成 | 小 | PriceAgent._get_price_history() 接上 price_history 資料表，含趨勢分析 |
-| Recommendation DB 連接 | 已完成 | 小 | RecommendationAgent._get_user_preferences() 接上 user_preferences 資料表 |
-| Subscription email 寄送 | 已完成 | 小 | FastMail + SMTP + Jinja2 templates 完整實作 |
-| Frontend E2E 測試 | 低 | 大 | Playwright E2E 測試（搜尋→結果→比價→聊天完整流程），MVP 上線非必要 |
-| Agent 層整合 Service | 低 | 中 | SearchAgent/PriceAgent 改用 SearchService/PriceService（僅影響 Chat 功能） |
-| Caddyfile | 低 | 小 | docker-compose.prod.yml 參考的 TLS 設定（僅 VM 部署需要，Railway 不需要） |
-| 部署 Runbook | 低 | 小 | 上線 SOP、環境設定、rollback 流程文件 |
-| Incident Playbook | 低 | 小 | 常見問題排查指引（API 配額耗盡、DB 連線失敗、email 寄送失敗等） |
-| 飯店搜尋實作 | ⏸️ 暫停 | 大 | SearchService/PriceService hotel 方法——Skyscanner/Kiwi 飯店 API 尚未驗證可用性，待確認後再啟用 |
-
-### Phase 8：國際化（i18n） -- 已完成
-
-| 里程碑 | 優先級 | 工作量 | 內容 |
-|---|---|---|---|
-| 前端 i18n 基礎建設 | 已完成 | 中 | next-intl 整合、`[locale]` 路由、middleware、翻譯檔（zh-TW + en，~200 keys） |
-| 前端字串抽取 | 已完成 | 大 | 所有頁面與元件的硬編碼字串替換為 `useTranslations()` 呼叫 |
-| 語言切換器 | 已完成 | 小 | Header 內語言切換按鈕 + 偏好設定頁語言選項 |
-| 後端 locale 中間件 | 已完成 | 小 | Accept-Language header 解析，`request.state.locale` 注入 |
-| 後端錯誤訊息翻譯 | 已完成 | 小 | `t(key, locale)` 翻譯函式 + zh-TW/en 錯誤訊息（~30 keys） |
-| AI Agent 語言感知 | 已完成 | 小 | BaseAgent 接受 locale 參數，系統提示詞附加語言指令 |
-| Email 模板翻譯 | 已完成 | 中 | 4 個模板 × 2 語言 = 8 個語言版模板 |
-| 使用者語言偏好 | 已完成 | 小 | `preferred_language` DB 欄位 + Alembic migration + API CRUD |
+| Production 部署驗證 | 中 | Railway 端到端驗證（env vars、health check、DB migration、域名設定） |
+| Agent 層整合 Service | 低 | SearchAgent/PriceAgent 改用 SearchService/PriceService（僅影響 Chat 功能） |
+| Caddyfile | 低 | docker-compose.prod.yml 參考的 TLS 設定（僅 VM 部署需要，Railway 不需要） |
+| 部署 Runbook | 低 | 上線 SOP、環境設定、rollback 流程文件 |
+| Incident Playbook | 低 | 常見問題排查指引（API 配額耗盡、DB 連線失敗、email 寄送失敗等） |
 
 ---
 

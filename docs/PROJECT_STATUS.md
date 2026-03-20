@@ -16,20 +16,20 @@
 
 ```
 Features       ██████████████████████  100% (96/96 items)
-Infrastructure ████████████████░░░░░░  78%  (14/18 items)
+Infrastructure ████████████████░░░░░░  79%  (15/19 items)
 Quality        ██████████████████████  100% (30/30 items)
 Documentation  ████████████████░░░░░░  73%  (8/11 items)
 ─────────────────────────────────────────────
-OVERALL        ████████████████████░░  95%  (148/155 items)
+OVERALL        ████████████████████░░  96%  (149/156 items)
 ```
 
 | Category | Done | Total | Remaining | Blocked |
 |----------|------|-------|-----------|---------|
 | Features (§3) | 96 | 96 | 0 | 0 |
-| Infrastructure (§4) | 14 | 18 | 4 | 0 |
+| Infrastructure (§4) | 15 | 19 | 4 | 0 |
 | Quality Assurance (§5) | 30 | 30 | 0 | 0 |
 | Documentation (§6) | 8 | 11 | 3 | 1 |
-| **Total** | **148** | **155** | **7** | **1** |
+| **Total** | **149** | **156** | **7** | **1** |
 
 **Top blockers**: None — all remaining items are unblocked and ready for development.
 
@@ -229,7 +229,11 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] docker-compose.prod.yml (Caddy proxy, no volumes)
 - [ ] Caddyfile for TLS termination (referenced but not created)
 
-### 4.2 CI/CD
+### 4.2 Admin & Operations
+
+- [x] SQLAdmin database browser (`/admin`, controlled by `ADMIN_ENABLED` setting)
+
+### 4.3 CI/CD
 
 - [x] GitHub Actions `test.yml` — lint + type-check + pytest (backend + monitor)
 - [x] GitHub Actions `deploy.yml` — test → deploy to Railway (parallel)
@@ -238,7 +242,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 - [x] Frontend unit tests in CI (Vitest)
 - [x] Redis service container in CI (redis:7-alpine for backend + monitor)
 
-### 4.3 Deployment
+### 4.4 Deployment
 
 - [x] Railway configuration (`railway.toml` per service)
 - [x] Environment variable documentation (`.env.example`)

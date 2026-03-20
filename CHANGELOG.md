@@ -7,6 +7,17 @@ and this project adheres to [Conventional Commits](https://www.conventionalcommi
 
 **Versioning**: `MAJOR.MINOR.PATCH` — Minor (new features, API changes) and patch (bug fixes, tests, docs) are bumped by the dev team. Major bumps (1.0.0, 2.0.0, ...) are owner-decided only.
 
+## [0.6.1] - 2026-03-20
+
+### Added
+
+- **SQLAdmin database browser**: Dev/ops admin panel at `/admin` with ModelViews for all 11 database models, controlled by `ADMIN_ENABLED` setting
+
+### Fixed
+
+- **Frontend 500 error**: Added `/app/.next` anonymous volume in `docker-compose.override.yml` to prevent stale manifest files from host bind mount
+- **Roundtrip route display**: Use `↔` arrow for roundtrip routes and `→` for oneway across monitor and subscription UI
+
 ## [0.6.0] - 2026-03-20
 
 ### Changed

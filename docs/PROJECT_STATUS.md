@@ -3,7 +3,7 @@
 | Field         | Value                                  |
 |---------------|----------------------------------------|
 | **Product**   | Travel-AI                              |
-| **Version**   | 0.6.0                                  |
+| **Version**   | 0.6.1                                  |
 | **Date**      | 2026-03-20                             |
 | **Owner**     | Woodrow Shen (woodrow.shen@gmail.com)  |
 | **Status**    | Active Development                     |
@@ -370,6 +370,7 @@ Travel-AI is an intelligent travel aggregation platform targeting Taiwanese trav
 | 0.3.0   | 2026-03-17 | Hotel search integration (Skyscanner + Kiwi), Google Flights 4th flight source, email bounce fix |
 | 0.4.0   | 2026-03-18 | Full-stack i18n: zh-TW + en, next-intl frontend, locale middleware, AI agent localization, email templates |
 | 0.5.0   | 2026-03-18 | Price monitoring dashboard: /monitor page with Recharts price trend chart, route selector, subscription overview, notification history; new API endpoints (price-history, notifications) |
+| 0.6.1   | 2026-03-20 | SQLAdmin database browser (/admin), fix frontend 500 error (stale .next manifest), roundtrip ↔ arrow display |
 | 0.6.0   | 2026-03-20 | Monitor refactoring: fixed departure date + roundtrip support for all clients, subscription config (departure_date, return_date, trip_type, date_flexibility), expired subscription auto-cleanup, price-history date filters, frontend date pickers and trip type UI, i18n updates (12 locales) |
 
 ---
